@@ -239,7 +239,7 @@ const BookingSection = () => {
                         placeholder="Ej: maria@gmail.com"
                         className="w-full px-4 py-3 rounded-xl border border-pink-200 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 placeholder-gray-300 transition-colors"
                       />
-                      <p className="font-poppins text-xs text-gray-400 mt-1">Te enviaremos la confirmación de tu cita por email.</p>
+                      <p className="font-poppins text-xs text-gray-400 mt-1">Te enviaremos la confirmación por email. También usamos este correo para identificarte como clienta.</p>
                     </div>
 
                     {/* Teléfono */}

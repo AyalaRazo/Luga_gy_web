@@ -186,6 +186,7 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
             <div>
               <label className={labelClass}>Correo electrónico <span className="text-gray-400 font-normal">(opcional)</span></label>
               <input type="email" value={form.email} onChange={set('email')} placeholder="maria@gmail.com" className={inputClass} />
+              <p className="font-poppins text-xs text-gray-400 mt-1">Se usa para identificar a la clienta y agrupar su historial de citas.</p>
             </div>
             <div>
               <label className={labelClass}>Celular <span className="text-gray-400 font-normal">(opcional)</span></label>
