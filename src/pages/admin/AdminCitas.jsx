@@ -11,6 +11,7 @@ const AUTH_ERRS = ['jwt', 'not authenticated', 'pgrst301', '401', 'invalid claim
 function isAuthErr(e) { return AUTH_ERRS.some(k => String(e?.message ?? e?.code ?? '').toLowerCase().includes(k)); }
 import CitaStatusBadge from '../../components/Admin/CitaStatusBadge';
 import CitaModal from '../../components/Admin/CitaModal';
+import Pagination from '../../components/Admin/Pagination';
 
 const ESTADOS_FILTER = ['todos', 'pendiente', 'por_confirmar', 'confirmada', 'completada', 'cancelada', 'solicitud_cancelacion'];
 
@@ -142,6 +143,8 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
   );
 }
 
+const PAGE_SIZE = 15;
+
 export default function AdminCitas() {
   const { signOut } = useAuth();
   const navigate = useNavigate();
@@ -150,10 +153,11 @@ export default function AdminCitas() {
   const [search,     setSearch]     = useState('');
   const [estado,     setEstado]     = useState('todos');
   const [fecha,      setFecha]      = useState('');
-  const [modal,      setModal]      = useState(null);   // null | { cita?: object }
-  const [confirm,    setConfirm]    = useState(null);   // null | { id, nombre }
+  const [modal,      setModal]      = useState(null);
+  const [confirm,    setConfirm]    = useState(null);
   const [toast,      setToast]      = useState('');
-  const [pagoDialog, setPagoDialog] = useState(null);     // null | { id, cita } — diálogo de pago al completar
+  const [pagoDialog, setPagoDialog] = useState(null);
+  const [page,       setPage]       = useState(1);
 
   const showToast = (msg) => {
     setToast(msg);
@@ -182,6 +186,12 @@ export default function AdminCitas() {
     c.nombre.toLowerCase().includes(search.toLowerCase()) ||
     c.servicio.toLowerCase().includes(search.toLowerCase())
   );
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pageCitas  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  // Reset a página 1 cuando cambia el resultado filtrado
+  useEffect(() => { setPage(1); }, [filtered.length, search, estado, fecha]);
 
   async function handleDelete(id, nombre) {
     setConfirm(null);
@@ -409,7 +419,7 @@ export default function AdminCitas() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {filtered.map(c => (
+                  {pageCitas.map(c => (
                     <tr key={c.id} className={`hover:bg-pink-50/30 transition-colors group ${c.estado === 'solicitud_cancelacion' ? 'bg-amber-50/40' : ''}`}>
                       <td className="px-5 py-3.5">
                         <p className="font-poppins text-sm font-medium text-gray-800">{c.nombre}</p>
@@ -515,7 +525,7 @@ export default function AdminCitas() {
 
             {/* Mobile cards */}
             <div className="md:hidden divide-y divide-gray-50">
-              {filtered.map(c => (
+              {pageCitas.map(c => (
                 <div key={c.id} className="p-4">
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div>
@@ -570,6 +580,7 @@ export default function AdminCitas() {
                 </div>
               ))}
             </div>
+            <Pagination page={page} totalPages={totalPages} total={filtered.length} pageSize={PAGE_SIZE} onChange={setPage} />
           </>
         )}
       </div>

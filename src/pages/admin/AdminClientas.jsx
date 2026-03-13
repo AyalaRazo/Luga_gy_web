@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { getClientas, getCitasDeCliente } from '../../lib/supabase';
 import CitaStatusBadge from '../../components/Admin/CitaStatusBadge';
+import Pagination from '../../components/Admin/Pagination';
 
 function fmt(fechaStr) {
   if (!fechaStr) return '—';
@@ -117,11 +118,14 @@ function HistorialDrawer({ clienta, onClose }) {
 
 // ─── Página principal ──────────────────────────────────────────────────────────
 
+const PAGE_SIZE = 10;
+
 export default function AdminClientas() {
   const [clientas, setClientas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const [loading,  setLoading]  = useState(true);
+  const [search,   setSearch]   = useState('');
   const [selected, setSelected] = useState(null);
+  const [page,     setPage]     = useState(1);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -140,6 +144,11 @@ export default function AdminClientas() {
       c.telefono?.toLowerCase().includes(q)
     );
   });
+
+  const totalPages    = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pageClientas  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  useEffect(() => { setPage(1); }, [filtered.length, search]);
 
   return (
     <div className="overflow-y-auto flex-1">
@@ -211,7 +220,7 @@ export default function AdminClientas() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {filtered.map(c => (
+                  {pageClientas.map(c => (
                     <tr key={c.cliente_id} className="hover:bg-pink-50/30 transition-colors">
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
@@ -270,7 +279,7 @@ export default function AdminClientas() {
 
             {/* Mobile cards */}
             <div className="lg:hidden space-y-3">
-              {filtered.map(c => (
+              {pageClientas.map(c => (
                 <div
                   key={c.cliente_id}
                   className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4"
@@ -325,6 +334,7 @@ export default function AdminClientas() {
                 </div>
               ))}
             </div>
+            <Pagination page={page} totalPages={totalPages} total={filtered.length} pageSize={PAGE_SIZE} onChange={setPage} />
           </>
         )}
       </div>

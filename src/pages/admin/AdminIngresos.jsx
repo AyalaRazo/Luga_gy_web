@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { TrendingUp, DollarSign, CheckCircle2, BarChart3, RefreshCw, CalendarDays, Download } from 'lucide-react';
+import { TrendingUp, DollarSign, CheckCircle2, BarChart3, RefreshCw, CalendarDays, Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { getIngresosStats, getIngresosPorServicio } from '../../lib/supabase';
 
@@ -49,12 +49,14 @@ function StatCard({ icon: Icon, label, value, sub, color }) {
 }
 
 export default function AdminIngresos() {
+  const PAGE_SIZE = 10;
   const [periodo,     setPeriodo]     = useState('mes');
   const [customInicio, setCustomInicio] = useState(hoyISO.slice(0, 7) + '-01');
   const [customFin,    setCustomFin]    = useState(hoyISO);
   const [citas,       setCitas]       = useState([]);
   const [ranking,     setRanking]     = useState([]);
   const [loading,     setLoading]     = useState(true);
+  const [page,        setPage]        = useState(1);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -71,6 +73,7 @@ export default function AdminIngresos() {
   }, [periodo, customInicio, customFin]);
 
   useEffect(() => { load(); }, [load]);
+  useEffect(() => { setPage(1); }, [citas]);
 
   function handleExport() {
     const { inicio, fin } = periodo === 'custom'
@@ -107,6 +110,22 @@ export default function AdminIngresos() {
   const totalIngresado = citas.reduce((s, c) => s + Number(c.precio_cobrado ?? 0), 0);
   const totalCitas     = citas.length;
   const promedio       = totalCitas > 0 ? totalIngresado / totalCitas : 0;
+
+  // Paginación
+  const totalPages = Math.max(1, Math.ceil(citas.length / PAGE_SIZE));
+  const pageCitas  = citas.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  function getPageNumbers() {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    const pages = new Set([1, totalPages, page, page - 1, page + 1].filter(p => p >= 1 && p <= totalPages));
+    const sorted = [...pages].sort((a, b) => a - b);
+    const result = [];
+    for (let i = 0; i < sorted.length; i++) {
+      if (i > 0 && sorted[i] - sorted[i - 1] > 1) result.push('…');
+      result.push(sorted[i]);
+    }
+    return result;
+  }
 
   // Daily chart data (last 30 days or within period)
   const dailyMap = {};
@@ -266,55 +285,135 @@ export default function AdminIngresos() {
             </div>
           </div>
 
-          {/* Recent completed citas */}
+          {/* Citas completadas — tabla paginada */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="flex items-center gap-2 px-5 py-4 border-b border-gray-50">
-              <CalendarDays size={17} className="text-pink-500" />
-              <h2 className="font-poppins text-sm font-semibold text-gray-700">Citas completadas</h2>
-              <span className="ml-1 px-2 py-0.5 rounded-full bg-pink-100 text-pink-600 font-poppins text-xs font-semibold">{totalCitas}</span>
+
+            {/* Header */}
+            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-gray-50 flex-wrap">
+              <div className="flex items-center gap-2">
+                <CalendarDays size={17} className="text-pink-500" />
+                <h2 className="font-poppins text-sm font-semibold text-gray-700">Citas completadas</h2>
+                <span className="px-2 py-0.5 rounded-full bg-pink-100 text-pink-600 font-poppins text-xs font-semibold">
+                  {totalCitas}
+                </span>
+              </div>
+              {citas.length > 0 && (
+                <p className="font-poppins text-xs text-gray-400">
+                  Mostrando <span className="font-semibold text-gray-600">{(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, citas.length)}</span> de <span className="font-semibold text-gray-600">{citas.length}</span> registros
+                </p>
+              )}
             </div>
 
             {citas.length === 0 ? (
-              <div className="py-12 flex flex-col items-center gap-2 text-gray-300">
+              <div className="py-14 flex flex-col items-center gap-2 text-gray-300">
                 <CalendarDays size={36} />
                 <p className="font-poppins text-sm">No hay citas completadas en este período</p>
-                <p className="font-poppins text-xs text-gray-400">Los ingresos se registran al marcar una cita como "Completada" con precio cobrado</p>
+                <p className="font-poppins text-xs text-gray-400 text-center max-w-xs">
+                  Los ingresos se registran al marcar una cita como "Completada" con precio cobrado
+                </p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="bg-gray-50/60 border-b border-gray-50">
-                      {['Fecha', 'Clienta', 'Servicio', 'Cobrado'].map(h => (
-                        <th key={h} className="px-5 py-3 text-left font-poppins text-xs font-semibold text-gray-400 uppercase tracking-wider">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-50">
-                    {citas.map((c, i) => (
-                      <tr key={i} className="hover:bg-pink-50/20 transition-colors">
-                        <td className="px-5 py-3 font-poppins text-sm text-gray-500">
-                          {new Date(c.fecha + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })}
-                        </td>
-                        <td className="px-5 py-3 font-poppins text-sm font-medium text-gray-800">{c.nombre}</td>
-                        <td className="px-5 py-3 font-poppins text-sm text-gray-600">{c.servicio}</td>
-                        <td className="px-5 py-3">
-                          {c.precio_cobrado != null
-                            ? <span className="font-poppins text-sm font-bold text-green-600">${fmt(c.precio_cobrado)}</span>
-                            : <span className="font-poppins text-xs text-gray-400 italic">Sin precio registrado</span>
-                          }
-                        </td>
+              <>
+                {/* Tabla */}
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-gray-50/80 border-b border-gray-100">
+                        {['#', 'Fecha', 'Clienta', 'Servicio', 'Cobrado'].map(h => (
+                          <th key={h} className="px-5 py-3 text-left font-poppins text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
+                            {h}
+                          </th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                  <tfoot>
-                    <tr className="bg-pink-50/60 border-t border-pink-100">
-                      <td colSpan={3} className="px-5 py-3 font-poppins text-sm font-semibold text-gray-700">Total</td>
-                      <td className="px-5 py-3 font-poppins text-base font-bold text-pink-600">${fmt(totalIngresado)}</td>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {pageCitas.map((c, i) => {
+                        const globalIndex = (page - 1) * PAGE_SIZE + i + 1;
+                        return (
+                          <tr key={c.fecha + c.nombre + i}
+                            className="border-b border-gray-50 hover:bg-pink-50/40 transition-colors duration-150 group">
+                            <td className="px-5 py-3.5 font-poppins text-xs text-gray-300 w-10">
+                              {globalIndex}
+                            </td>
+                            <td className="px-5 py-3.5 font-poppins text-sm text-gray-500 whitespace-nowrap">
+                              {new Date(c.fecha + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            </td>
+                            <td className="px-5 py-3.5 font-poppins text-sm font-semibold text-gray-800">
+                              {c.nombre}
+                            </td>
+                            <td className="px-5 py-3.5">
+                              <span className="inline-block font-poppins text-xs px-2.5 py-1 rounded-lg bg-pink-50 text-pink-600 font-medium border border-pink-100">
+                                {c.servicio}
+                              </span>
+                            </td>
+                            <td className="px-5 py-3.5">
+                              {c.precio_cobrado != null
+                                ? <span className="font-poppins text-sm font-bold text-green-600">${fmt(c.precio_cobrado)}</span>
+                                : <span className="font-poppins text-xs text-gray-300 italic">—</span>
+                              }
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Footer: paginación + total */}
+                <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-100 bg-gray-50/50 flex-wrap gap-3">
+
+                  {/* Total */}
+                  <div className="font-poppins text-sm text-gray-600">
+                    Total del período: <span className="font-bold text-pink-600 text-base">${fmt(totalIngresado)}</span>
+                  </div>
+
+                  {/* Controles de paginación */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center gap-1">
+                      {/* Anterior */}
+                      <button
+                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                        className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150 cursor-pointer"
+                        aria-label="Página anterior"
+                      >
+                        <ChevronLeft size={14} />
+                      </button>
+
+                      {/* Números */}
+                      {getPageNumbers().map((p, i) =>
+                        p === '…' ? (
+                          <span key={`ellipsis-${i}`} className="w-8 h-8 flex items-center justify-center font-poppins text-xs text-gray-400">
+                            …
+                          </span>
+                        ) : (
+                          <button
+                            key={p}
+                            onClick={() => setPage(p)}
+                            className={`w-8 h-8 flex items-center justify-center rounded-lg font-poppins text-xs font-medium transition-all duration-150 cursor-pointer border ${
+                              page === p
+                                ? 'bg-pink-500 text-white border-pink-500 shadow-sm'
+                                : 'border-gray-200 text-gray-600 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50'
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        )
+                      )}
+
+                      {/* Siguiente */}
+                      <button
+                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                        disabled={page === totalPages}
+                        className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150 cursor-pointer"
+                        aria-label="Página siguiente"
+                      >
+                        <ChevronRight size={14} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
             )}
           </div>
         </>
