@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { TrendingUp, DollarSign, CheckCircle2, BarChart3, RefreshCw, CalendarDays } from 'lucide-react';
+import { TrendingUp, DollarSign, CheckCircle2, BarChart3, RefreshCw, CalendarDays, Download } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { getIngresosStats, getIngresosPorServicio } from '../../lib/supabase';
 
 const PERIODOS = [
@@ -71,6 +72,37 @@ export default function AdminIngresos() {
 
   useEffect(() => { load(); }, [load]);
 
+  function handleExport() {
+    const { inicio, fin } = periodo === 'custom'
+      ? { inicio: customInicio, fin: customFin }
+      : getRango(periodo);
+
+    // Hoja 1: detalle de citas
+    const detalle = citas.map(c => ({
+      'Fecha':    c.fecha,
+      'Clienta':  c.nombre,
+      'Servicio': c.servicio,
+      'Cobrado':  c.precio_cobrado != null ? Number(c.precio_cobrado) : '',
+    }));
+    detalle.push({ 'Fecha': '', 'Clienta': '', 'Servicio': 'TOTAL', 'Cobrado': totalIngresado });
+
+    // Hoja 2: resumen por servicio
+    const resumen = ranking
+      .filter(r => Number(r.total_ingresado) > 0)
+      .map(r => ({
+        'Servicio':       r.nombre,
+        'Citas':          Number(r.total_citas),
+        'Total ingresado': Number(r.total_ingresado),
+      }));
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(detalle),  'Citas completadas');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(resumen),  'Por servicio');
+
+    const nombreArchivo = `ingresos_${inicio}_${fin}.xlsx`;
+    XLSX.writeFile(wb, nombreArchivo);
+  }
+
   // Computed stats
   const totalIngresado = citas.reduce((s, c) => s + Number(c.precio_cobrado ?? 0), 0);
   const totalCitas     = citas.length;
@@ -112,6 +144,14 @@ export default function AdminIngresos() {
           <button onClick={load} disabled={loading}
             className="w-8 h-8 flex items-center justify-center rounded-xl border border-gray-200 text-gray-500 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 transition-all cursor-pointer">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+          </button>
+          <button
+            onClick={handleExport}
+            disabled={loading || citas.length === 0}
+            title="Exportar a Excel"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 font-poppins text-xs font-medium text-gray-600 hover:text-green-600 hover:border-green-300 hover:bg-green-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer">
+            <Download size={14} />
+            Exportar .xlsx
           </button>
         </div>
 
