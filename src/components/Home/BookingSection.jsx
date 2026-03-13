@@ -131,7 +131,9 @@ const BookingSection = () => {
     setStatus(ESTADO.IDLE); setErrorMsg(''); setBookedSlots([]); setTelefono('');
   };
 
-  const slotDisabled = (slot) => bookedSlots.includes(slot);
+  const dayKey = date ? DIA_KEYS[new Date(date + 'T12:00:00').getDay()] : null;
+  const dayCapacity = (dayKey && horario?.[dayKey]?.capacidad) ? horario[dayKey].capacidad : 1;
+  const slotDisabled = (slot) => bookedSlots.filter(s => s === slot).length >= dayCapacity;
   const isDayClosed  = date && !dateBlocked && horario && availableSlots.length === 0;
 
   // Genera lista de horarios para el panel lateral
