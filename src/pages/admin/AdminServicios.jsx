@@ -92,6 +92,7 @@ export default function AdminServicios() {
       {modal !== null && (
         <ServicioModal
           servicio={modal.servicio ?? null}
+          totalServicios={servicios.length}
           onClose={() => setModal(null)}
           onSaved={() => { setModal(null); load(); showToast(modal.servicio ? 'Servicio actualizado.' : 'Servicio creado.'); }}
         />

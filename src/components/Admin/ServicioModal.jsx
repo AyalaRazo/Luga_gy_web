@@ -10,7 +10,7 @@ const EMPTY = {
   categoria: 'General', activo: true, orden: 0, imagen_url: '',
 };
 
-export default function ServicioModal({ servicio, onClose, onSaved }) {
+export default function ServicioModal({ servicio, totalServicios = 0, onClose, onSaved }) {
   const isEdit    = Boolean(servicio);
   const [form,    setForm]    = useState(isEdit ? { ...EMPTY, ...servicio, precio: String(servicio.precio) } : { ...EMPTY });
   const [loading, setLoading] = useState(false);
@@ -205,6 +205,11 @@ export default function ServicioModal({ servicio, onClose, onSaved }) {
             <div>
               <label className={lbl}>Orden de aparición</label>
               <input type="number" min="0" value={form.orden} onChange={set('orden')} className={inp} />
+              {!servicio && totalServicios > 0 && (
+                <p className="font-poppins text-xs text-gray-400 mt-1.5">
+                  Hay <strong className="text-gray-600">{totalServicios}</strong> servicio{totalServicios !== 1 ? 's' : ''} actualmente. Usa <strong className="text-gray-600">{totalServicios + 1}</strong> para agregarlo al final.
+                </p>
+              )}
             </div>
           </div>
 
