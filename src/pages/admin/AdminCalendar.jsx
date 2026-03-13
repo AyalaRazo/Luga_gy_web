@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus, RefreshCw, CalendarDays } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ChevronLeft, ChevronRight, Plus, RefreshCw, CalendarDays, X, Pencil, Mail, Phone, Clock, Tag, FileText, DollarSign, Users, ChevronRight as Arrow } from 'lucide-react';
 import { getCitasRango } from '../../lib/supabase';
 import CitaModal from '../../components/Admin/CitaModal';
 
-// ─── Constants ──────────────────────────────────────────────────────────────
+// ─── Constants ───────────────────────────────────────────────────────────────
 const HOUR_START  = 8;
 const HOUR_END    = 20;
-const PX_PER_HOUR = 64; // pixels per hour row
+const PX_PER_HOUR = 64;
 
 const DAYS_ES   = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 const MONTHS_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio',
@@ -19,46 +19,218 @@ const DURACIONES = {
 };
 
 const STATUS_STYLE = {
-  pendiente:  'bg-amber-50  border-l-4 border-amber-400  text-amber-900',
-  confirmada: 'bg-green-50  border-l-4 border-green-500  text-green-900',
-  completada: 'bg-purple-50 border-l-4 border-purple-400 text-purple-900',
-  cancelada:  'bg-gray-50   border-l-4 border-gray-300   text-gray-500',
+  pendiente:             'bg-amber-50  border-l-4 border-amber-400  text-amber-900',
+  por_confirmar:         'bg-blue-50   border-l-4 border-blue-400   text-blue-900',
+  confirmada:            'bg-green-50  border-l-4 border-green-500  text-green-900',
+  completada:            'bg-purple-50 border-l-4 border-purple-400 text-purple-900',
+  cancelada:             'bg-gray-50   border-l-4 border-gray-300   text-gray-500',
+  solicitud_cancelacion: 'bg-red-50    border-l-4 border-red-400    text-red-900',
 };
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
+const STATUS_BADGE = {
+  pendiente:             'bg-amber-100  text-amber-700',
+  por_confirmar:         'bg-blue-100   text-blue-700',
+  confirmada:            'bg-green-100  text-green-700',
+  completada:            'bg-purple-100 text-purple-700',
+  cancelada:             'bg-gray-100   text-gray-500',
+  solicitud_cancelacion: 'bg-red-100    text-red-700',
+};
+
+const STATUS_LABEL = {
+  pendiente:             'Pendiente',
+  por_confirmar:         'Por confirmar',
+  confirmada:            'Confirmada',
+  completada:            'Completada',
+  cancelada:             'Cancelada',
+  solicitud_cancelacion: 'Sol. cancelación',
+};
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 function getMonday(date) {
-  const d   = new Date(date);
+  const d = new Date(date);
   const day = d.getDay();
   d.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
   d.setHours(0, 0, 0, 0);
   return d;
 }
+function addDays(date, n) { const d = new Date(date); d.setDate(d.getDate() + n); return d; }
+function toDateStr(d)     { return d.toISOString().slice(0, 10); }
+function timeToMinutes(t) { const [h, m] = (t ?? '00:00').slice(0, 5).split(':').map(Number); return h * 60 + m; }
+function minutesToPx(min) { return (min / 60) * PX_PER_HOUR; }
 
-function addDays(date, n) {
-  const d = new Date(date);
-  d.setDate(d.getDate() + n);
-  return d;
+/**
+ * Agrupa las citas por hora de inicio.
+ * Devuelve: [{ hora, citas, topPx, heightPx }]
+ */
+function groupBySlot(dayCitas) {
+  const map = {};
+  for (const c of dayCitas) {
+    const key = c.hora.slice(0, 5);
+    (map[key] ??= []).push(c);
+  }
+  return Object.entries(map).map(([hora, citas]) => {
+    const maxDur   = Math.max(...citas.map(c => DURACIONES[c.servicio] ?? 60));
+    const startMin = timeToMinutes(hora);
+    return {
+      hora,
+      citas,
+      topPx:    minutesToPx(startMin - HOUR_START * 60),
+      heightPx: Math.max(minutesToPx(maxDur), 28),
+    };
+  });
 }
 
-function toDateStr(d) {
-  return d.toISOString().slice(0, 10);
+// ─── Overlay wrapper (closes on outside click / Escape) ──────────────────────
+function Overlay({ children, onClose }) {
+  const ref = useRef();
+  useEffect(() => {
+    const onKey  = (e) => { if (e.key === 'Escape') onClose(); };
+    const onDown = (e) => { if (ref.current && !ref.current.contains(e.target)) onClose(); };
+    window.addEventListener('keydown', onKey);
+    setTimeout(() => document.addEventListener('mousedown', onDown), 0);
+    return () => { window.removeEventListener('keydown', onKey); document.removeEventListener('mousedown', onDown); };
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm">
+      <div ref={ref} className="animate-fade-in-up">
+        {children}
+      </div>
+    </div>
+  );
 }
 
-function timeToMinutes(t) {
-  const [h, m] = (t ?? '00:00').slice(0, 5).split(':').map(Number);
-  return h * 60 + m;
+// ─── Panel: lista de clientes en un slot ─────────────────────────────────────
+function SlotListPanel({ hora, fecha, citas, onSelectCita, onClose }) {
+  const d = new Date(fecha + 'T12:00:00');
+  const fechaLabel = d.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  return (
+    <Overlay onClose={onClose}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+          <div>
+            <div className="flex items-center gap-2">
+              <Users size={15} className="text-pink-500" />
+              <span className="font-poppins text-base font-bold text-gray-800">{hora}</span>
+              <span className="px-2 py-0.5 rounded-full bg-pink-100 text-pink-600 font-poppins text-xs font-semibold">
+                {citas.length} clientas
+              </span>
+            </div>
+            <p className="font-poppins text-xs text-gray-400 mt-0.5 capitalize">{fechaLabel}</p>
+          </div>
+          <button onClick={onClose}
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all cursor-pointer">
+            <X size={15} />
+          </button>
+        </div>
+
+        {/* Lista */}
+        <div className="p-3 space-y-2 max-h-80 overflow-y-auto">
+          {citas.map(c => (
+            <button key={c.id} onClick={() => onSelectCita(c)}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-100 hover:border-pink-200 hover:bg-pink-50/50 transition-all cursor-pointer text-left group">
+              {/* Color dot */}
+              <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${
+                c.estado === 'confirmada' ? 'bg-green-500' :
+                c.estado === 'completada' ? 'bg-purple-400' :
+                c.estado === 'cancelada'  ? 'bg-gray-300'  : 'bg-amber-400'
+              }`} />
+              <div className="flex-1 min-w-0">
+                <p className="font-poppins text-sm font-semibold text-gray-800 truncate">{c.nombre}</p>
+                <p className="font-poppins text-xs text-gray-500 truncate">{c.servicio}</p>
+              </div>
+              <span className={`shrink-0 px-2 py-0.5 rounded-full font-poppins text-[10px] font-semibold ${STATUS_BADGE[c.estado] ?? STATUS_BADGE.pendiente}`}>
+                {STATUS_LABEL[c.estado] ?? c.estado}
+              </span>
+              <Arrow size={14} className="text-gray-300 group-hover:text-pink-400 shrink-0 transition-colors" />
+            </button>
+          ))}
+        </div>
+      </div>
+    </Overlay>
+  );
 }
 
-function minutesToPx(minutes) {
-  return (minutes / 60) * PX_PER_HOUR;
+// ─── Panel: detalle de una cita ───────────────────────────────────────────────
+function CitaDetail({ cita, onClose, onEdit, onBack }) {
+  const estado = cita.estado ?? 'pendiente';
+  return (
+    <Overlay onClose={onClose}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden">
+        {/* Header */}
+        <div className="flex items-start justify-between px-6 py-5 border-b border-gray-100 gap-3">
+          <div className="flex-1 min-w-0">
+            <p className="font-poppins text-base font-bold text-gray-800 truncate">{cita.nombre}</p>
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
+              <span className="font-poppins text-xs text-gray-500">{cita.hora?.slice(0, 5)}</span>
+              <span className={`px-2 py-0.5 rounded-full font-poppins text-[10px] font-semibold ${STATUS_BADGE[estado]}`}>
+                {STATUS_LABEL[estado] ?? estado}
+              </span>
+            </div>
+          </div>
+          <button onClick={onClose}
+            className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all cursor-pointer shrink-0">
+            <X size={15} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="px-6 py-5 grid grid-cols-2 gap-x-8 gap-y-4">
+          <DetailRow icon={Tag}       label="Servicio" value={cita.servicio} />
+          <DetailRow icon={Clock}     label="Hora"     value={cita.hora?.slice(0, 5)} />
+          {cita.email    && <DetailRow icon={Mail}        label="Correo"   value={cita.email} />}
+          {cita.telefono && <DetailRow icon={Phone}       label="Celular"  value={cita.telefono} />}
+          {cita.precio_cobrado != null && (
+            <DetailRow icon={DollarSign} label="Cobrado"
+              value={`$${Number(cita.precio_cobrado).toLocaleString('es-MX')}`} />
+          )}
+          {cita.notas && (
+            <div className="col-span-2">
+              <DetailRow icon={FileText} label="Notas" value={cita.notas} multiline />
+            </div>
+          )}
+        </div>
+
+        {/* Actions */}
+        <div className="px-6 pb-6 flex gap-2">
+          {onBack && (
+            <button onClick={onBack}
+              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-gray-200 font-poppins text-sm text-gray-600 hover:bg-gray-50 transition-all cursor-pointer">
+              <ChevronLeft size={14} /> Volver
+            </button>
+          )}
+          <button onClick={onEdit}
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-poppins text-sm font-semibold transition-all cursor-pointer shadow-pink-sm">
+            <Pencil size={14} /> Editar
+          </button>
+        </div>
+      </div>
+    </Overlay>
+  );
 }
 
-// ─── Component ──────────────────────────────────────────────────────────────
+function DetailRow({ icon: Icon, label, value, multiline }) {
+  return (
+    <div className="flex items-start gap-2.5">
+      <Icon size={14} className="text-pink-400 mt-0.5 shrink-0" />
+      <div className="min-w-0">
+        <span className="font-poppins text-[10px] text-gray-400 uppercase tracking-wide block">{label}</span>
+        <span className={`font-poppins text-sm text-gray-700 ${multiline ? 'whitespace-pre-wrap' : 'truncate block'}`}>{value}</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
 export default function AdminCalendar() {
   const [monday,  setMonday]  = useState(() => getMonday(new Date()));
   const [citas,   setCitas]   = useState([]);
   const [loading, setLoading] = useState(true);
-  const [modal,   setModal]   = useState(null);
+  const [modal,   setModal]   = useState(null);   // { cita? } | null → CitaModal
+  const [slotPanel, setSlotPanel] = useState(null); // { hora, fecha, citas }
+  const [detail,    setDetail]    = useState(null); // { cita, fromSlot? }
   const [toast,   setToast]   = useState('');
 
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(monday, i));
@@ -75,11 +247,8 @@ export default function AdminCalendar() {
 
   useEffect(() => { load(); }, [load]);
 
-  // Group citas by date
   const byDate = {};
-  citas.forEach(c => {
-    (byDate[c.fecha] ??= []).push(c);
-  });
+  citas.forEach(c => { (byDate[c.fecha] ??= []).push(c); });
 
   const hours = Array.from({ length: HOUR_END - HOUR_START }, (_, i) => HOUR_START + i);
 
@@ -95,6 +264,15 @@ export default function AdminCalendar() {
     setModal({ defaultFecha: dateStr, defaultHora: `${h}:00` });
   }
 
+  function handleBlockClick(e, slot, dateStr) {
+    e.stopPropagation();
+    if (slot.citas.length === 1) {
+      setDetail({ cita: slot.citas[0], fromSlot: null });
+    } else {
+      setSlotPanel({ hora: slot.hora, fecha: dateStr, citas: slot.citas });
+    }
+  }
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Toast */}
@@ -104,7 +282,28 @@ export default function AdminCalendar() {
         </div>
       )}
 
-      {/* Modal */}
+      {/* Slot list panel (múltiples clientes) */}
+      {slotPanel && !detail && (
+        <SlotListPanel
+          hora={slotPanel.hora}
+          fecha={slotPanel.fecha}
+          citas={slotPanel.citas}
+          onClose={() => setSlotPanel(null)}
+          onSelectCita={(c) => setDetail({ cita: c, fromSlot: slotPanel })}
+        />
+      )}
+
+      {/* Detail de una cita */}
+      {detail && (
+        <CitaDetail
+          cita={detail.cita}
+          onClose={() => setDetail(null)}
+          onBack={detail.fromSlot ? () => { setDetail(null); setSlotPanel(detail.fromSlot); } : null}
+          onEdit={() => { setDetail(null); setSlotPanel(null); setModal({ cita: detail.cita }); }}
+        />
+      )}
+
+      {/* Crear / editar cita */}
       {modal !== null && (
         <CitaModal
           cita={modal.cita ?? null}
@@ -121,7 +320,6 @@ export default function AdminCalendar() {
 
       {/* ── Header ── */}
       <div className="shrink-0 bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3 flex-wrap">
-        {/* Week nav */}
         <div className="flex items-center gap-1">
           <button onClick={() => setMonday(d => addDays(d, -7))}
             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-pink-50 text-gray-500 hover:text-pink-500 transition-all cursor-pointer">
@@ -156,9 +354,8 @@ export default function AdminCalendar() {
       <div className="flex-1 overflow-auto">
         <div className="min-w-[640px] flex flex-col">
 
-          {/* Day headers — sticky */}
+          {/* Day headers */}
           <div className="flex sticky top-0 z-20 bg-white border-b border-gray-100 shadow-sm">
-            {/* Time gutter */}
             <div className="w-14 shrink-0" />
             {weekDays.map((day, i) => {
               const ds      = toDateStr(day);
@@ -190,7 +387,7 @@ export default function AdminCalendar() {
             {/* Hour labels */}
             <div className="w-14 shrink-0 select-none">
               {hours.map(h => (
-                <div key={h} className="flex items-start justify-end pr-2 pt-0"
+                <div key={h} className="flex items-start justify-end pr-2"
                   style={{ height: PX_PER_HOUR }}>
                   <span className="font-poppins text-[11px] text-gray-400 translate-y-[-7px]">
                     {String(h).padStart(2, '0')}:00
@@ -201,15 +398,17 @@ export default function AdminCalendar() {
 
             {/* Day columns */}
             {weekDays.map((day, di) => {
-              const ds        = toDateStr(day);
-              const isToday   = ds === todayStr;
-              const dayCitas  = byDate[ds] ?? [];
+              const ds       = toDateStr(day);
+              const isToday  = ds === todayStr;
+              const dayCitas = byDate[ds] ?? [];
+              const slots    = groupBySlot(dayCitas);
 
               return (
-                <div key={di} className={`flex-1 min-w-0 relative border-l border-gray-100 ${isToday ? 'bg-pink-50/30' : ''}`}
+                <div key={di}
+                  className={`flex-1 min-w-0 relative border-l border-gray-100 ${isToday ? 'bg-pink-50/30' : ''}`}
                   style={{ height: PX_PER_HOUR * hours.length }}>
 
-                  {/* Hour slot backgrounds (clickable) */}
+                  {/* Hour slot backgrounds */}
                   {hours.map(h => (
                     <div key={h}
                       onClick={() => handleSlotClick(ds, h)}
@@ -228,9 +427,8 @@ export default function AdminCalendar() {
 
                   {/* Current time indicator */}
                   {isToday && (() => {
-                    const now     = new Date();
-                    const nowMins = now.getHours() * 60 + now.getMinutes();
-                    const topPx   = minutesToPx(nowMins - HOUR_START * 60);
+                    const now    = new Date();
+                    const topPx  = minutesToPx(now.getHours() * 60 + now.getMinutes() - HOUR_START * 60);
                     if (topPx < 0 || topPx > PX_PER_HOUR * hours.length) return null;
                     return (
                       <div className="absolute left-0 right-0 z-10 pointer-events-none flex items-center"
@@ -241,27 +439,48 @@ export default function AdminCalendar() {
                     );
                   })()}
 
-                  {/* Cita blocks */}
-                  {dayCitas.map(c => {
-                    const startMins = timeToMinutes(c.hora);
-                    const dur       = DURACIONES[c.servicio] ?? 60;
-                    const topPx     = minutesToPx(startMins - HOUR_START * 60);
-                    const heightPx  = Math.max(minutesToPx(dur), 24);
-                    const style     = STATUS_STYLE[c.estado] ?? STATUS_STYLE.pendiente;
+                  {/* Slot blocks */}
+                  {slots.map(slot => {
+                    const single = slot.citas.length === 1;
+                    const c      = slot.citas[0];
+                    const style  = single ? (STATUS_STYLE[c.estado] ?? STATUS_STYLE.pendiente) : '';
 
                     return (
-                      <div key={c.id}
-                        onClick={e => { e.stopPropagation(); setModal({ cita: c }); }}
-                        className={`absolute left-0.5 right-0.5 rounded-md px-2 py-1 shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden z-10 ${style}`}
-                        style={{ top: topPx + 1, height: heightPx - 2 }}
+                      <div key={slot.hora}
+                        onClick={e => handleBlockClick(e, slot, ds)}
+                        title={single ? `${c.nombre} · ${c.servicio}` : `${slot.citas.length} clientas · ${slot.hora}`}
+                        className={`absolute left-0.5 right-0.5 rounded-md px-2 py-1 shadow-sm hover:shadow-md hover:brightness-95 transition-all cursor-pointer overflow-hidden z-10 ${
+                          single
+                            ? style
+                            : 'bg-pink-500 text-white border-l-4 border-pink-700'
+                        }`}
+                        style={{ top: slot.topPx + 1, height: slot.heightPx - 2 }}
                       >
-                        <p className="font-poppins text-[11px] font-bold leading-tight truncate">
-                          {c.hora.slice(0, 5)} · {c.nombre}
-                        </p>
-                        {heightPx > 36 && (
-                          <p className="font-poppins text-[10px] leading-tight truncate opacity-80">
-                            {c.servicio}
-                          </p>
+                        {single ? (
+                          <>
+                            <p className="font-poppins text-[11px] font-bold leading-tight truncate">
+                              {c.hora.slice(0, 5)} · {c.nombre}
+                            </p>
+                            {slot.heightPx > 36 && (
+                              <p className="font-poppins text-[10px] leading-tight truncate opacity-80">
+                                {c.servicio}
+                              </p>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex items-center gap-1">
+                              <Users size={10} className="shrink-0 opacity-90" />
+                              <p className="font-poppins text-[11px] font-bold leading-tight truncate">
+                                {slot.hora} · {slot.citas.length} clientas
+                              </p>
+                            </div>
+                            {slot.heightPx > 36 && (
+                              <p className="font-poppins text-[10px] leading-tight truncate opacity-80">
+                                {slot.citas.map(x => x.nombre.split(' ')[0]).join(', ')}
+                              </p>
+                            )}
+                          </>
                         )}
                       </div>
                     );
@@ -287,6 +506,7 @@ export default function AdminCalendar() {
           { label: 'Pendiente',  cls: 'bg-amber-400'  },
           { label: 'Confirmada', cls: 'bg-green-500'  },
           { label: 'Completada', cls: 'bg-purple-400' },
+          { label: 'Múltiples',  cls: 'bg-pink-500'   },
         ].map(({ label, cls }) => (
           <div key={label} className="flex items-center gap-1.5">
             <div className={`w-2.5 h-2.5 rounded-sm ${cls}`} />
@@ -294,7 +514,7 @@ export default function AdminCalendar() {
           </div>
         ))}
         <span className="font-poppins text-xs text-gray-400 ml-auto">
-          Clic en un horario vacío para crear cita
+          Clic en cita para ver detalle · Clic en horario vacío para crear
         </span>
       </div>
     </div>
