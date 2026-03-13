@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #FFFFFF;
+    color: #4A4A4A;
+    font-family: 'Poppins', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .elegant-shadow {
+    box-shadow: 0 8px 30px rgba(255, 209, 220, 0.30);
+  }
+
+  .pink-gradient {
+    background: linear-gradient(135deg, #FFD1DC 0%, #FBC4C4 50%, #FF9EB5 100%);
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+
+  .container-custom {
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn-primary {
+    @apply bg-pink-400 hover:bg-pink-500 text-white font-poppins font-medium
+           px-7 py-3 rounded-full shadow-pink-sm hover:shadow-pink-md
+           transition-all duration-300 cursor-pointer
+           focus:outline-none focus:ring-2 focus:ring-pink-300 focus:ring-offset-2;
+  }
+
+  .btn-secondary {
+    @apply bg-white hover:bg-pink-50 text-pink-500 border-2 border-pink-400
+           font-poppins font-medium px-7 py-3 rounded-full
+           transition-all duration-300 cursor-pointer
+           focus:outline-none focus:ring-2 focus:ring-pink-300 focus:ring-offset-2;
+  }
+
+  .card-base {
+    @apply bg-white rounded-2xl border border-pink-100 shadow-card
+           hover:shadow-card-hover transition-all duration-300;
+  }
+
+  .section-divider {
+    @apply w-20 h-0.5 bg-gradient-to-r from-pink-300 via-pink-400 to-gold-400 mx-auto mt-4 rounded-full;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .scrollbar-pink::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-pink::-webkit-scrollbar-track {
+    background: #FFF5F7;
+    border-radius: 10px;
+  }
+  .scrollbar-pink::-webkit-scrollbar-thumb {
+    background: #FBC4C4;
+    border-radius: 10px;
+  }
+  .scrollbar-pink::-webkit-scrollbar-thumb:hover {
+    background: #FF9EB5;
+  }
+}
