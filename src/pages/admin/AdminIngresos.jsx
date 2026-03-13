@@ -6,7 +6,10 @@ const PERIODOS = [
   { label: 'Esta semana', value: 'semana' },
   { label: 'Este mes',    value: 'mes'    },
   { label: 'Este año',    value: 'año'    },
+  { label: 'Personalizado', value: 'custom' },
 ];
+
+const hoyISO = new Date().toISOString().slice(0, 10);
 
 function getRango(periodo) {
   const hoy = new Date();
@@ -45,14 +48,18 @@ function StatCard({ icon: Icon, label, value, sub, color }) {
 }
 
 export default function AdminIngresos() {
-  const [periodo,  setPeriodo]  = useState('mes');
-  const [citas,    setCitas]    = useState([]);
-  const [ranking,  setRanking]  = useState([]);
-  const [loading,  setLoading]  = useState(true);
+  const [periodo,     setPeriodo]     = useState('mes');
+  const [customInicio, setCustomInicio] = useState(hoyISO.slice(0, 7) + '-01');
+  const [customFin,    setCustomFin]    = useState(hoyISO);
+  const [citas,       setCitas]       = useState([]);
+  const [ranking,     setRanking]     = useState([]);
+  const [loading,     setLoading]     = useState(true);
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { inicio, fin } = getRango(periodo);
+    const { inicio, fin } = periodo === 'custom'
+      ? { inicio: customInicio, fin: customFin }
+      : getRango(periodo);
     const [{ data: c }, { data: r }] = await Promise.all([
       getIngresosStats(inicio, fin),
       getIngresosPorServicio(),
@@ -60,7 +67,7 @@ export default function AdminIngresos() {
     setCitas(c ?? []);
     setRanking(r ?? []);
     setLoading(false);
-  }, [periodo]);
+  }, [periodo, customInicio, customFin]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -91,7 +98,7 @@ export default function AdminIngresos() {
           <h1 className="font-poppins text-2xl font-bold text-gray-800">Ingresos</h1>
           <p className="font-poppins text-sm text-gray-400 mt-0.5">Control financiero del negocio</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {PERIODOS.map(p => (
             <button key={p.value} onClick={() => setPeriodo(p.value)}
               className={`px-3 py-1.5 rounded-xl font-poppins text-xs font-medium transition-all cursor-pointer border ${
@@ -107,6 +114,28 @@ export default function AdminIngresos() {
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
+
+        {/* Rango personalizado */}
+        {periodo === 'custom' && (
+          <div className="flex items-center gap-2 mt-3 flex-wrap">
+            <input
+              type="date"
+              value={customInicio}
+              max={customFin}
+              onChange={e => setCustomInicio(e.target.value)}
+              className="px-3 py-2 font-poppins text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all cursor-pointer"
+            />
+            <span className="font-poppins text-sm text-gray-400">al</span>
+            <input
+              type="date"
+              value={customFin}
+              min={customInicio}
+              max={hoyISO}
+              onChange={e => setCustomFin(e.target.value)}
+              className="px-3 py-2 font-poppins text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all cursor-pointer"
+            />
+          </div>
+        )}
       </div>
 
       {loading ? (
