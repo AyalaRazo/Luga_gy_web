@@ -42,7 +42,7 @@ function ServiceModal({ service, onClose }) {
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in">
+      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in">
         {/* Image */}
         <div className="relative h-56 bg-gradient-to-br from-pink-100 to-rose-200 shrink-0">
           {service.image ? (
@@ -62,7 +62,7 @@ function ServiceModal({ service, onClose }) {
             className="absolute top-3 right-3 w-8 h-8 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-sm transition-all cursor-pointer"
             aria-label="Cerrar"
           >
-            <X size={16} className="text-gray-600" />
+            <X size={16} className="text-gray-600 dark:text-gray-300" />
           </button>
 
           {/* Badges */}
@@ -75,18 +75,18 @@ function ServiceModal({ service, onClose }) {
           {/* Duration */}
           <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
             <Clock size={12} className="text-pink-400" />
-            <span className="font-poppins text-xs text-gray-600">{service.duration} min</span>
+            <span className="font-poppins text-xs text-gray-600 dark:text-gray-300">{service.duration} min</span>
           </div>
         </div>
 
         {/* Content */}
         <div className="p-6">
-          <h2 className="font-poppins text-xl font-bold text-gray-800 mb-3">{service.title}</h2>
-          <p className="font-poppins text-sm text-gray-500 leading-relaxed mb-6">{service.description}</p>
+          <h2 className="font-poppins text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">{service.title}</h2>
+          <p className="font-poppins text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-6">{service.description}</p>
 
-          <div className="flex items-center justify-between pt-4 border-t border-pink-50">
+          <div className="flex items-center justify-between pt-4 border-t border-pink-50 dark:border-gray-700">
             <div>
-              <p className="font-poppins text-xs text-gray-400 mb-0.5">Precio</p>
+              <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mb-0.5">Precio</p>
               <span className="font-great-vibes text-4xl text-pink-400 leading-none">${service.price}</span>
             </div>
             <button
@@ -148,7 +148,7 @@ const ServicesGrid = () => {
       : services.filter(s => s.category.toLowerCase() === activeCategory.toLowerCase());
 
   return (
-    <section id="servicios" className="section-padding bg-pink-50/40">
+    <section id="servicios" className="section-padding bg-pink-50/40 dark:bg-gray-900">
       <div className="container-custom">
         <SectionTitle
           title="Nuestros Servicios"
@@ -164,7 +164,7 @@ const ServicesGrid = () => {
               className={`px-5 py-2 rounded-full font-poppins text-sm font-medium transition-all duration-200 border cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-300 focus:ring-offset-1 ${
                 activeCategory === cat
                   ? 'bg-pink-400 text-white border-pink-400 shadow-pink-sm'
-                  : 'bg-white text-gray-600 border-pink-200 hover:bg-pink-50 hover:border-pink-300 hover:text-pink-500'
+                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-pink-200 dark:border-gray-600 hover:bg-pink-50 dark:hover:bg-gray-700 hover:border-pink-300 hover:text-pink-500'
               }`}
               aria-pressed={activeCategory === cat}
             >
@@ -181,7 +181,7 @@ const ServicesGrid = () => {
         </div>
 
         {filtered.length === 0 && (
-          <p className="text-center font-poppins text-gray-400 py-12">
+          <p className="text-center font-poppins text-gray-400 dark:text-gray-500 py-12">
             No hay servicios en esta categoría.
           </p>
         )}

@@ -14,20 +14,20 @@ const CAT_COLORS = {
 function ConfirmDialog({ nombre, onConfirm, onCancel }) {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm p-6">
         <div className="flex items-start gap-3 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-900/30 flex items-center justify-center shrink-0">
             <AlertCircle size={20} className="text-red-500" />
           </div>
           <div>
-            <h3 className="font-poppins text-sm font-semibold text-gray-800">¿Eliminar servicio?</h3>
-            <p className="font-poppins text-sm text-gray-500 mt-1">
+            <h3 className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100">¿Eliminar servicio?</h3>
+            <p className="font-poppins text-sm text-gray-500 dark:text-gray-400 mt-1">
               Se eliminará <strong>{nombre}</strong>. Las citas existentes no se verán afectadas.
             </p>
           </div>
         </div>
         <div className="flex gap-3">
-          <button onClick={onCancel} className="flex-1 py-2.5 rounded-xl border border-gray-200 font-poppins text-sm text-gray-600 hover:bg-gray-50 transition-all cursor-pointer">Cancelar</button>
+          <button onClick={onCancel} className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all cursor-pointer">Cancelar</button>
           <button onClick={onConfirm} className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-poppins text-sm font-semibold transition-all cursor-pointer">Eliminar</button>
         </div>
       </div>
@@ -101,14 +101,14 @@ export default function AdminServicios() {
       {/* Header */}
       <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
         <div>
-          <h1 className="font-poppins text-2xl font-bold text-gray-800">Servicios</h1>
-          <p className="font-poppins text-sm text-gray-400 mt-0.5">
+          <h1 className="font-poppins text-2xl font-bold text-gray-800 dark:text-gray-100">Servicios</h1>
+          <p className="font-poppins text-sm text-gray-400 dark:text-gray-500 mt-0.5">
             {activos} activos · {servicios.length} total
           </p>
         </div>
         <div className="flex gap-2">
           <button onClick={load} disabled={loading}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 font-poppins text-sm text-gray-500 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 transition-all cursor-pointer">
+            className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-500 dark:text-gray-400 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-all cursor-pointer">
             <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
           </button>
           <button onClick={() => setModal({})}
@@ -125,7 +125,7 @@ export default function AdminServicios() {
             className={`px-4 py-1.5 rounded-full font-poppins text-sm font-medium transition-all cursor-pointer border ${
               catFilter === cat
                 ? 'bg-pink-500 text-white border-pink-500 shadow-pink-sm'
-                : 'bg-white text-gray-600 border-gray-200 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50'
+                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50 dark:hover:bg-gray-700'
             }`}>
             {cat}
           </button>
@@ -141,7 +141,7 @@ export default function AdminServicios() {
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
           {filtered.map(s => (
             <div key={s.id}
-              className={`bg-white rounded-2xl border shadow-sm hover:shadow-md transition-all overflow-hidden group ${s.activo ? 'border-gray-100' : 'border-gray-100 opacity-60'}`}>
+              className={`bg-white dark:bg-gray-800 rounded-2xl border shadow-sm hover:shadow-md transition-all overflow-hidden group ${s.activo ? 'border-gray-100 dark:border-gray-700' : 'border-gray-100 dark:border-gray-700 opacity-60'}`}>
 
               {/* Card header */}
               <div className={`${!s.activo ? 'grayscale' : ''}`}>
@@ -164,7 +164,7 @@ export default function AdminServicios() {
               <div className="px-5 pt-4 pb-4">
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="font-poppins text-sm font-semibold text-gray-800 leading-tight">{s.nombre}</h3>
+                    <h3 className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100 leading-tight">{s.nombre}</h3>
                   </div>
 
                   {/* Active toggle */}
@@ -176,30 +176,30 @@ export default function AdminServicios() {
                 </div>
 
                 {s.descripcion && (
-                  <p className="font-poppins text-xs text-gray-500 leading-relaxed line-clamp-2 mb-4">
+                  <p className="font-poppins text-xs text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-2 mb-4">
                     {s.descripcion}
                   </p>
                 )}
 
                 {/* Price + Duration */}
                 <div className="flex items-center gap-3">
-                  <div className="flex-1 bg-pink-50 rounded-xl px-3 py-2 text-center">
-                    <p className="font-poppins text-lg font-bold text-pink-600 leading-tight">
+                  <div className="flex-1 bg-pink-50 dark:bg-pink-900/30 rounded-xl px-3 py-2 text-center">
+                    <p className="font-poppins text-lg font-bold text-pink-600 dark:text-pink-400 leading-tight">
                       ${Number(s.precio).toLocaleString('es-MX')}
                     </p>
                     <p className="font-poppins text-[10px] text-pink-400 uppercase tracking-wide">precio</p>
                   </div>
-                  <div className="flex-1 bg-gray-50 rounded-xl px-3 py-2 text-center">
-                    <p className="font-poppins text-lg font-bold text-gray-700 leading-tight">{s.duracion}</p>
-                    <p className="font-poppins text-[10px] text-gray-400 uppercase tracking-wide">minutos</p>
+                  <div className="flex-1 bg-gray-50 dark:bg-gray-700 rounded-xl px-3 py-2 text-center">
+                    <p className="font-poppins text-lg font-bold text-gray-700 dark:text-gray-200 leading-tight">{s.duracion}</p>
+                    <p className="font-poppins text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wide">minutos</p>
                   </div>
                 </div>
               </div>
               </div>{/* end grayscale wrapper */}
 
               {/* Actions */}
-              <div className="border-t border-gray-50 px-5 py-3 flex items-center justify-between bg-gray-50/50">
-                <span className={`font-poppins text-xs font-medium ${s.activo ? 'text-green-600' : 'text-gray-400'}`}>
+              <div className="border-t border-gray-50 dark:border-gray-700 px-5 py-3 flex items-center justify-between bg-gray-50/50 dark:bg-gray-700/30">
+                <span className={`font-poppins text-xs font-medium ${s.activo ? 'text-green-600' : 'text-gray-400 dark:text-gray-500'}`}>
                   {s.activo ? 'Visible en la web' : 'Oculto en la web'}
                 </span>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -220,8 +220,8 @@ export default function AdminServicios() {
 
           {/* Add new card */}
           <button onClick={() => setModal({})}
-            className="border-2 border-dashed border-pink-200 rounded-2xl p-8 flex flex-col items-center justify-center gap-3 hover:border-pink-400 hover:bg-pink-50/40 transition-all cursor-pointer group min-h-[200px]">
-            <div className="w-12 h-12 rounded-2xl bg-pink-100 group-hover:bg-pink-200 flex items-center justify-center transition-all">
+            className="border-2 border-dashed border-pink-200 dark:border-pink-800/50 rounded-2xl p-8 flex flex-col items-center justify-center gap-3 hover:border-pink-400 hover:bg-pink-50/40 dark:hover:bg-pink-900/20 transition-all cursor-pointer group min-h-[200px]">
+            <div className="w-12 h-12 rounded-2xl bg-pink-100 dark:bg-pink-900/40 group-hover:bg-pink-200 dark:group-hover:bg-pink-900/60 flex items-center justify-center transition-all">
               <Plus size={22} className="text-pink-500" />
             </div>
             <p className="font-poppins text-sm font-medium text-pink-500">Agregar servicio</p>

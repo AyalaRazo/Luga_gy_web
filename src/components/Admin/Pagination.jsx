@@ -20,13 +20,13 @@ export default function Pagination({ page, totalPages, total, pageSize, onChange
   const to   = Math.min(page * pageSize, total);
 
   return (
-    <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-100 bg-gray-50/50 flex-wrap gap-3">
+    <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/20 flex-wrap gap-3">
       {/* Contador */}
-      <p className="font-poppins text-xs text-gray-400">
+      <p className="font-poppins text-xs text-gray-400 dark:text-gray-500">
         Mostrando{' '}
-        <span className="font-semibold text-gray-600">{from}–{to}</span>
+        <span className="font-semibold text-gray-600 dark:text-gray-300">{from}–{to}</span>
         {' '}de{' '}
-        <span className="font-semibold text-gray-600">{total}</span>
+        <span className="font-semibold text-gray-600 dark:text-gray-300">{total}</span>
         {' '}registros
       </p>
 
@@ -37,14 +37,14 @@ export default function Pagination({ page, totalPages, total, pageSize, onChange
             onClick={() => onChange(Math.max(1, page - 1))}
             disabled={page === 1}
             aria-label="Página anterior"
-            className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150 cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-900/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150 cursor-pointer"
           >
             <ChevronLeft size={14} />
           </button>
 
           {getPageNumbers(page, totalPages).map((p, i) =>
             p === '…' ? (
-              <span key={`e${i}`} className="w-8 h-8 flex items-center justify-center font-poppins text-xs text-gray-400">
+              <span key={`e${i}`} className="w-8 h-8 flex items-center justify-center font-poppins text-xs text-gray-400 dark:text-gray-500">
                 …
               </span>
             ) : (
@@ -54,7 +54,7 @@ export default function Pagination({ page, totalPages, total, pageSize, onChange
                 className={`w-8 h-8 flex items-center justify-center rounded-lg font-poppins text-xs font-medium transition-all duration-150 cursor-pointer border ${
                   page === p
                     ? 'bg-pink-500 text-white border-pink-500 shadow-sm'
-                    : 'border-gray-200 text-gray-600 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50'
+                    : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-900/20'
                 }`}
               >
                 {p}
@@ -66,7 +66,7 @@ export default function Pagination({ page, totalPages, total, pageSize, onChange
             onClick={() => onChange(Math.min(totalPages, page + 1))}
             disabled={page === totalPages}
             aria-label="Página siguiente"
-            className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150 cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-900/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150 cursor-pointer"
           >
             <ChevronRight size={14} />
           </button>

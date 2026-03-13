@@ -24,6 +24,11 @@
     overflow-x: hidden;
   }
 
+  .dark body {
+    background-color: #111827;
+    color: #F3F4F6;
+  }
+
   #root {
     width: 100%;
     min-height: 100vh;

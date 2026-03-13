@@ -18,7 +18,7 @@ const ServiceCard = ({ title, description, price, duration, image, icon, categor
 
   return (
     <article
-      className="card-base group overflow-hidden cursor-pointer flex flex-col h-full"
+      className="card-base dark:bg-gray-800 group overflow-hidden cursor-pointer flex flex-col h-full"
       onClick={() => onSelect?.({ title, description, price, duration, image, category })}
     >
       {/* Image */}
@@ -38,7 +38,7 @@ const ServiceCard = ({ title, description, price, duration, image, icon, categor
         {/* Duration badge */}
         <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
           <Clock size={12} className="text-pink-400" aria-hidden="true" />
-          <span className="font-poppins text-xs text-gray-600">{duration} min</span>
+          <span className="font-poppins text-xs text-gray-600 dark:text-gray-300">{duration} min</span>
         </div>
 
         {/* Category badge */}
@@ -50,16 +50,16 @@ const ServiceCard = ({ title, description, price, duration, image, icon, categor
       {/* Content */}
       <div className="p-5 flex flex-col flex-1">
         <div className="mb-2">
-          <h3 className="font-poppins text-base font-semibold text-gray-800 leading-tight">
+          <h3 className="font-poppins text-base font-semibold text-gray-800 dark:text-gray-100 leading-tight">
             {title}
           </h3>
         </div>
 
-        <p className="font-poppins text-sm text-gray-500 leading-relaxed mb-4 flex-1 line-clamp-3">
+        <p className="font-poppins text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4 flex-1 line-clamp-3">
           {description}
         </p>
 
-        <div className="flex items-center justify-between mt-auto pt-3 border-t border-pink-50">
+        <div className="flex items-center justify-between mt-auto pt-3 border-t border-pink-50 dark:border-gray-700">
           <div className="flex items-baseline gap-0.5">
             <span className="font-great-vibes text-3xl text-pink-400 leading-none">${price}</span>
           </div>

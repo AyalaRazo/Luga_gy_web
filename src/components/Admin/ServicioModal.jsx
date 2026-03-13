@@ -85,28 +85,28 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
     onSaved();
   }
 
-  const inp = "w-full px-3 py-2.5 font-poppins text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all";
-  const lbl = "block font-poppins text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide";
+  const inp = "w-full px-3 py-2.5 font-poppins text-sm bg-gray-50 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all";
+  const lbl = "block font-poppins text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1.5 uppercase tracking-wide";
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
-          <h2 className="font-poppins text-base font-semibold text-gray-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
+          <h2 className="font-poppins text-base font-semibold text-gray-800 dark:text-gray-100">
             {isEdit ? 'Editar servicio' : 'Nuevo servicio'}
           </h2>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all cursor-pointer">
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 hover:bg-gray-100 transition-all cursor-pointer">
             <X size={18} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && (
-            <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+            <div className="flex items-start gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 rounded-xl px-4 py-3">
               <AlertCircle size={15} className="text-red-500 mt-0.5 shrink-0" />
               <p className="font-poppins text-sm text-red-700">{error}</p>
             </div>
@@ -131,12 +131,12 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
                   </div>
                 </>
               ) : (
-                <div className="h-full flex flex-col items-center justify-center gap-2 bg-pink-50/60">
+                <div className="h-full flex flex-col items-center justify-center gap-2 bg-pink-50/60 dark:bg-pink-900/20">
                   <div className="w-12 h-12 rounded-2xl bg-pink-100 flex items-center justify-center">
                     <Upload size={20} className="text-pink-400" />
                   </div>
                   <p className="font-poppins text-sm text-pink-500 font-medium">Subir imagen</p>
-                  <p className="font-poppins text-xs text-gray-400">JPG, PNG o WEBP · máx 5 MB</p>
+                  <p className="font-poppins text-xs text-gray-400 dark:text-gray-500">JPG, PNG o WEBP · máx 5 MB</p>
                 </div>
               )}
             </div>
@@ -151,7 +151,7 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); setPreview(null); setImgFile(null); setForm(p => ({ ...p, imagen_url: '' })); }}
-                className="mt-1.5 font-poppins text-xs text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+                className="mt-1.5 font-poppins text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors cursor-pointer"
               >
                 Quitar imagen
               </button>
@@ -177,7 +177,7 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
             <div>
               <label className={lbl}>Precio (MXN) *</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 font-poppins text-sm text-gray-400">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 font-poppins text-sm text-gray-400 dark:text-gray-500">$</span>
                 <input type="number" min="0" step="0.01" required
                   value={form.precio} onChange={set('precio')}
                   placeholder="350"
@@ -206,8 +206,8 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
               <label className={lbl}>Orden de aparición</label>
               <input type="number" min="0" value={form.orden} onChange={set('orden')} className={inp} />
               {!servicio && totalServicios > 0 && (
-                <p className="font-poppins text-xs text-gray-400 mt-1.5">
-                  Hay <strong className="text-gray-600">{totalServicios}</strong> servicio{totalServicios !== 1 ? 's' : ''} actualmente. Usa <strong className="text-gray-600">{totalServicios + 1}</strong> para agregarlo al final.
+                <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-1.5">
+                  Hay <strong className="text-gray-600 dark:text-gray-300">{totalServicios}</strong> servicio{totalServicios !== 1 ? 's' : ''} actualmente. Usa <strong className="text-gray-600 dark:text-gray-300">{totalServicios + 1}</strong> para agregarlo al final.
                 </p>
               )}
             </div>
@@ -221,7 +221,7 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
               className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border-2 transition-all cursor-pointer font-poppins text-sm font-medium ${
                 form.activo
                   ? 'border-green-300 bg-green-50 text-green-700'
-                  : 'border-gray-200 bg-gray-50 text-gray-500'
+                  : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
               }`}>
               <div className={`w-9 h-5 rounded-full transition-all relative ${form.activo ? 'bg-green-500' : 'bg-gray-300'}`}>
                 <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all ${form.activo ? 'left-4' : 'left-0.5'}`} />
@@ -233,7 +233,7 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
           {/* Actions */}
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl border border-gray-200 font-poppins text-sm text-gray-600 hover:bg-gray-50 transition-all cursor-pointer">
+              className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all cursor-pointer">
               Cancelar
             </button>
             <button type="submit" disabled={loading}

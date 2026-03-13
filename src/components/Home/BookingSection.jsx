@@ -152,7 +152,7 @@ const BookingSection = () => {
   });
 
   return (
-    <section id="reservar" className="section-padding bg-pink-50/60">
+    <section id="reservar" className="section-padding bg-pink-50/60 dark:bg-gray-900">
       <div className="container-custom">
         <SectionTitle
           title="Reserva tu Cita"
@@ -160,7 +160,7 @@ const BookingSection = () => {
         />
 
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-pink-md overflow-hidden border border-pink-100">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-pink-md overflow-hidden border border-pink-100 dark:border-gray-700">
             <div className="grid md:grid-cols-5">
 
               {/* ── Formulario ─────────────────────────── */}
@@ -172,14 +172,14 @@ const BookingSection = () => {
                   <div className="flex flex-col items-center justify-center py-10 gap-4 text-center animate-fade-in-up">
                     <CheckCircle size={52} className="text-green-400" aria-hidden="true" />
                     <div>
-                      <p className="font-poppins text-gray-800 font-semibold text-lg">
+                      <p className="font-poppins text-gray-800 dark:text-gray-100 font-semibold text-lg">
                         ¡Cita guardada!
                       </p>
-                      <p className="font-poppins text-sm text-gray-500 mt-1">
+                      <p className="font-poppins text-sm text-gray-500 dark:text-gray-400 mt-1">
                         Te enviamos un email de confirmación a <strong className="text-pink-400">{email}</strong>.
                       </p>
                     </div>
-                    <div className="bg-pink-50 rounded-xl p-4 w-full text-left text-sm font-poppins text-gray-600 space-y-1 border border-pink-100">
+                    <div className="bg-pink-50 dark:bg-pink-900/20 rounded-xl p-4 w-full text-left text-sm font-poppins text-gray-600 dark:text-gray-300 space-y-1 border border-pink-100 dark:border-gray-700">
                       <p><span className="font-medium text-pink-400">Servicio:</span> {service}</p>
                       <p><span className="font-medium text-pink-400">Fecha:</span> {date}</p>
                       <p><span className="font-medium text-pink-400">Hora:</span> {time}</p>
@@ -212,7 +212,7 @@ const BookingSection = () => {
 
                     {/* Nombre */}
                     <div>
-                      <label htmlFor="booking-name" className="block font-poppins text-sm font-medium text-gray-600 mb-1.5">
+                      <label htmlFor="booking-name" className="block font-poppins text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">
                         Tu nombre
                       </label>
                       <input
@@ -221,13 +221,13 @@ const BookingSection = () => {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Ej: María González"
-                        className="w-full px-4 py-3 rounded-xl border border-pink-200 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 placeholder-gray-300 transition-colors"
+                        className="w-full px-4 py-3 rounded-xl border border-pink-200 dark:border-gray-600 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-300 dark:placeholder-gray-500 transition-colors"
                       />
                     </div>
 
                     {/* Email */}
                     <div>
-                      <label htmlFor="booking-email" className="block font-poppins text-sm font-medium text-gray-600 mb-1.5">
+                      <label htmlFor="booking-email" className="block font-poppins text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">
                         Tu correo electrónico <span className="text-pink-400">*</span>
                       </label>
                       <input
@@ -237,14 +237,14 @@ const BookingSection = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Ej: maria@gmail.com"
-                        className="w-full px-4 py-3 rounded-xl border border-pink-200 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 placeholder-gray-300 transition-colors"
+                        className="w-full px-4 py-3 rounded-xl border border-pink-200 dark:border-gray-600 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-300 dark:placeholder-gray-500 transition-colors"
                       />
-                      <p className="font-poppins text-xs text-gray-400 mt-1">Te enviaremos la confirmación por email. También usamos este correo para identificarte como clienta.</p>
+                      <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-1">Te enviaremos la confirmación por email. También usamos este correo para identificarte como clienta.</p>
                     </div>
 
                     {/* Teléfono */}
                     <div>
-                      <label htmlFor="booking-phone" className="block font-poppins text-sm font-medium text-gray-600 mb-1.5">
+                      <label htmlFor="booking-phone" className="block font-poppins text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">
                         Tu número de celular <span className="text-pink-400">*</span>
                       </label>
                       <input
@@ -254,13 +254,13 @@ const BookingSection = () => {
                         onChange={(e) => setTelefono(e.target.value)}
                         placeholder="Ej: 686 116 2619"
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-pink-200 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 placeholder-gray-300 transition-colors"
+                        className="w-full px-4 py-3 rounded-xl border border-pink-200 dark:border-gray-600 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-300 dark:placeholder-gray-500 transition-colors"
                       />
                     </div>
 
                     {/* Servicio */}
                     <div>
-                      <label htmlFor="booking-service" className="block font-poppins text-sm font-medium text-gray-600 mb-1.5">
+                      <label htmlFor="booking-service" className="block font-poppins text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">
                         Servicio <span className="text-pink-400">*</span>
                       </label>
                       <select
@@ -268,7 +268,7 @@ const BookingSection = () => {
                         value={service}
                         onChange={(e) => setService(e.target.value)}
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-pink-200 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 bg-white transition-colors cursor-pointer"
+                        className="w-full px-4 py-3 rounded-xl border border-pink-200 dark:border-gray-600 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-800 transition-colors cursor-pointer"
                       >
                         <option value="">Elige un servicio...</option>
                         {serviceOptions.map((s) => (
@@ -279,7 +279,7 @@ const BookingSection = () => {
 
                     {/* Fecha */}
                     <div>
-                      <label htmlFor="booking-date" className="block font-poppins text-sm font-medium text-gray-600 mb-1.5">
+                      <label htmlFor="booking-date" className="block font-poppins text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">
                         <Calendar size={14} className="inline mr-1 text-pink-400" aria-hidden="true" />
                         Fecha <span className="text-pink-400">*</span>
                       </label>
@@ -290,13 +290,13 @@ const BookingSection = () => {
                         onChange={(e) => { setDate(e.target.value); setTime(''); }}
                         required
                         min={todayISO}
-                        className="w-full px-4 py-3 rounded-xl border border-pink-200 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 transition-colors cursor-pointer"
+                        className="w-full px-4 py-3 rounded-xl border border-pink-200 dark:border-gray-600 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 dark:text-gray-100 dark:bg-gray-800 transition-colors cursor-pointer"
                       />
                     </div>
 
                     {/* Horarios */}
                     <div>
-                      <p className="font-poppins text-sm font-medium text-gray-600 mb-2">
+                      <p className="font-poppins text-sm font-medium text-gray-600 dark:text-gray-300 mb-2">
                         <Clock size={14} className="inline mr-1 text-pink-400" aria-hidden="true" />
                         Horario <span className="text-pink-400">*</span>
                         {loadingSlots && (
@@ -314,9 +314,9 @@ const BookingSection = () => {
 
                       {/* Día sin horario (cerrado) */}
                       {isDayClosed && (
-                        <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3">
-                          <AlertCircle size={15} className="text-gray-400 shrink-0" />
-                          <p className="font-poppins text-sm text-gray-500">No trabajamos ese día. Elige otra fecha.</p>
+                        <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3">
+                          <AlertCircle size={15} className="text-gray-400 dark:text-gray-500 shrink-0" />
+                          <p className="font-poppins text-sm text-gray-500 dark:text-gray-400">No trabajamos ese día. Elige otra fecha.</p>
                         </div>
                       )}
 
@@ -333,10 +333,10 @@ const BookingSection = () => {
                                 onClick={() => setTime(slot)}
                                 className={`py-2 rounded-lg text-xs font-poppins font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-pink-300 ${
                                   ocupado
-                                    ? 'bg-gray-100 text-gray-300 cursor-not-allowed line-through'
+                                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-300 dark:text-gray-600 cursor-not-allowed line-through'
                                     : time === slot
                                       ? 'bg-pink-400 text-white shadow-pink-sm cursor-pointer'
-                                      : 'bg-pink-50 text-gray-600 hover:bg-pink-100 hover:text-pink-500 cursor-pointer'
+                                      : 'bg-pink-50 dark:bg-pink-900/20 text-gray-600 dark:text-gray-300 hover:bg-pink-100 dark:hover:bg-gray-700 hover:text-pink-500 cursor-pointer'
                                 }`}
                                 aria-pressed={time === slot}
                                 title={ocupado ? 'Horario no disponible' : slot}
@@ -349,12 +349,12 @@ const BookingSection = () => {
                       )}
 
                       {!date && (
-                        <p className="font-poppins text-xs text-gray-400 mt-2">
+                        <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-2">
                           Selecciona una fecha para ver disponibilidad.
                         </p>
                       )}
                       {date && !dateBlocked && availableSlots.length > 0 && bookedSlots.length > 0 && (
-                        <p className="font-poppins text-xs text-gray-400 mt-2">
+                        <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-2">
                           Los horarios tachados ya están reservados.
                         </p>
                       )}
@@ -443,7 +443,7 @@ const BookingSection = () => {
             </div>
           </div>
 
-          <p className="text-center font-poppins text-xs text-gray-400 mt-5">
+          <p className="text-center font-poppins text-xs text-gray-400 dark:text-gray-500 mt-5">
             Las citas quedan guardadas en nuestro sistema. Te confirmamos vía Correo Electrónico o Whatsapp.
           </p>
         </div>

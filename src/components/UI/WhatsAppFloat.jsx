@@ -26,7 +26,7 @@ const WhatsAppFloat = () => {
     <div className="fixed bottom-6 right-6 z-40 flex items-end gap-3">
       {/* Tooltip */}
       {showTooltip && (
-        <div className="relative bg-white rounded-2xl shadow-pink-lg border border-pink-100 px-4 py-3 max-w-xs animate-fade-in-up">
+        <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-pink-lg border border-pink-100 dark:border-gray-700 px-4 py-3 max-w-xs animate-fade-in-up">
           <button
             onClick={() => setShowTooltip(false)}
             className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center cursor-pointer transition-colors focus:outline-none"
@@ -34,10 +34,10 @@ const WhatsAppFloat = () => {
           >
             <X size={10} className="text-gray-600" aria-hidden="true" />
           </button>
-          <p className="font-poppins text-sm text-gray-700 font-medium">
+          <p className="font-poppins text-sm text-gray-700 dark:text-gray-200 font-medium">
             ¡Hola! ¿Querés reservar una cita?
           </p>
-          <p className="font-poppins text-xs text-gray-400 mt-0.5">
+          <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-0.5">
             Escribinos por WhatsApp ahora
           </p>
           {/* Arrow */}

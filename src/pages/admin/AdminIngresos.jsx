@@ -35,14 +35,14 @@ function fmt(n) {
 
 function StatCard({ icon: Icon, label, value, sub, color }) {
   return (
-    <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-start gap-4">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 flex items-start gap-4">
       <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
         <Icon size={20} className="text-white" />
       </div>
       <div>
-        <p className="font-poppins text-2xl font-bold text-gray-800 leading-tight">{value}</p>
-        <p className="font-poppins text-sm text-gray-500">{label}</p>
-        {sub && <p className="font-poppins text-xs text-gray-400 mt-0.5">{sub}</p>}
+        <p className="font-poppins text-2xl font-bold text-gray-800 dark:text-gray-100 leading-tight">{value}</p>
+        <p className="font-poppins text-sm text-gray-500 dark:text-gray-400">{label}</p>
+        {sub && <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-0.5">{sub}</p>}
       </div>
     </div>
   );
@@ -146,8 +146,8 @@ export default function AdminIngresos() {
       {/* Header */}
       <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
         <div>
-          <h1 className="font-poppins text-2xl font-bold text-gray-800">Ingresos</h1>
-          <p className="font-poppins text-sm text-gray-400 mt-0.5">Control financiero del negocio</p>
+          <h1 className="font-poppins text-2xl font-bold text-gray-800 dark:text-gray-100">Ingresos</h1>
+          <p className="font-poppins text-sm text-gray-400 dark:text-gray-500 mt-0.5">Control financiero del negocio</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {PERIODOS.map(p => (
@@ -155,20 +155,20 @@ export default function AdminIngresos() {
               className={`px-3 py-1.5 rounded-xl font-poppins text-xs font-medium transition-all cursor-pointer border ${
                 periodo === p.value
                   ? 'bg-pink-500 text-white border-pink-500 shadow-pink-sm'
-                  : 'bg-white text-gray-600 border-gray-200 hover:border-pink-300 hover:text-pink-500'
+                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-pink-300 hover:text-pink-500'
               }`}>
               {p.label}
             </button>
           ))}
           <button onClick={load} disabled={loading}
-            className="w-8 h-8 flex items-center justify-center rounded-xl border border-gray-200 text-gray-500 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 transition-all cursor-pointer">
+            className="w-8 h-8 flex items-center justify-center rounded-xl border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-all cursor-pointer">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
           <button
             onClick={handleExport}
             disabled={loading || citas.length === 0}
             title="Exportar a Excel"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 font-poppins text-xs font-medium text-gray-600 hover:text-green-600 hover:border-green-300 hover:bg-green-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer">
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-green-600 hover:border-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer">
             <Download size={14} />
             Exportar .xlsx
           </button>
@@ -182,16 +182,16 @@ export default function AdminIngresos() {
               value={customInicio}
               max={customFin}
               onChange={e => setCustomInicio(e.target.value)}
-              className="px-3 py-2 font-poppins text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all cursor-pointer"
+              className="px-3 py-2 font-poppins text-sm bg-white dark:bg-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all cursor-pointer"
             />
-            <span className="font-poppins text-sm text-gray-400">al</span>
+            <span className="font-poppins text-sm text-gray-400 dark:text-gray-500">al</span>
             <input
               type="date"
               value={customFin}
               min={customInicio}
               max={hoyISO}
               onChange={e => setCustomFin(e.target.value)}
-              className="px-3 py-2 font-poppins text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all cursor-pointer"
+              className="px-3 py-2 font-poppins text-sm bg-white dark:bg-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all cursor-pointer"
             />
           </div>
         )}
@@ -212,13 +212,13 @@ export default function AdminIngresos() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
             {/* Daily chart */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-5">
               <div className="flex items-center gap-2 mb-5">
                 <BarChart3 size={18} className="text-pink-500" />
-                <h2 className="font-poppins text-sm font-semibold text-gray-700">Ingresos por día</h2>
+                <h2 className="font-poppins text-sm font-semibold text-gray-700 dark:text-gray-200">Ingresos por día</h2>
               </div>
               {chartDays.length === 0 ? (
-                <div className="flex flex-col items-center py-8 text-gray-300">
+                <div className="flex flex-col items-center py-8 text-gray-300 dark:text-gray-600">
                   <BarChart3 size={36} className="mb-2" />
                   <p className="font-poppins text-sm">Sin ingresos registrados</p>
                 </div>
@@ -239,7 +239,7 @@ export default function AdminIngresos() {
                             ${fmt(val)}
                           </div>
                         </div>
-                        <span className="font-poppins text-[10px] text-gray-400">{d}</span>
+                        <span className="font-poppins text-[10px] text-gray-400 dark:text-gray-500">{d}</span>
                       </div>
                     );
                   })}
@@ -248,13 +248,13 @@ export default function AdminIngresos() {
             </div>
 
             {/* Top servicios */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-5">
               <div className="flex items-center gap-2 mb-5">
                 <TrendingUp size={18} className="text-pink-500" />
-                <h2 className="font-poppins text-sm font-semibold text-gray-700">Top servicios por ingreso</h2>
+                <h2 className="font-poppins text-sm font-semibold text-gray-700 dark:text-gray-200">Top servicios por ingreso</h2>
               </div>
               {topServicios.length === 0 ? (
-                <div className="flex flex-col items-center py-8 text-gray-300">
+                <div className="flex flex-col items-center py-8 text-gray-300 dark:text-gray-600">
                   <TrendingUp size={36} className="mb-2" />
                   <p className="font-poppins text-sm">Sin datos aún</p>
                 </div>
@@ -267,14 +267,14 @@ export default function AdminIngresos() {
                         <div className="flex items-center justify-between mb-1">
                           <div className="flex items-center gap-2">
                             <span className="font-poppins text-xs font-bold text-pink-400 w-4">{i + 1}</span>
-                            <span className="font-poppins text-xs font-medium text-gray-700 truncate max-w-[140px]">{r.nombre}</span>
+                            <span className="font-poppins text-xs font-medium text-gray-700 dark:text-gray-200 truncate max-w-[140px]">{r.nombre}</span>
                           </div>
                           <div className="text-right shrink-0 ml-2">
-                            <span className="font-poppins text-xs font-bold text-gray-800">${fmt(r.total_ingresado)}</span>
-                            <span className="font-poppins text-[10px] text-gray-400 ml-1">({r.total_citas} citas)</span>
+                            <span className="font-poppins text-xs font-bold text-gray-800 dark:text-gray-100">${fmt(r.total_ingresado)}</span>
+                            <span className="font-poppins text-[10px] text-gray-400 dark:text-gray-500 ml-1">({r.total_citas} citas)</span>
                           </div>
                         </div>
-                        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                           <div className="h-full bg-gradient-to-r from-pink-400 to-rose-400 rounded-full transition-all" style={{ width: `${pct}%` }} />
                         </div>
                       </div>
@@ -286,29 +286,29 @@ export default function AdminIngresos() {
           </div>
 
           {/* Citas completadas — tabla paginada */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
 
             {/* Header */}
-            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-gray-50 flex-wrap">
+            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-gray-50 dark:border-gray-700 flex-wrap">
               <div className="flex items-center gap-2">
                 <CalendarDays size={17} className="text-pink-500" />
-                <h2 className="font-poppins text-sm font-semibold text-gray-700">Citas completadas</h2>
-                <span className="px-2 py-0.5 rounded-full bg-pink-100 text-pink-600 font-poppins text-xs font-semibold">
+                <h2 className="font-poppins text-sm font-semibold text-gray-700 dark:text-gray-200">Citas completadas</h2>
+                <span className="px-2 py-0.5 rounded-full bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 font-poppins text-xs font-semibold">
                   {totalCitas}
                 </span>
               </div>
               {citas.length > 0 && (
-                <p className="font-poppins text-xs text-gray-400">
-                  Mostrando <span className="font-semibold text-gray-600">{(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, citas.length)}</span> de <span className="font-semibold text-gray-600">{citas.length}</span> registros
+                <p className="font-poppins text-xs text-gray-400 dark:text-gray-500">
+                  Mostrando <span className="font-semibold text-gray-600 dark:text-gray-300">{(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, citas.length)}</span> de <span className="font-semibold text-gray-600 dark:text-gray-300">{citas.length}</span> registros
                 </p>
               )}
             </div>
 
             {citas.length === 0 ? (
-              <div className="py-14 flex flex-col items-center gap-2 text-gray-300">
+              <div className="py-14 flex flex-col items-center gap-2 text-gray-300 dark:text-gray-600">
                 <CalendarDays size={36} />
                 <p className="font-poppins text-sm">No hay citas completadas en este período</p>
-                <p className="font-poppins text-xs text-gray-400 text-center max-w-xs">
+                <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 text-center max-w-xs">
                   Los ingresos se registran al marcar una cita como "Completada" con precio cobrado
                 </p>
               </div>
@@ -318,9 +318,9 @@ export default function AdminIngresos() {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="bg-gray-50/80 border-b border-gray-100">
+                      <tr className="bg-gray-50/80 dark:bg-gray-700/40 border-b border-gray-100 dark:border-gray-700">
                         {['#', 'Fecha', 'Clienta', 'Servicio', 'Cobrado'].map(h => (
-                          <th key={h} className="px-5 py-3 text-left font-poppins text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
+                          <th key={h} className="px-5 py-3 text-left font-poppins text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                             {h}
                           </th>
                         ))}
@@ -331,25 +331,25 @@ export default function AdminIngresos() {
                         const globalIndex = (page - 1) * PAGE_SIZE + i + 1;
                         return (
                           <tr key={c.fecha + c.nombre + i}
-                            className="border-b border-gray-50 hover:bg-pink-50/40 transition-colors duration-150 group">
-                            <td className="px-5 py-3.5 font-poppins text-xs text-gray-300 w-10">
+                            className="border-b border-gray-50 dark:border-gray-700 hover:bg-pink-50/40 dark:hover:bg-gray-700/50 transition-colors duration-150 group">
+                            <td className="px-5 py-3.5 font-poppins text-xs text-gray-300 dark:text-gray-600 w-10">
                               {globalIndex}
                             </td>
-                            <td className="px-5 py-3.5 font-poppins text-sm text-gray-500 whitespace-nowrap">
+                            <td className="px-5 py-3.5 font-poppins text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
                               {new Date(c.fecha + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}
                             </td>
-                            <td className="px-5 py-3.5 font-poppins text-sm font-semibold text-gray-800">
+                            <td className="px-5 py-3.5 font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100">
                               {c.nombre}
                             </td>
                             <td className="px-5 py-3.5">
-                              <span className="inline-block font-poppins text-xs px-2.5 py-1 rounded-lg bg-pink-50 text-pink-600 font-medium border border-pink-100">
+                              <span className="inline-block font-poppins text-xs px-2.5 py-1 rounded-lg bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 font-medium border border-pink-100 dark:border-pink-800">
                                 {c.servicio}
                               </span>
                             </td>
                             <td className="px-5 py-3.5">
                               {c.precio_cobrado != null
                                 ? <span className="font-poppins text-sm font-bold text-green-600">${fmt(c.precio_cobrado)}</span>
-                                : <span className="font-poppins text-xs text-gray-300 italic">—</span>
+                                : <span className="font-poppins text-xs text-gray-300 dark:text-gray-600 italic">—</span>
                               }
                             </td>
                           </tr>
@@ -360,11 +360,11 @@ export default function AdminIngresos() {
                 </div>
 
                 {/* Footer: paginación + total */}
-                <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-100 bg-gray-50/50 flex-wrap gap-3">
+                <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/20 flex-wrap gap-3">
 
                   {/* Total */}
-                  <div className="font-poppins text-sm text-gray-600">
-                    Total del período: <span className="font-bold text-pink-600 text-base">${fmt(totalIngresado)}</span>
+                  <div className="font-poppins text-sm text-gray-600 dark:text-gray-300">
+                    Total del período: <span className="font-bold text-pink-600 dark:text-pink-400 text-base">${fmt(totalIngresado)}</span>
                   </div>
 
                   {/* Controles de paginación */}
@@ -374,7 +374,7 @@ export default function AdminIngresos() {
                       <button
                         onClick={() => setPage(p => Math.max(1, p - 1))}
                         disabled={page === 1}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150 cursor-pointer"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-900/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150 cursor-pointer"
                         aria-label="Página anterior"
                       >
                         <ChevronLeft size={14} />
@@ -383,7 +383,7 @@ export default function AdminIngresos() {
                       {/* Números */}
                       {getPageNumbers().map((p, i) =>
                         p === '…' ? (
-                          <span key={`ellipsis-${i}`} className="w-8 h-8 flex items-center justify-center font-poppins text-xs text-gray-400">
+                          <span key={`ellipsis-${i}`} className="w-8 h-8 flex items-center justify-center font-poppins text-xs text-gray-400 dark:text-gray-500">
                             …
                           </span>
                         ) : (
@@ -393,7 +393,7 @@ export default function AdminIngresos() {
                             className={`w-8 h-8 flex items-center justify-center rounded-lg font-poppins text-xs font-medium transition-all duration-150 cursor-pointer border ${
                               page === p
                                 ? 'bg-pink-500 text-white border-pink-500 shadow-sm'
-                                : 'border-gray-200 text-gray-600 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50'
+                                : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-900/20'
                             }`}
                           >
                             {p}
@@ -405,7 +405,7 @@ export default function AdminIngresos() {
                       <button
                         onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                         disabled={page === totalPages}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150 cursor-pointer"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-pink-300 hover:text-pink-500 hover:bg-pink-50 dark:hover:bg-pink-900/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150 cursor-pointer"
                         aria-label="Página siguiente"
                       >
                         <ChevronRight size={14} />

@@ -14,6 +14,9 @@ import BookingSection from './components/Home/BookingSection';
 import LocationSection from './components/Home/LocationSection';
 import WhatsAppFloat from './components/UI/WhatsAppFloat';
 
+// Theme
+import { ThemeProvider } from './context/ThemeContext';
+
 // Admin
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/Admin/ProtectedRoute';
@@ -35,7 +38,7 @@ import CancelarCita from './pages/public/CancelarCita';
 
 function PublicSite() {
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen bg-white dark:bg-gray-900 overflow-x-hidden">
       <Header />
       <main>
         <HeroSection />
@@ -56,6 +59,7 @@ function PublicSite() {
 function App() {
   return (
     <BrowserRouter>
+      <ThemeProvider>
       <AuthProvider>
         <Routes>
           {/* Public site */}
@@ -92,6 +96,7 @@ function App() {
           </Route>
         </Routes>
       </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

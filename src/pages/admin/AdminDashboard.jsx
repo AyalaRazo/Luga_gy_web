@@ -10,14 +10,14 @@ function isAuthErr(e) { return AUTH_ERRS.some(k => String(e?.message ?? e?.code 
 
 function StatCard({ icon: Icon, label, value, color, sub }) {
   return (
-    <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-start gap-4">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 flex items-start gap-4">
       <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
         <Icon size={20} className="text-white" />
       </div>
       <div className="min-w-0">
-        <p className="font-poppins text-2xl font-bold text-gray-800 leading-tight">{value ?? '—'}</p>
-        <p className="font-poppins text-sm text-gray-500">{label}</p>
-        {sub && <p className="font-poppins text-xs text-gray-400 mt-0.5">{sub}</p>}
+        <p className="font-poppins text-2xl font-bold text-gray-800 dark:text-gray-100 leading-tight">{value ?? '—'}</p>
+        <p className="font-poppins text-sm text-gray-500 dark:text-gray-400">{label}</p>
+        {sub && <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-0.5">{sub}</p>}
       </div>
     </div>
   );
@@ -70,15 +70,15 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex items-start justify-between mb-8 gap-4">
         <div>
-          <h1 className="font-poppins text-2xl font-bold text-gray-800">
+          <h1 className="font-poppins text-2xl font-bold text-gray-800 dark:text-gray-100">
             Hola, {profile?.nombre?.split(' ')[0] ?? 'Admin'} 👋
           </h1>
-          <p className="font-poppins text-sm text-gray-400 mt-0.5 capitalize">{todayCapital}</p>
+          <p className="font-poppins text-sm text-gray-400 dark:text-gray-500 mt-0.5 capitalize">{todayCapital}</p>
         </div>
         <button
           onClick={load}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 font-poppins text-sm text-gray-500 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 transition-all cursor-pointer"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-500 dark:text-gray-400 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 dark:hover:bg-pink-900/20 dark:hover:border-pink-700 dark:hover:text-pink-400 transition-all cursor-pointer"
         >
           <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
           Actualizar
@@ -86,48 +86,28 @@ export default function AdminDashboard() {
       </div>
 
       {fetchErr && (
-        <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-6">
+        <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3 mb-6">
           <AlertCircle size={15} className="text-red-500 shrink-0" />
-          <p className="font-poppins text-sm text-red-700">{fetchErr}</p>
+          <p className="font-poppins text-sm text-red-700 dark:text-red-400">{fetchErr}</p>
         </div>
       )}
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard
-          icon={TrendingUp}
-          label="Total citas"
-          value={stats?.total}
-          color="bg-pink-500"
-        />
-        <StatCard
-          icon={Clock}
-          label="Pendientes"
-          value={stats?.pendientes}
-          color="bg-amber-400"
-        />
-        <StatCard
-          icon={CheckCircle2}
-          label="Confirmadas"
-          value={stats?.confirmadas}
-          color="bg-green-500"
-        />
-        <StatCard
-          icon={XCircle}
-          label="Canceladas"
-          value={stats?.canceladas}
-          color="bg-red-400"
-        />
+        <StatCard icon={TrendingUp}   label="Total citas"  value={stats?.total}      color="bg-pink-500"   />
+        <StatCard icon={Clock}        label="Pendientes"   value={stats?.pendientes}  color="bg-amber-400"  />
+        <StatCard icon={CheckCircle2} label="Confirmadas"  value={stats?.confirmadas} color="bg-green-500"  />
+        <StatCard icon={XCircle}      label="Canceladas"   value={stats?.canceladas}  color="bg-red-400"    />
       </div>
 
       {/* Today's appointments */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50 dark:border-gray-700">
           <div className="flex items-center gap-2">
             <CalendarDays size={18} className="text-pink-500" />
-            <h2 className="font-poppins text-base font-semibold text-gray-700">Citas de hoy</h2>
+            <h2 className="font-poppins text-base font-semibold text-gray-700 dark:text-gray-200">Citas de hoy</h2>
             {!loading && (
-              <span className="ml-1 px-2 py-0.5 rounded-full bg-pink-100 text-pink-600 font-poppins text-xs font-medium">
+              <span className="ml-1 px-2 py-0.5 rounded-full bg-pink-100 dark:bg-pink-900/40 text-pink-600 dark:text-pink-400 font-poppins text-xs font-medium">
                 {citas.length}
               </span>
             )}
@@ -144,20 +124,20 @@ export default function AdminDashboard() {
         ) : citas.length === 0 ? (
           <div className="px-6 py-12 text-center">
             <CalendarDays size={36} className="text-pink-200 mx-auto mb-3" />
-            <p className="font-poppins text-sm text-gray-400">No hay citas para hoy</p>
+            <p className="font-poppins text-sm text-gray-400 dark:text-gray-500">No hay citas para hoy</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-gray-50 dark:divide-gray-700">
             {citas.map((c) => (
-              <div key={c.id} className="flex items-center gap-4 px-6 py-3.5 hover:bg-pink-50/40 transition-colors">
+              <div key={c.id} className="flex items-center gap-4 px-6 py-3.5 hover:bg-pink-50/40 dark:hover:bg-gray-700/50 transition-colors">
                 <div className="w-14 text-center">
-                  <span className="font-poppins text-sm font-semibold text-pink-600">
+                  <span className="font-poppins text-sm font-semibold text-pink-600 dark:text-pink-400">
                     {c.hora?.slice(0, 5)}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-poppins text-sm font-medium text-gray-800 truncate">{c.nombre}</p>
-                  <p className="font-poppins text-xs text-gray-400 truncate">{c.servicio}</p>
+                  <p className="font-poppins text-sm font-medium text-gray-800 dark:text-gray-100 truncate">{c.nombre}</p>
+                  <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 truncate">{c.servicio}</p>
                 </div>
                 <CitaStatusBadge estado={c.estado} />
               </div>
@@ -168,18 +148,18 @@ export default function AdminDashboard() {
 
       {/* Quick stats bottom */}
       <div className="grid grid-cols-2 gap-4 mt-4">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-5 flex items-center gap-4">
           <CalendarDays size={20} className="text-pink-400 shrink-0" />
           <div>
-            <p className="font-poppins text-xl font-bold text-gray-800">{stats?.hoy ?? '—'}</p>
-            <p className="font-poppins text-xs text-gray-400">Citas hoy</p>
+            <p className="font-poppins text-xl font-bold text-gray-800 dark:text-gray-100">{stats?.hoy ?? '—'}</p>
+            <p className="font-poppins text-xs text-gray-400 dark:text-gray-500">Citas hoy</p>
           </div>
         </div>
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-5 flex items-center gap-4">
           <CalendarDays size={20} className="text-purple-400 shrink-0" />
           <div>
-            <p className="font-poppins text-xl font-bold text-gray-800">{stats?.manana ?? '—'}</p>
-            <p className="font-poppins text-xs text-gray-400">Citas mañana</p>
+            <p className="font-poppins text-xl font-bold text-gray-800 dark:text-gray-100">{stats?.manana ?? '—'}</p>
+            <p className="font-poppins text-xs text-gray-400 dark:text-gray-500">Citas mañana</p>
           </div>
         </div>
       </div>

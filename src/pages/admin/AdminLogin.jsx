@@ -44,30 +44,30 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 flex items-center justify-center p-4">
-      <div className="absolute top-0 left-0 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-72 h-72 bg-rose-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 pointer-events-none" />
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+      <div className="absolute top-0 left-0 w-72 h-72 bg-pink-200 dark:bg-pink-900/30 rounded-full mix-blend-multiply filter blur-3xl opacity-30 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-72 h-72 bg-rose-200 dark:bg-rose-900/30 rounded-full mix-blend-multiply filter blur-3xl opacity-30 pointer-events-none" />
 
       <div className="relative w-full max-w-md">
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-pink-lg border border-pink-100 p-8">
+        <div className="bg-white/80 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-pink-lg border border-pink-100 dark:border-gray-700 p-8">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-pink-50 rounded-2xl mb-4 shadow-pink-sm">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-pink-50 dark:bg-pink-900/30 rounded-2xl mb-4 shadow-pink-sm">
               <Heart size={28} className="text-pink-500 fill-pink-200" />
             </div>
             <h1 className="font-great-vibes text-4xl text-pink-500 leading-none">Luga Gy</h1>
-            <p className="font-poppins text-sm text-gray-500 mt-1 tracking-wide uppercase">Panel Administrativo</p>
+            <p className="font-poppins text-sm text-gray-500 dark:text-gray-400 mt-1 tracking-wide uppercase">Panel Administrativo</p>
           </div>
 
           {error && (
-            <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-6">
+            <div className="flex items-start gap-2.5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3 mb-6">
               <AlertCircle size={16} className="text-red-500 mt-0.5 shrink-0" />
-              <p className="font-poppins text-sm text-red-700">{error}</p>
+              <p className="font-poppins text-sm text-red-700 dark:text-red-400">{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block font-poppins text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="email" className="block font-poppins text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">
                 Correo electrónico
               </label>
               <div className="relative">
@@ -76,13 +76,13 @@ export default function AdminLogin() {
                   id="email" type="email" autoComplete="email" required
                   value={email} onChange={e => setEmail(e.target.value)}
                   placeholder="admin@lugagy.com"
-                  className="w-full pl-10 pr-4 py-2.5 font-poppins text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all placeholder:text-gray-300"
+                  className="w-full pl-10 pr-4 py-2.5 font-poppins text-sm bg-white dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all placeholder:text-gray-300"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block font-poppins text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="password" className="block font-poppins text-sm font-medium text-gray-700 dark:text-gray-200 mb-1.5">
                 Contraseña
               </label>
               <div className="relative">
@@ -92,10 +92,10 @@ export default function AdminLogin() {
                   autoComplete="current-password" required
                   value={password} onChange={e => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-10 py-2.5 font-poppins text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all placeholder:text-gray-300"
+                  className="w-full pl-10 pr-10 py-2.5 font-poppins text-sm bg-white dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all placeholder:text-gray-300"
                 />
                 <button type="button" onClick={() => setShowPass(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
                   aria-label={showPass ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                 >
                   {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -114,13 +114,13 @@ export default function AdminLogin() {
             </button>
           </form>
 
-          <p className="font-poppins text-xs text-center text-gray-400 mt-6">
+          <p className="font-poppins text-xs text-center text-gray-400 dark:text-gray-500 mt-6">
             Solo personal autorizado de Luga Gy
           </p>
         </div>
 
         <div className="text-center mt-5">
-          <a href="/" className="font-poppins text-sm text-gray-400 hover:text-pink-500 transition-colors cursor-pointer">
+          <a href="/" className="font-poppins text-sm text-gray-400 dark:text-gray-500 hover:text-pink-500 transition-colors cursor-pointer">
             ← Volver al sitio
           </a>
         </div>

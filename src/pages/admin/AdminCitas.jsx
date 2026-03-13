@@ -31,20 +31,20 @@ function PagoDialog({ cita, onConfirm, onCancel }) {
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm p-6">
         <div className="flex items-start gap-3 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center shrink-0">
             <CheckCircle2 size={20} className="text-green-500" />
           </div>
           <div>
-            <h3 className="font-poppins text-sm font-semibold text-gray-800">Completar cita</h3>
-            <p className="font-poppins text-xs text-gray-500 mt-0.5">
+            <h3 className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100">Completar cita</h3>
+            <p className="font-poppins text-xs text-gray-500 dark:text-gray-400 mt-0.5">
               {cita.nombre} · {cita.servicio}
             </p>
           </div>
         </div>
 
-        <p className="font-poppins text-sm text-gray-600 mb-4">¿Se realizó el pago por el servicio?</p>
+        <p className="font-poppins text-sm text-gray-600 dark:text-gray-300 mb-4">¿Se realizó el pago por el servicio?</p>
 
         {/* Toggle pagado / no pagado */}
         <div className="grid grid-cols-2 gap-2 mb-4">
@@ -73,7 +73,7 @@ function PagoDialog({ cita, onConfirm, onCancel }) {
         {/* Monto */}
         {pagado && (
           <div className="mb-4">
-            <label className="block font-poppins text-xs font-medium text-gray-600 mb-1.5">
+            <label className="block font-poppins text-xs font-medium text-gray-600 dark:text-gray-300 mb-1.5">
               Monto cobrado (MXN)
             </label>
             <div className="relative">
@@ -86,7 +86,7 @@ function PagoDialog({ cita, onConfirm, onCancel }) {
                 value={monto}
                 onChange={e => setMonto(e.target.value)}
                 placeholder="0.00"
-                className="w-full pl-7 pr-3 py-2.5 font-poppins text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400 transition-all"
+                className="w-full pl-7 pr-3 py-2.5 font-poppins text-sm bg-white dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-300 focus:border-green-400 transition-all"
               />
             </div>
           </div>
@@ -95,7 +95,7 @@ function PagoDialog({ cita, onConfirm, onCancel }) {
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 py-2.5 rounded-xl border border-gray-200 font-poppins text-sm text-gray-600 hover:bg-gray-50 transition-all cursor-pointer"
+            className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all cursor-pointer"
           >
             Cancelar
           </button>
@@ -114,20 +114,20 @@ function PagoDialog({ cita, onConfirm, onCancel }) {
 function ConfirmDialog({ message, onConfirm, onCancel }) {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm p-6">
         <div className="flex items-start gap-3 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-900/30 flex items-center justify-center shrink-0">
             <AlertCircle size={20} className="text-red-500" />
           </div>
           <div>
-            <h3 className="font-poppins text-sm font-semibold text-gray-800">¿Confirmar eliminación?</h3>
-            <p className="font-poppins text-sm text-gray-500 mt-1">{message}</p>
+            <h3 className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100">¿Confirmar eliminación?</h3>
+            <p className="font-poppins text-sm text-gray-500 dark:text-gray-400 mt-1">{message}</p>
           </div>
         </div>
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 py-2.5 rounded-xl border border-gray-200 font-poppins text-sm text-gray-600 hover:bg-gray-50 transition-all cursor-pointer"
+            className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all cursor-pointer"
           >
             Cancelar
           </button>
@@ -314,8 +314,8 @@ export default function AdminCitas() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
         <div>
-          <h1 className="font-poppins text-2xl font-bold text-gray-800">Citas</h1>
-          <p className="font-poppins text-sm text-gray-400 mt-0.5">
+          <h1 className="font-poppins text-2xl font-bold text-gray-800 dark:text-gray-100">Citas</h1>
+          <p className="font-poppins text-sm text-gray-400 dark:text-gray-500 mt-0.5">
             {loading ? 'Cargando…' : `${filtered.length} resultado${filtered.length !== 1 ? 's' : ''}`}
           </p>
         </div>
@@ -323,7 +323,7 @@ export default function AdminCitas() {
           <button
             onClick={load}
             disabled={loading}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 font-poppins text-sm text-gray-500 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 transition-all cursor-pointer"
+            className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-500 dark:text-gray-400 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-all cursor-pointer"
           >
             <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
           </button>
@@ -338,7 +338,7 @@ export default function AdminCitas() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
         {/* Search */}
         <div className="relative flex-1">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
@@ -347,7 +347,7 @@ export default function AdminCitas() {
             placeholder="Buscar por nombre o servicio…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 font-poppins text-sm bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-300 transition-all"
+            className="w-full pl-9 pr-4 py-2 font-poppins text-sm bg-gray-50 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500 border border-gray-100 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-pink-300 transition-all"
           />
         </div>
 
@@ -357,7 +357,7 @@ export default function AdminCitas() {
           <select
             value={estado}
             onChange={e => setEstado(e.target.value)}
-            className="pl-8 pr-8 py-2 font-poppins text-sm bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-200 appearance-none cursor-pointer"
+            className="pl-8 pr-8 py-2 font-poppins text-sm bg-gray-50 dark:bg-gray-700 dark:text-gray-100 border border-gray-100 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-200 appearance-none cursor-pointer"
           >
             {ESTADOS_FILTER.map(e => (
               <option key={e} value={e}>{ESTADO_LABELS[e]}</option>
@@ -373,14 +373,14 @@ export default function AdminCitas() {
             type="date"
             value={fecha}
             onChange={e => setFecha(e.target.value)}
-            className="pl-8 pr-3 py-2 font-poppins text-sm bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-200 cursor-pointer"
+            className="pl-8 pr-3 py-2 font-poppins text-sm bg-gray-50 dark:bg-gray-700 dark:text-gray-100 border border-gray-100 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-200 cursor-pointer"
           />
         </div>
 
         {(fecha || estado !== 'todos' || search) && (
           <button
             onClick={() => { setFecha(''); setEstado('todos'); setSearch(''); }}
-            className="px-3 py-2 rounded-xl font-poppins text-xs text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all cursor-pointer border border-transparent hover:border-red-100"
+            className="px-3 py-2 rounded-xl font-poppins text-xs text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all cursor-pointer border border-transparent hover:border-red-100"
           >
             Limpiar
           </button>
@@ -388,7 +388,7 @@ export default function AdminCitas() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
         {loading ? (
           <div className="py-20 flex justify-center">
             <div className="w-9 h-9 border-3 border-pink-100 border-t-pink-500 rounded-full animate-spin" />
@@ -396,7 +396,7 @@ export default function AdminCitas() {
         ) : filtered.length === 0 ? (
           <div className="py-20 flex flex-col items-center gap-3">
             <CalendarDays size={40} className="text-pink-200" />
-            <p className="font-poppins text-sm text-gray-400">No se encontraron citas</p>
+            <p className="font-poppins text-sm text-gray-400 dark:text-gray-500">No se encontraron citas</p>
             <button
               onClick={() => setModal({})}
               className="mt-1 flex items-center gap-1.5 px-4 py-2 rounded-xl bg-pink-50 text-pink-600 font-poppins text-sm hover:bg-pink-100 transition-all cursor-pointer"
@@ -410,39 +410,39 @@ export default function AdminCitas() {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-50 bg-gray-50/60">
+                  <tr className="border-b border-gray-50 dark:border-gray-700 bg-gray-50/60 dark:bg-gray-700/40">
                     {['Clienta', 'Servicio', 'Fecha', 'Hora', 'Estado', 'Acciones'].map(h => (
-                      <th key={h} className="px-5 py-3 text-left font-poppins text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                      <th key={h} className="px-5 py-3 text-left font-poppins text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">
                         {h}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-50">
+                <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
                   {pageCitas.map(c => (
-                    <tr key={c.id} className={`hover:bg-pink-50/30 transition-colors group ${c.estado === 'solicitud_cancelacion' ? 'bg-amber-50/40' : ''}`}>
+                    <tr key={c.id} className={`hover:bg-pink-50/30 dark:hover:bg-gray-700/50 transition-colors group ${c.estado === 'solicitud_cancelacion' ? 'bg-amber-50/40 dark:bg-amber-900/10' : ''}`}>
                       <td className="px-5 py-3.5">
-                        <p className="font-poppins text-sm font-medium text-gray-800">{c.nombre}</p>
+                        <p className="font-poppins text-sm font-medium text-gray-800 dark:text-gray-100">{c.nombre}</p>
                         {c.email && (
-                          <p className="flex items-center gap-1 font-poppins text-xs text-gray-400 truncate max-w-[220px]" title={c.email}>
+                          <p className="flex items-center gap-1 font-poppins text-xs text-gray-400 dark:text-gray-500 truncate max-w-[220px]" title={c.email}>
                             <Mail size={10} className="shrink-0" />{c.email}
                           </p>
                         )}
                         {c.telefono && (
-                          <p className="flex items-center gap-1 font-poppins text-xs text-gray-400">
+                          <p className="flex items-center gap-1 font-poppins text-xs text-gray-400 dark:text-gray-500">
                             <Phone size={10} className="shrink-0" />{c.telefono}
                           </p>
                         )}
                         {c.cancel_reason && (
-                          <p className="font-poppins text-xs text-amber-600 truncate max-w-[200px]" title={c.cancel_reason}>
+                          <p className="font-poppins text-xs text-amber-600 dark:text-amber-400 truncate max-w-[200px]" title={c.cancel_reason}>
                             Motivo: {c.cancel_reason}
                           </p>
                         )}
-                        {!c.cancel_reason && c.notas && <p className="font-poppins text-xs text-gray-400 truncate max-w-[200px]">{c.notas}</p>}
+                        {!c.cancel_reason && c.notas && <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 truncate max-w-[200px]">{c.notas}</p>}
                       </td>
-                      <td className="px-5 py-3.5 font-poppins text-sm text-gray-600">{c.servicio}</td>
-                      <td className="px-5 py-3.5 font-poppins text-sm text-gray-600">{formatFecha(c.fecha)}</td>
-                      <td className="px-5 py-3.5 font-poppins text-sm font-semibold text-pink-600">{c.hora?.slice(0, 5)}</td>
+                      <td className="px-5 py-3.5 font-poppins text-sm text-gray-600 dark:text-gray-300">{c.servicio}</td>
+                      <td className="px-5 py-3.5 font-poppins text-sm text-gray-600 dark:text-gray-300">{formatFecha(c.fecha)}</td>
+                      <td className="px-5 py-3.5 font-poppins text-sm font-semibold text-pink-600 dark:text-pink-400">{c.hora?.slice(0, 5)}</td>
                       <td className="px-5 py-3.5">
                         {c.estado === 'solicitud_cancelacion' ? (
                           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-700 font-poppins text-xs font-semibold">
@@ -524,20 +524,20 @@ export default function AdminCitas() {
             </div>
 
             {/* Mobile cards */}
-            <div className="md:hidden divide-y divide-gray-50">
+            <div className="md:hidden divide-y divide-gray-50 dark:divide-gray-700">
               {pageCitas.map(c => (
                 <div key={c.id} className="p-4">
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div>
-                      <p className="font-poppins text-sm font-semibold text-gray-800">{c.nombre}</p>
-                      <p className="font-poppins text-xs text-gray-500">{c.servicio}</p>
+                      <p className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100">{c.nombre}</p>
+                      <p className="font-poppins text-xs text-gray-500 dark:text-gray-400">{c.servicio}</p>
                       {c.email && (
-                        <p className="flex items-center gap-1 font-poppins text-xs text-gray-400 mt-0.5">
+                        <p className="flex items-center gap-1 font-poppins text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                           <Mail size={10} />{c.email}
                         </p>
                       )}
                       {c.telefono && (
-                        <p className="flex items-center gap-1 font-poppins text-xs text-gray-400">
+                        <p className="flex items-center gap-1 font-poppins text-xs text-gray-400 dark:text-gray-500">
                           <Phone size={10} />{c.telefono}
                         </p>
                       )}
@@ -545,10 +545,10 @@ export default function AdminCitas() {
                     <CitaStatusBadge estado={c.estado} />
                   </div>
                   <div className="flex items-center gap-4 mb-3">
-                    <span className="font-poppins text-xs text-gray-500">{formatFecha(c.fecha)}</span>
-                    <span className="font-poppins text-xs font-semibold text-pink-600">{c.hora?.slice(0, 5)}</span>
+                    <span className="font-poppins text-xs text-gray-500 dark:text-gray-400">{formatFecha(c.fecha)}</span>
+                    <span className="font-poppins text-xs font-semibold text-pink-600 dark:text-pink-400">{c.hora?.slice(0, 5)}</span>
                   </div>
-                  {c.notas && <p className="font-poppins text-xs text-gray-400 mb-3">{c.notas}</p>}
+                  {c.notas && <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mb-3">{c.notas}</p>}
                   <div className="flex gap-2 flex-wrap">
                     {c.email && c.estado === 'confirmada' && (
                       <button
@@ -566,13 +566,13 @@ export default function AdminCitas() {
                     )}
                     <button
                       onClick={() => setModal({ cita: c })}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 font-poppins text-xs text-gray-600 hover:text-pink-500 hover:border-pink-200 transition-all cursor-pointer"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 font-poppins text-xs text-gray-600 dark:text-gray-300 hover:text-pink-500 hover:border-pink-200 transition-all cursor-pointer"
                     >
                       <Pencil size={12} /> Editar
                     </button>
                     <button
                       onClick={() => setConfirm({ id: c.id, nombre: c.nombre })}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 font-poppins text-xs text-gray-600 hover:text-red-500 hover:border-red-200 transition-all cursor-pointer"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-600 font-poppins text-xs text-gray-600 dark:text-gray-300 hover:text-red-500 hover:border-red-200 transition-all cursor-pointer"
                     >
                       <Trash2 size={12} /> Eliminar
                     </button>

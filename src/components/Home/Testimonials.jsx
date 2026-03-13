@@ -64,7 +64,7 @@ const StarRating = ({ rating }) => (
 );
 
 const TestimonialCard = ({ testimonial }) => (
-  <article className="card-base p-6 flex flex-col gap-4">
+  <article className="card-base dark:bg-gray-800 dark:border-gray-700 p-6 flex flex-col gap-4">
     <div className="flex items-start gap-4">
       {/* Avatar */}
       <div
@@ -77,10 +77,10 @@ const TestimonialCard = ({ testimonial }) => (
       {/* Meta */}
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-poppins font-semibold text-gray-800 text-sm leading-tight">
+          <h3 className="font-poppins font-semibold text-gray-800 dark:text-gray-100 text-sm leading-tight">
             {testimonial.name}
           </h3>
-          <span className="font-poppins text-xs text-gray-400 shrink-0">{testimonial.date}</span>
+          <span className="font-poppins text-xs text-gray-400 dark:text-gray-500 shrink-0">{testimonial.date}</span>
         </div>
         <p className="font-poppins text-xs text-pink-400 mt-0.5">{testimonial.service}</p>
         <div className="mt-1.5">
@@ -90,14 +90,14 @@ const TestimonialCard = ({ testimonial }) => (
     </div>
 
     {/* Comment */}
-    <blockquote className="font-poppins text-sm text-gray-600 leading-relaxed border-l-2 border-pink-200 pl-3">
+    <blockquote className="font-poppins text-sm text-gray-600 dark:text-gray-300 leading-relaxed border-l-2 border-pink-200 pl-3">
       "{testimonial.comment}"
     </blockquote>
   </article>
 );
 
 const Testimonials = () => (
-  <section id="reseñas" className="section-padding bg-pink-50/40">
+  <section id="reseñas" className="section-padding bg-pink-50/40 dark:bg-gray-900">
     <div className="container-custom">
       <SectionTitle
         title="Lo que dicen nuestras clientas"
@@ -106,16 +106,16 @@ const Testimonials = () => (
 
       {/* Overall rating */}
       <div className="flex justify-center mb-10">
-        <div className="bg-white rounded-2xl px-8 py-5 shadow-card border border-pink-100 flex items-center gap-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl px-8 py-5 shadow-card border border-pink-100 dark:border-gray-700 flex items-center gap-6">
           <div className="text-center">
             <div className="font-playfair text-5xl font-bold text-pink-400">4.8</div>
             <StarRating rating={5} />
-            <p className="font-poppins text-xs text-gray-400 mt-1">Calificación promedio</p>
+            <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-1">Calificación promedio</p>
           </div>
           <div className="h-12 w-px bg-pink-100" aria-hidden="true" />
           <div className="text-center">
             <div className="font-playfair text-5xl font-bold text-pink-400">500+</div>
-            <p className="font-poppins text-xs text-gray-400 mt-1">Clientas satisfechas</p>
+            <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-1">Clientas satisfechas</p>
           </div>
         </div>
       </div>
@@ -129,7 +129,7 @@ const Testimonials = () => (
 
       {/* TikTok reviews link */}
       <div className="text-center mt-10">
-        <p className="font-poppins text-sm text-gray-400 mb-3">
+        <p className="font-poppins text-sm text-gray-400 dark:text-gray-500 mb-3">
           Mirá más reseñas y procesos en nuestro TikTok
         </p>
         <a

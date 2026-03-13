@@ -34,19 +34,19 @@ export default function CancelarCita() {
   }
 
   return (
-    <div className="min-h-screen bg-pink-50/60 flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-pink-50/60 dark:bg-gray-900 flex flex-col items-center justify-center p-6">
       {/* Logo */}
       <a href="/" className="flex items-center gap-2 mb-10">
         <img src="/logo.png" alt="Luga Gy" className="h-14 w-auto object-contain" />
       </a>
 
-      <div className="bg-white rounded-3xl shadow-pink-md border border-pink-100 w-full max-w-md p-8 text-center">
+      <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-pink-md border border-pink-100 dark:border-gray-700 w-full max-w-md p-8 text-center">
 
         {/* Loading */}
         {(status === 'loading' || status === 'sending') && (
           <div className="flex flex-col items-center gap-4 py-6">
             <Loader size={40} className="text-pink-400 animate-spin" />
-            <p className="font-poppins text-sm text-gray-500">
+            <p className="font-poppins text-sm text-gray-500 dark:text-gray-400">
               {status === 'sending' ? 'Enviando solicitud…' : 'Cargando…'}
             </p>
           </div>
@@ -59,34 +59,34 @@ export default function CancelarCita() {
               <AlertTriangle size={28} className="text-amber-400" />
             </div>
             <h1 className="font-great-vibes text-4xl text-pink-400 mb-2">Cancelar Cita</h1>
-            <p className="font-poppins text-sm text-gray-500 mb-6">
-              Hola <strong className="text-gray-700">{cita.nombre}</strong>, ¿deseas solicitar la cancelación de esta cita?
+            <p className="font-poppins text-sm text-gray-500 dark:text-gray-400 mb-6">
+              Hola <strong className="text-gray-700 dark:text-gray-200">{cita.nombre}</strong>, ¿deseas solicitar la cancelación de esta cita?
             </p>
-            <div className="bg-pink-50/80 rounded-2xl border border-pink-100 p-5 text-left space-y-3 mb-6">
+            <div className="bg-pink-50/80 dark:bg-gray-700 rounded-2xl border border-pink-100 dark:border-gray-600 p-5 text-left space-y-3 mb-6">
               <div>
-                <p className="font-poppins text-[10px] text-gray-400 uppercase tracking-wider">Servicio</p>
-                <p className="font-poppins text-sm font-semibold text-gray-800">{cita.servicio}</p>
+                <p className="font-poppins text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider">Servicio</p>
+                <p className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100">{cita.servicio}</p>
               </div>
               <div>
-                <p className="font-poppins text-[10px] text-gray-400 uppercase tracking-wider">Fecha</p>
-                <p className="font-poppins text-sm font-semibold text-gray-800 capitalize">{formatFecha(cita.fecha)}</p>
+                <p className="font-poppins text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider">Fecha</p>
+                <p className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100 capitalize">{formatFecha(cita.fecha)}</p>
               </div>
               <div>
-                <p className="font-poppins text-[10px] text-gray-400 uppercase tracking-wider">Hora</p>
-                <p className="font-poppins text-sm font-semibold text-gray-800">{cita.hora?.slice(0, 5)}</p>
+                <p className="font-poppins text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider">Hora</p>
+                <p className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100">{cita.hora?.slice(0, 5)}</p>
               </div>
             </div>
 
             <div className="text-left mb-6">
-              <label className="block font-poppins text-xs font-medium text-gray-600 mb-1.5">
-                Motivo de cancelación <span className="text-gray-400">(opcional)</span>
+              <label className="block font-poppins text-xs font-medium text-gray-600 dark:text-gray-300 mb-1.5">
+                Motivo de cancelación <span className="text-gray-400 dark:text-gray-500">(opcional)</span>
               </label>
               <textarea
                 value={motivo}
                 onChange={e => setMotivo(e.target.value)}
                 rows={3}
                 placeholder="Ej: Me surgió algo inesperado…"
-                className="w-full px-4 py-3 rounded-xl border border-pink-200 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 placeholder-gray-300 transition-colors resize-none"
+                className="w-full px-4 py-3 rounded-xl border border-pink-200 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 dark:text-gray-100 placeholder-gray-300 dark:placeholder-gray-500 dark:bg-gray-700 dark:border-gray-600 transition-colors resize-none"
               />
             </div>
 
@@ -96,7 +96,7 @@ export default function CancelarCita() {
             >
               Solicitar cancelación
             </button>
-            <a href="/" className="inline-block font-poppins text-sm text-gray-400 hover:text-gray-600 transition-colors">
+            <a href="/" className="inline-block font-poppins text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 transition-colors">
               No, mantener mi cita
             </a>
           </>
@@ -108,8 +108,8 @@ export default function CancelarCita() {
             <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <AlertTriangle size={28} className="text-amber-400" />
             </div>
-            <h1 className="font-poppins text-xl font-bold text-gray-800 mb-2">Solicitud enviada</h1>
-            <p className="font-poppins text-sm text-gray-500 mb-6">
+            <h1 className="font-poppins text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">Solicitud enviada</h1>
+            <p className="font-poppins text-sm text-gray-500 dark:text-gray-400 mb-6">
               Tu solicitud de cancelación fue recibida. El equipo de Luga Gy la revisará y te contactará a la brevedad.
             </p>
             <a href="/" className="inline-block font-poppins text-sm text-pink-400 hover:text-pink-600 transition-colors">
@@ -122,8 +122,8 @@ export default function CancelarCita() {
         {status === 'already' && (
           <>
             <XCircle size={52} className="text-gray-300 mx-auto mb-4" />
-            <h1 className="font-poppins text-xl font-bold text-gray-800 mb-2">Cita ya cancelada</h1>
-            <p className="font-poppins text-sm text-gray-500 mb-6">
+            <h1 className="font-poppins text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">Cita ya cancelada</h1>
+            <p className="font-poppins text-sm text-gray-500 dark:text-gray-400 mb-6">
               Esta cita ya fue cancelada anteriormente.
             </p>
             <a href="/" className="inline-block font-poppins text-sm text-pink-400 hover:text-pink-600 transition-colors">
@@ -136,8 +136,8 @@ export default function CancelarCita() {
         {status === 'invalid' && (
           <>
             <XCircle size={52} className="text-red-300 mx-auto mb-4" />
-            <h1 className="font-poppins text-xl font-bold text-gray-800 mb-2">Enlace inválido</h1>
-            <p className="font-poppins text-sm text-gray-500 mb-6">
+            <h1 className="font-poppins text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">Enlace inválido</h1>
+            <p className="font-poppins text-sm text-gray-500 dark:text-gray-400 mb-6">
               Este enlace no es válido o la cita no puede cancelarse.
             </p>
             <a href="/" className="inline-block font-poppins text-sm text-pink-400 hover:text-pink-600 transition-colors">

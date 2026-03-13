@@ -16,6 +16,17 @@
     <meta property="og:locale" content="es_AR" />
 
     <title>Luga Gy — Pedicure · Nails · Lashes · Brows</title>
+  <script>
+    (function() {
+      try {
+        var stored = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (stored === 'dark' || (!stored && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
   </head>
   <body>
     <div id="root"></div>

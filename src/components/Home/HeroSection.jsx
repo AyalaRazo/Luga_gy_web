@@ -4,11 +4,11 @@ import ElegantButton from '../UI/ElegantButton';
 
 const FloatingBadge = ({ icon, label, className }) => (
   <div
-    className={`absolute bg-white/90 backdrop-blur-sm rounded-2xl px-4 py-2.5 shadow-pink-md
-                flex items-center gap-2 border border-pink-100 ${className}`}
+    className={`absolute bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl px-4 py-2.5 shadow-pink-md
+                flex items-center gap-2 border border-pink-100 dark:border-gray-700 ${className}`}
   >
     <span className="text-lg" aria-hidden="true">{icon}</span>
-    <span className="font-poppins text-xs font-medium text-gray-700 whitespace-nowrap">{label}</span>
+    <span className="font-poppins text-xs font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">{label}</span>
   </div>
 );
 
@@ -16,7 +16,7 @@ const HeroSection = () => {
   return (
     <section
       id="inicio"
-      className="relative min-h-screen flex items-center overflow-hidden bg-hero-gradient pt-20"
+      className="relative min-h-screen flex items-center overflow-hidden bg-hero-gradient dark:bg-gray-900 pt-20"
       aria-label="Sección principal"
     >
       {/* Background decorative circles */}
@@ -42,14 +42,14 @@ const HeroSection = () => {
               <h1 className="font-great-vibes text-7xl md:text-8xl lg:text-9xl text-pink-400 leading-none mb-3">
                 Luga Gy
               </h1>
-              <p className="font-playfair text-2xl md:text-3xl text-gray-700 font-medium leading-snug">
+              <p className="font-playfair text-2xl md:text-3xl text-gray-700 dark:text-gray-200 font-medium leading-snug">
                 Tu salón de belleza de{' '}
                 <span className="text-pink-400 italic">confianza</span>
               </p>
             </div>
 
             {/* Description */}
-            <p className="font-poppins text-gray-500 text-lg leading-relaxed max-w-lg mx-auto lg:mx-0">
+            <p className="font-poppins text-gray-500 dark:text-gray-400 text-lg leading-relaxed max-w-lg mx-auto lg:mx-0">
               Especialistas en <strong className="text-pink-500 font-medium">Pedicure</strong>,{' '}
               <strong className="text-pink-500 font-medium">Nails</strong>,{' '}
               <strong className="text-pink-500 font-medium">Lashes</strong> y{' '}
@@ -65,7 +65,7 @@ const HeroSection = () => {
               ].map(({ value, label }) => (
                 <div key={label} className="text-center lg:text-left">
                   <div className="font-playfair text-2xl font-bold text-pink-400">{value}</div>
-                  <div className="font-poppins text-xs text-gray-500 mt-0.5">{label}</div>
+                  <div className="font-poppins text-xs text-gray-500 dark:text-gray-400 mt-0.5">{label}</div>
                 </div>
               ))}
             </div>
@@ -131,7 +131,7 @@ const HeroSection = () => {
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 animate-bounce">
-          <span className="font-poppins text-xs text-gray-400 tracking-widest uppercase">Explorar</span>
+          <span className="font-poppins text-xs text-gray-400 dark:text-gray-500 tracking-widest uppercase">Explorar</span>
           <ChevronDown size={18} className="text-pink-300" aria-hidden="true" />
         </div>
       </div>

@@ -74,16 +74,16 @@ const Modal = ({ item, onClose, onPrev, onNext }) => (
     aria-label={`Resultado: ${item.description}`}
   >
     <div
-      className="relative max-w-2xl w-full bg-white rounded-3xl overflow-hidden shadow-2xl"
+      className="relative max-w-2xl w-full bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-2xl"
       onClick={(e) => e.stopPropagation()}
     >
       {/* Close */}
       <button
         onClick={onClose}
-        className="absolute top-3 right-3 z-10 w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-400"
+        className="absolute top-3 right-3 z-10 w-9 h-9 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-400"
         aria-label="Cerrar"
       >
-        <X size={18} className="text-gray-600" aria-hidden="true" />
+        <X size={18} className="text-gray-600 dark:text-gray-300" aria-hidden="true" />
       </button>
 
       <div className="flex">
@@ -91,7 +91,7 @@ const Modal = ({ item, onClose, onPrev, onNext }) => (
         <div className={`w-1/2 h-64 bg-gradient-to-br ${categoryColors[item.category] || 'from-pink-200 to-pink-400'} opacity-50 flex items-center justify-center`}>
           <div className="text-center">
             <span className="text-7xl opacity-60">{item.emoji}</span>
-            <p className="font-poppins text-sm font-semibold text-gray-700 mt-2">ANTES</p>
+            <p className="font-poppins text-sm font-semibold text-gray-700 dark:text-gray-200 mt-2">ANTES</p>
           </div>
         </div>
         {/* After */}
@@ -103,20 +103,20 @@ const Modal = ({ item, onClose, onPrev, onNext }) => (
         </div>
       </div>
 
-      <div className="p-5 flex items-center justify-between">
+      <div className="p-5 flex items-center justify-between dark:bg-gray-800">
         <button
           onClick={onPrev}
-          className="w-9 h-9 bg-pink-50 hover:bg-pink-100 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-300"
+          className="w-9 h-9 bg-pink-50 dark:bg-pink-900/20 hover:bg-pink-100 dark:hover:bg-gray-700 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-300"
           aria-label="Anterior"
         >
           <ChevronLeft size={18} className="text-pink-400" aria-hidden="true" />
         </button>
-        <p className="font-poppins text-gray-700 font-medium text-sm text-center">
+        <p className="font-poppins text-gray-700 dark:text-gray-200 font-medium text-sm text-center">
           {item.description}
         </p>
         <button
           onClick={onNext}
-          className="w-9 h-9 bg-pink-50 hover:bg-pink-100 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-300"
+          className="w-9 h-9 bg-pink-50 dark:bg-pink-900/20 hover:bg-pink-100 dark:hover:bg-gray-700 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-300"
           aria-label="Siguiente"
         >
           <ChevronRight size={18} className="text-pink-400" aria-hidden="true" />
@@ -136,7 +136,7 @@ const GallerySection = () => {
   const nextItem = () => setSelected(gallery[(selectedIndex + 1) % gallery.length]);
 
   return (
-    <section id="galeria" className="section-padding bg-white">
+    <section id="galeria" className="section-padding bg-white dark:bg-gray-900">
       <div className="container-custom">
         <SectionTitle
           title="Resultados Reales"
@@ -149,7 +149,7 @@ const GallerySection = () => {
           ))}
         </div>
 
-        <p className="text-center font-poppins text-sm text-gray-400 mt-8">
+        <p className="text-center font-poppins text-sm text-gray-400 dark:text-gray-500 mt-8">
           Próximamente: fotos reales de nuestros trabajos
         </p>
       </div>

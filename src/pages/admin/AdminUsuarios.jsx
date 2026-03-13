@@ -27,21 +27,21 @@ function RolBadge({ rol }) {
 function DeleteConfirmModal({ usuario, onConfirm, onCancel, loading }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm p-6">
         <div className="flex items-start gap-3 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center shrink-0">
             <Trash2 size={18} className="text-red-500" />
           </div>
           <div>
-            <h3 className="font-poppins text-sm font-semibold text-gray-800">¿Eliminar usuario?</h3>
-            <p className="font-poppins text-xs text-gray-500 mt-1">
+            <h3 className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100">¿Eliminar usuario?</h3>
+            <p className="font-poppins text-xs text-gray-500 dark:text-gray-400 mt-1">
               Se eliminará permanentemente a <strong>{usuario.nombre}</strong>. Esta acción no se puede deshacer.
             </p>
           </div>
         </div>
         <div className="flex gap-3">
           <button onClick={onCancel} disabled={loading}
-            className="flex-1 py-2.5 rounded-xl border border-gray-200 font-poppins text-sm text-gray-600 hover:bg-gray-50 transition-all cursor-pointer disabled:opacity-50">
+            className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all cursor-pointer disabled:opacity-50">
             Cancelar
           </button>
           <button onClick={onConfirm} disabled={loading}
@@ -83,24 +83,24 @@ function InviteModal({ onClose, onSuccess }) {
     onClose();
   }
 
-  const inp = 'w-full px-3 py-2.5 font-poppins text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all';
-  const lbl = 'block font-poppins text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide';
+  const inp = 'w-full px-3 py-2.5 font-poppins text-sm bg-gray-50 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all';
+  const lbl = 'block font-poppins text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1.5 uppercase tracking-wide';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm p-6">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
             <UserPlus size={18} className="text-pink-500" />
-            <h2 className="font-poppins text-base font-semibold text-gray-800">Invitar usuario</h2>
+            <h2 className="font-poppins text-base font-semibold text-gray-800 dark:text-gray-100">Invitar usuario</h2>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors">
+          <button onClick={onClose} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 cursor-pointer transition-colors">
             <X size={18} />
           </button>
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 bg-red-50 border border-red-200 rounded-xl px-3 py-2 mb-4">
+          <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 rounded-xl px-3 py-2 mb-4">
             <AlertCircle size={14} className="text-red-500 shrink-0" />
             <p className="font-poppins text-xs text-red-700">{error}</p>
           </div>
@@ -127,7 +127,7 @@ function InviteModal({ onClose, onSuccess }) {
               <option value="worker">Worker</option>
             </select>
           </div>
-          <p className="font-poppins text-xs text-gray-400">
+          <p className="font-poppins text-xs text-gray-400 dark:text-gray-500">
             Se enviará un email de invitación. El usuario podrá establecer su contraseña al hacer clic en el link.
           </p>
           <button type="submit" disabled={loading}
@@ -227,14 +227,14 @@ export default function AdminUsuarios() {
         {/* Header */}
         <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
           <div>
-            <h1 className="font-poppins text-2xl font-bold text-gray-800">Usuarios</h1>
-            <p className="font-poppins text-sm text-gray-400 mt-0.5">
+            <h1 className="font-poppins text-2xl font-bold text-gray-800 dark:text-gray-100">Usuarios</h1>
+            <p className="font-poppins text-sm text-gray-400 dark:text-gray-500 mt-0.5">
               {loading ? '…' : `${usuarios.length} usuarios registrados`}
             </p>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={load} disabled={loading}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 font-poppins text-sm text-gray-500 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 transition-all cursor-pointer">
+              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-500 dark:text-gray-400 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-all cursor-pointer">
               <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
             </button>
             {isSuperAdmin && (
@@ -253,14 +253,14 @@ export default function AdminUsuarios() {
             <div className="w-9 h-9 border-3 border-pink-100 border-t-pink-500 rounded-full animate-spin" />
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
             {usuarios.length === 0 ? (
               <div className="py-16 text-center">
                 <Users size={36} className="text-pink-200 mx-auto mb-3" />
-                <p className="font-poppins text-sm text-gray-400">No hay usuarios registrados</p>
+                <p className="font-poppins text-sm text-gray-400 dark:text-gray-500">No hay usuarios registrados</p>
               </div>
             ) : (
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-gray-50 dark:divide-gray-700">
                 {usuarios.map(u => {
                   const readOnly = isReadOnly(u);
                   const isSelf   = u.id === profile?.id;
@@ -280,16 +280,16 @@ export default function AdminUsuarios() {
                       {/* Info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <p className="font-poppins text-sm font-semibold text-gray-800">{u.nombre}</p>
-                          {isSelf && <span className="font-poppins text-xs text-gray-400">(tú)</span>}
-                          {!u.activo && <span className="font-poppins text-xs text-gray-400 italic">Inactivo</span>}
+                          <p className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100">{u.nombre}</p>
+                          {isSelf && <span className="font-poppins text-xs text-gray-400 dark:text-gray-500">(tú)</span>}
+                          {!u.activo && <span className="font-poppins text-xs text-gray-400 dark:text-gray-500 italic">Inactivo</span>}
                         </div>
                         <RolBadge rol={u.rol} />
                       </div>
 
                       {/* Acciones */}
                       {readOnly ? (
-                        <span className="font-poppins text-xs text-gray-300 shrink-0">Solo lectura</span>
+                        <span className="font-poppins text-xs text-gray-300 dark:text-gray-600 shrink-0">Solo lectura</span>
                       ) : (
                         <div className="flex items-center gap-2 shrink-0">
                           {/* Cambiar rol */}
@@ -297,7 +297,7 @@ export default function AdminUsuarios() {
                             value={u.rol}
                             disabled={saving[u.id + '_rol']}
                             onChange={e => handleChangeRol(u, e.target.value)}
-                            className="px-2 py-1.5 font-poppins text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300 cursor-pointer disabled:opacity-50 bg-white"
+                            className="px-2 py-1.5 font-poppins text-xs border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-300 cursor-pointer disabled:opacity-50 bg-white dark:bg-gray-700 dark:text-gray-100"
                           >
                             <option value="admin">Admin</option>
                             <option value="worker">Worker</option>
@@ -338,7 +338,7 @@ export default function AdminUsuarios() {
         )}
 
         {/* Info */}
-        <div className="mt-4 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
+        <div className="mt-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/40 rounded-xl px-4 py-3">
           <p className="font-poppins text-xs text-amber-700 leading-relaxed">
             <strong>Permisos:</strong> Worker solo puede gestionar Citas, Clientas y Calendario.
             Admin tiene acceso completo de lectura. Super Admin puede gestionar todos los usuarios.

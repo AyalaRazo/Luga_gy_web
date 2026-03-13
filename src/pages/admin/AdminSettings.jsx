@@ -125,8 +125,8 @@ export default function AdminSettings() {
     );
   }
 
-  const inputClass = "w-full px-3 py-2.5 font-poppins text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all";
-  const labelClass = "block font-poppins text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide";
+  const inputClass = "w-full px-3 py-2.5 font-poppins text-sm bg-gray-50 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all";
+  const labelClass = "block font-poppins text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1.5 uppercase tracking-wide";
 
   return (
     <div className="overflow-y-auto flex-1"><div className="p-6 lg:p-8 max-w-2xl mx-auto">
@@ -141,19 +141,19 @@ export default function AdminSettings() {
       )}
 
       <div className="mb-8">
-        <h1 className="font-poppins text-2xl font-bold text-gray-800">Ajustes</h1>
-        <p className="font-poppins text-sm text-gray-400 mt-0.5">Notificaciones y Google Calendar</p>
+        <h1 className="font-poppins text-2xl font-bold text-gray-800 dark:text-gray-100">Ajustes</h1>
+        <p className="font-poppins text-sm text-gray-400 dark:text-gray-500 mt-0.5">Notificaciones y Google Calendar</p>
       </div>
 
       {/* Notificaciones */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-5">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-6 mb-5">
         <div className="flex items-start gap-3 mb-5">
           <div className="w-9 h-9 rounded-xl bg-pink-100 flex items-center justify-center shrink-0">
             <Bell size={16} className="text-pink-500" />
           </div>
           <div>
-            <h2 className="font-poppins text-sm font-semibold text-gray-800">Email de notificaciones</h2>
-            <p className="font-poppins text-xs text-gray-500 mt-1 leading-relaxed">
+            <h2 className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100">Email de notificaciones</h2>
+            <p className="font-poppins text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
               Cuando un cliente reserve una cita, recibirás un aviso en este correo (vía MailerLite).
             </p>
           </div>
@@ -178,15 +178,15 @@ export default function AdminSettings() {
       </div>
 
       {/* Step 1 — Create OAuth Client */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-5">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-6 mb-5">
         <div className="flex items-start gap-3 mb-4">
           <div className="w-7 h-7 rounded-full bg-pink-100 text-pink-600 font-poppins text-xs font-bold flex items-center justify-center shrink-0">1</div>
           <div>
-            <h2 className="font-poppins text-sm font-semibold text-gray-800">Crear credenciales en Google Cloud</h2>
-            <p className="font-poppins text-xs text-gray-500 mt-1 leading-relaxed">
+            <h2 className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100">Crear credenciales en Google Cloud</h2>
+            <p className="font-poppins text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
               Necesitás un OAuth 2.0 Client ID de tipo <strong>Web application</strong>. En "Authorized redirect URIs" agregá exactamente:
               <br />
-              <code className="bg-gray-100 px-2 py-0.5 rounded text-pink-600 text-xs mt-1 inline-block">
+              <code className="bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded text-pink-600 dark:text-pink-400 text-xs mt-1 inline-block">
                 {window.location.origin}/admin/settings
               </code>
             </p>
@@ -196,7 +196,7 @@ export default function AdminSettings() {
           href="https://console.cloud.google.com/apis/credentials"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 hover:bg-pink-50 border border-gray-200 hover:border-pink-200 font-poppins text-sm text-gray-600 hover:text-pink-600 transition-all cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 dark:bg-gray-700 hover:bg-pink-50 dark:hover:bg-pink-900/20 border border-gray-200 dark:border-gray-600 hover:border-pink-200 font-poppins text-sm text-gray-600 dark:text-gray-300 hover:text-pink-600 transition-all cursor-pointer"
         >
           <ExternalLink size={14} />
           Abrir Google Cloud Console
@@ -204,10 +204,10 @@ export default function AdminSettings() {
       </div>
 
       {/* Step 2 — Enter credentials */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-5">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-6 mb-5">
         <div className="flex items-start gap-3 mb-5">
           <div className="w-7 h-7 rounded-full bg-pink-100 text-pink-600 font-poppins text-xs font-bold flex items-center justify-center shrink-0">2</div>
-          <h2 className="font-poppins text-sm font-semibold text-gray-800 mt-1">Ingresar credenciales</h2>
+          <h2 className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100 mt-1">Ingresar credenciales</h2>
         </div>
 
         <form onSubmit={handleSaveCredentials} className="space-y-4">
@@ -232,7 +232,7 @@ export default function AdminSettings() {
                 className={`${inputClass} pr-10`}
               />
               <button type="button" onClick={() => setShowSecret(v => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer">
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 cursor-pointer">
                 {showSecret ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             </div>
@@ -259,12 +259,12 @@ export default function AdminSettings() {
       </div>
 
       {/* Step 3 — Connect */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-6">
         <div className="flex items-start gap-3 mb-5">
           <div className="w-7 h-7 rounded-full bg-pink-100 text-pink-600 font-poppins text-xs font-bold flex items-center justify-center shrink-0">3</div>
           <div>
-            <h2 className="font-poppins text-sm font-semibold text-gray-800 mt-1">Conectar con Google Calendar</h2>
-            <p className="font-poppins text-xs text-gray-500 mt-1">
+            <h2 className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100 mt-1">Conectar con Google Calendar</h2>
+            <p className="font-poppins text-xs text-gray-500 dark:text-gray-400 mt-1">
               Autorizá el acceso a tu Google Calendar. Solo necesitás hacerlo una vez.
             </p>
           </div>
@@ -273,7 +273,7 @@ export default function AdminSettings() {
         <button
           onClick={handleConnectGoogle}
           disabled={connecting}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-400 font-poppins text-sm font-semibold text-blue-600 transition-all cursor-pointer"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 border-2 border-blue-200 hover:border-blue-400 font-poppins text-sm font-semibold text-blue-600 dark:text-blue-400 transition-all cursor-pointer"
         >
           {connecting
             ? <><RefreshCw size={15} className="animate-spin" /> Conectando…</>

@@ -127,21 +127,21 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
     onSaved();
   }
 
-  const inputClass = "w-full px-3 py-2.5 font-poppins text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all";
-  const labelClass = "block font-poppins text-xs font-medium text-gray-600 mb-1.5";
+  const inputClass = "w-full px-3 py-2.5 font-poppins text-sm bg-gray-50 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all";
+  const labelClass = "block font-poppins text-xs font-medium text-gray-600 dark:text-gray-300 mb-1.5";
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
-          <h2 className="font-poppins text-base font-semibold text-gray-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800 z-10">
+          <h2 className="font-poppins text-base font-semibold text-gray-800 dark:text-gray-100">
             {isEdit ? 'Editar cita' : 'Nueva cita'}
           </h2>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all cursor-pointer">
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 hover:bg-gray-100 transition-all cursor-pointer">
             <X size={18} />
           </button>
         </div>
@@ -149,7 +149,7 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
         {/* Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && (
-            <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+            <div className="flex items-start gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 rounded-xl px-4 py-3">
               <AlertCircle size={15} className="text-red-500 mt-0.5 shrink-0" />
               <p className="font-poppins text-sm text-red-700">{error}</p>
             </div>
@@ -184,12 +184,12 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Correo electrónico <span className="text-gray-400 font-normal">(opcional)</span></label>
+              <label className={labelClass}>Correo electrónico <span className="text-gray-400 dark:text-gray-500 font-normal">(opcional)</span></label>
               <input type="email" value={form.email} onChange={set('email')} placeholder="maria@gmail.com" className={inputClass} />
-              <p className="font-poppins text-xs text-gray-400 mt-1">Se usa para identificar a la clienta y agrupar su historial de citas.</p>
+              <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-1">Se usa para identificar a la clienta y agrupar su historial de citas.</p>
             </div>
             <div>
-              <label className={labelClass}>Celular <span className="text-gray-400 font-normal">(opcional)</span></label>
+              <label className={labelClass}>Celular <span className="text-gray-400 dark:text-gray-500 font-normal">(opcional)</span></label>
               <input type="tel" value={form.telefono} onChange={set('telefono')} placeholder="686 116 2619" className={inputClass} />
             </div>
           </div>
@@ -228,13 +228,13 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
             <div>
               <label className={labelClass}>Precio cobrado (MXN)</label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 font-poppins text-sm text-gray-400">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 font-poppins text-sm text-gray-400 dark:text-gray-500">$</span>
                 <input type="number" min="0" step="0.01"
                   value={form.precio_cobrado} onChange={set('precio_cobrado')}
                   placeholder="0.00"
                   className={`${inputClass} pl-7`} />
               </div>
-              <p className="font-poppins text-xs text-gray-400 mt-1">Se usa para calcular los ingresos en el reporte.</p>
+              <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-1">Se usa para calcular los ingresos en el reporte.</p>
             </div>
           )}
 
@@ -245,7 +245,7 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
 
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl border border-gray-200 font-poppins text-sm text-gray-600 hover:bg-gray-50 transition-all cursor-pointer">
+              className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all cursor-pointer">
               Cancelar
             </button>
             <button type="submit" disabled={loading}

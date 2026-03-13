@@ -94,7 +94,7 @@ export default function AdminHorario() {
     load();
   }
 
-  const inp = "px-3 py-2 font-poppins text-sm bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all";
+  const inp = "px-3 py-2 font-poppins text-sm bg-white dark:bg-gray-700 dark:text-gray-100 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all";
 
   return (
     <div className="p-6 lg:p-8 overflow-y-auto flex-1">
@@ -113,11 +113,11 @@ export default function AdminHorario() {
       {/* Header */}
       <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
         <div>
-          <h1 className="font-poppins text-2xl font-bold text-gray-800">Horario</h1>
-          <p className="font-poppins text-sm text-gray-400 mt-0.5">Configura los días y horarios de atención</p>
+          <h1 className="font-poppins text-2xl font-bold text-gray-800 dark:text-gray-100">Horario</h1>
+          <p className="font-poppins text-sm text-gray-400 dark:text-gray-500 mt-0.5">Configura los días y horarios de atención</p>
         </div>
         <button onClick={load} disabled={loading}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 font-poppins text-sm text-gray-500 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 transition-all cursor-pointer">
+          className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-500 dark:text-gray-400 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-all cursor-pointer">
           <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
         </button>
       </div>
@@ -130,10 +130,10 @@ export default function AdminHorario() {
         <div className="space-y-6">
 
           {/* Horario semanal */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-            <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-50">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+            <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-50 dark:border-gray-700">
               <Clock size={17} className="text-pink-500" />
-              <h2 className="font-poppins text-sm font-semibold text-gray-700">Horario semanal</h2>
+              <h2 className="font-poppins text-sm font-semibold text-gray-700 dark:text-gray-200">Horario semanal</h2>
               <div className="relative group ml-1">
                 <HelpCircle size={15} className="text-gray-300 hover:text-gray-400 cursor-help transition-colors" />
                 <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 bg-gray-800 text-white font-poppins text-xs rounded-xl px-3 py-2.5 leading-relaxed opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 shadow-lg">
@@ -147,7 +147,7 @@ export default function AdminHorario() {
                 const dia = horario[key] ?? { activo: false, inicio: '09:00', fin: '18:00' };
                 return (
                   <div key={key} className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
-                    dia.activo ? 'border-pink-100 bg-pink-50/30' : 'border-gray-100 bg-gray-50/50'
+                    dia.activo ? 'border-pink-100 dark:border-pink-900/50 bg-pink-50/30 dark:bg-pink-900/10' : 'border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/30'
                   }`}>
                     {/* Toggle */}
                     <button
@@ -158,7 +158,7 @@ export default function AdminHorario() {
                     </button>
 
                     {/* Día */}
-                    <span className={`font-poppins text-sm font-medium w-24 ${dia.activo ? 'text-gray-700' : 'text-gray-400'}`}>
+                    <span className={`font-poppins text-sm font-medium w-24 ${dia.activo ? 'text-gray-700 dark:text-gray-200' : 'text-gray-400 dark:text-gray-500'}`}>
                       {label}
                     </span>
 
@@ -168,12 +168,12 @@ export default function AdminHorario() {
                         <select value={dia.inicio} onChange={e => setHora(key, 'inicio', e.target.value)} className={`${inp} cursor-pointer`}>
                           {HORAS.map(h => <option key={h} value={h}>{h}</option>)}
                         </select>
-                        <span className="font-poppins text-sm text-gray-400">a</span>
+                        <span className="font-poppins text-sm text-gray-400 dark:text-gray-500">a</span>
                         <select value={dia.fin} onChange={e => setHora(key, 'fin', e.target.value)} className={`${inp} cursor-pointer`}>
                           {HORAS.map(h => <option key={h} value={h}>{h}</option>)}
                         </select>
                         <div className="flex items-center gap-1.5">
-                          <span className="font-poppins text-xs text-gray-400 whitespace-nowrap">Capacidad:</span>
+                          <span className="font-poppins text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">Capacidad:</span>
                           <input
                             type="number"
                             min="1"
@@ -192,7 +192,7 @@ export default function AdminHorario() {
                         </div>
                       </div>
                     ) : (
-                      <span className="font-poppins text-sm text-gray-400 italic">Cerrado</span>
+                      <span className="font-poppins text-sm text-gray-400 dark:text-gray-500 italic">Cerrado</span>
                     )}
                   </div>
                 );
@@ -213,11 +213,11 @@ export default function AdminHorario() {
           </div>
 
           {/* Días bloqueados */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-            <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-50">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm">
+            <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-50 dark:border-gray-700">
               <AlertCircle size={17} className="text-amber-500" />
-              <h2 className="font-poppins text-sm font-semibold text-gray-700">Días bloqueados</h2>
-              <span className="ml-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-600 font-poppins text-xs font-semibold">
+              <h2 className="font-poppins text-sm font-semibold text-gray-700 dark:text-gray-200">Días bloqueados</h2>
+              <span className="ml-1 px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 font-poppins text-xs font-semibold">
                 {diasBloqueados.length}
               </span>
               <div className="relative group ml-1">
@@ -260,16 +260,16 @@ export default function AdminHorario() {
 
               {/* Lista */}
               {diasBloqueados.length === 0 ? (
-                <p className="font-poppins text-sm text-gray-400 text-center py-6">
+                <p className="font-poppins text-sm text-gray-400 dark:text-gray-500 text-center py-6">
                   No hay días bloqueados. El horario semanal aplica todos los días.
                 </p>
               ) : (
                 <div className="space-y-2">
                   {diasBloqueados.map(d => (
-                    <div key={d.id} className="flex items-center justify-between gap-3 p-3.5 bg-amber-50 border border-amber-100 rounded-xl">
+                    <div key={d.id} className="flex items-center justify-between gap-3 p-3.5 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/50 rounded-xl">
                       <div>
-                        <p className="font-poppins text-sm font-semibold text-gray-700 capitalize">{formatFecha(d.fecha)}</p>
-                        {d.motivo && <p className="font-poppins text-xs text-gray-500 mt-0.5">{d.motivo}</p>}
+                        <p className="font-poppins text-sm font-semibold text-gray-700 dark:text-gray-200 capitalize">{formatFecha(d.fecha)}</p>
+                        {d.motivo && <p className="font-poppins text-xs text-gray-500 dark:text-gray-400 mt-0.5">{d.motivo}</p>}
                       </div>
                       <button
                         onClick={() => handleDeleteDia(d.id, d.fecha)}

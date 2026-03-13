@@ -27,7 +27,7 @@ const values = [
 ];
 
 const AboutSection = () => (
-  <section id="nosotras" className="section-padding bg-white">
+  <section id="nosotras" className="section-padding bg-white dark:bg-gray-900">
     <div className="container-custom">
       <div className="grid lg:grid-cols-2 gap-12 items-center">
 
@@ -49,13 +49,13 @@ const AboutSection = () => (
             </div>
 
             {/* Floating stat cards */}
-            <div className="absolute -top-4 -right-4 bg-white rounded-2xl px-4 py-3 shadow-pink-md border border-pink-100">
+            <div className="absolute -top-4 -right-4 bg-white dark:bg-gray-800 rounded-2xl px-4 py-3 shadow-pink-md border border-pink-100 dark:border-gray-700">
               <div className="font-playfair text-2xl font-bold text-pink-400">5+</div>
-              <div className="font-poppins text-xs text-gray-500">años de experiencia</div>
+              <div className="font-poppins text-xs text-gray-500 dark:text-gray-400">años de experiencia</div>
             </div>
-            <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl px-4 py-3 shadow-pink-md border border-pink-100">
+            <div className="absolute -bottom-4 -left-4 bg-white dark:bg-gray-800 rounded-2xl px-4 py-3 shadow-pink-md border border-pink-100 dark:border-gray-700">
               <div className="font-playfair text-2xl font-bold text-pink-400">500+</div>
-              <div className="font-poppins text-xs text-gray-500">clientas felices</div>
+              <div className="font-poppins text-xs text-gray-500 dark:text-gray-400">clientas felices</div>
             </div>
           </div>
         </div>
@@ -67,12 +67,12 @@ const AboutSection = () => (
             subtitle=""
             align="left"
           />
-          <p className="font-poppins text-gray-600 leading-relaxed mb-4">
+          <p className="font-poppins text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
             Somos un salón de belleza especializado en el cuidado femenino integral. Nacimos con la
             misión de ofrecer una experiencia donde cada clienta se sienta valorada, consentida y
             completamente satisfecha.
           </p>
-          <p className="font-poppins text-gray-600 leading-relaxed mb-8">
+          <p className="font-poppins text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
             Nuestra pasión es la belleza auténtica: realzar lo que cada mujer tiene de único,
             potenciando su seguridad y bienestar con técnicas profesionales y productos de primera calidad.
           </p>
@@ -85,8 +85,8 @@ const AboutSection = () => (
                   <Icon size={18} className="text-pink-400" aria-hidden="true" />
                 </div>
                 <div>
-                  <h4 className="font-poppins text-sm font-semibold text-gray-800 mb-0.5">{title}</h4>
-                  <p className="font-poppins text-xs text-gray-500 leading-relaxed">{description}</p>
+                  <h4 className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100 mb-0.5">{title}</h4>
+                  <p className="font-poppins text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{description}</p>
                 </div>
               </div>
             ))}
