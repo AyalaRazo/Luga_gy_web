@@ -242,8 +242,8 @@ export async function getIngresosPorServicio() {
 // ─── Horario ──────────────────────────────────────────────────────────────────
 
 export async function getHorario() {
-  const { data, error } = await supabase.from('settings').select('horario_config').eq('id', 1).single();
-  return { data: data?.horario_config ?? null, error };
+  const { data, error } = await supabase.rpc('get_horario_publico');
+  return { data: data ?? null, error };
 }
 
 export async function updateHorario(horario_config) {
