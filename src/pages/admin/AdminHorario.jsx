@@ -136,9 +136,9 @@ export default function AdminHorario() {
               <h2 className="font-poppins text-sm font-semibold text-gray-700">Horario semanal</h2>
               <div className="relative group ml-1">
                 <HelpCircle size={15} className="text-gray-300 hover:text-gray-400 cursor-help transition-colors" />
-                <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 bg-gray-800 text-white font-poppins text-xs rounded-xl px-3 py-2.5 leading-relaxed opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 shadow-lg">
+                <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 bg-gray-800 text-white font-poppins text-xs rounded-xl px-3 py-2.5 leading-relaxed opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 z-50 shadow-lg">
+                  <div className="absolute left-1/2 -translate-x-1/2 bottom-full w-0 h-0 border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent border-b-gray-800" />
                   Define los días y horas en que se aceptan reservas cada semana. Los días desactivados aparecerán como no disponibles para los clientes.<br /><br /><strong>Capacidad:</strong> número de citas que se pueden reservar al mismo tiempo en un horario. Si hay 2 trabajadoras disponibles ese día, ponla en 2.
-                  <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-800" />
                 </div>
               </div>
             </div>
@@ -179,7 +179,14 @@ export default function AdminHorario() {
                             min="1"
                             max="10"
                             value={dia.capacidad ?? 1}
-                            onChange={e => setHorario(h => ({ ...h, [key]: { ...h[key], capacidad: Math.max(1, Number(e.target.value)) } }))}
+                            onChange={e => {
+                              const n = e.target.valueAsNumber;
+                              if (!isNaN(n)) setHorario(h => ({ ...h, [key]: { ...h[key], capacidad: Math.max(1, n) } }));
+                            }}
+                            onBlur={e => {
+                              if (!e.target.value || Number(e.target.value) < 1)
+                                setHorario(h => ({ ...h, [key]: { ...h[key], capacidad: 1 } }));
+                            }}
                             className={`${inp} w-16 text-center`}
                           />
                         </div>
