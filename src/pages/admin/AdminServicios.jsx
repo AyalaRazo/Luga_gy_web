@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, RefreshCw, ToggleLeft, ToggleRight, AlertCircle, ImageOff } from 'lucide-react';
-import { getServiciosAdmin, updateServicio, deleteServicio } from '../../lib/supabase';
+import { Plus, Pencil, Trash2, RefreshCw, ToggleLeft, ToggleRight, AlertCircle, ImageOff, Eraser } from 'lucide-react';
+import { getServiciosAdmin, updateServicio, deleteServicio, cleanupOrphanImages } from '../../lib/supabase';
 import { getStorageUrl } from '../../lib/storage';
 import ServicioModal from '../../components/Admin/ServicioModal';
 
@@ -37,12 +37,13 @@ function ConfirmDialog({ nombre, onConfirm, onCancel }) {
 }
 
 export default function AdminServicios() {
-  const [servicios, setServicios] = useState([]);
-  const [loading,   setLoading]   = useState(true);
-  const [modal,     setModal]     = useState(null);
-  const [confirm,   setConfirm]   = useState(null);
-  const [toast,     setToast]     = useState('');
-  const [catFilter, setCatFilter] = useState('Todos');
+  const [servicios,   setServicios]   = useState([]);
+  const [loading,     setLoading]     = useState(true);
+  const [cleaning,    setCleaning]    = useState(false);
+  const [modal,       setModal]       = useState(null);
+  const [confirm,     setConfirm]     = useState(null);
+  const [toast,       setToast]       = useState('');
+  const [catFilter,   setCatFilter]   = useState('Todos');
 
   const showToast = (msg) => { setToast(msg); setTimeout(() => setToast(''), 3000); };
 
@@ -59,6 +60,14 @@ export default function AdminServicios() {
     await updateServicio(s.id, { activo: !s.activo });
     showToast(s.activo ? `${s.nombre} desactivado.` : `${s.nombre} activado.`);
     load();
+  }
+
+  async function handleCleanup() {
+    setCleaning(true);
+    const { deleted, errors } = await cleanupOrphanImages();
+    setCleaning(false);
+    if (errors.length) { showToast('Error al limpiar imágenes.'); return; }
+    showToast(deleted.length ? `${deleted.length} imagen${deleted.length > 1 ? 'es eliminadas' : ' eliminada'} del Storage.` : 'No hay imágenes huérfanas.');
   }
 
   async function handleDelete(id, nombre) {
@@ -111,6 +120,11 @@ export default function AdminServicios() {
           <button onClick={load} disabled={loading}
             className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-500 dark:text-gray-400 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-all cursor-pointer">
             <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
+          </button>
+          <button onClick={handleCleanup} disabled={cleaning}
+            title="Eliminar imágenes huérfanas del Storage (archivos sin servicio asociado)"
+            className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-500 dark:text-gray-400 hover:text-amber-500 hover:border-amber-200 hover:bg-amber-50 dark:hover:bg-amber-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer">
+            <Eraser size={15} className={cleaning ? 'animate-pulse' : ''} />
           </button>
           <button onClick={() => setModal({})}
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-poppins text-sm font-semibold transition-all cursor-pointer shadow-pink-sm">

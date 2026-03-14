@@ -215,7 +215,52 @@ export async function uploadServicioImagen(file, servicioId) {
     .upload(path, file, { upsert: true, contentType: file.type });
   if (error) return { url: null, error };
   const { data } = supabase.storage.from('servicios').getPublicUrl(path);
-  return { url: data.publicUrl, error: null };
+  // Cache-busting: append ?v=<timestamp> so the CDN never serves a stale version
+  // when the same filename is reused with upsert.
+  const url = `${data.publicUrl}?v=${Date.now()}`;
+  return { url, error: null };
+}
+
+/**
+ * Elimina del bucket 'servicios' todos los archivos que no están referenciados
+ * en ningún imagen_url de la tabla servicios.
+ * @returns {{ deleted: string[], errors: string[] }}
+ */
+export async function cleanupOrphanImages() {
+  // 1. List all files in the bucket
+  const { data: files, error: listErr } = await supabase.storage
+    .from('servicios')
+    .list('', { limit: 1000 });
+  if (listErr) return { deleted: [], errors: [listErr.message] };
+
+  // 2. Get all valid image paths from the servicios table
+  const { data: servicios } = await supabase
+    .from('servicios')
+    .select('imagen_url')
+    .not('imagen_url', 'is', null);
+
+  const validPaths = new Set(
+    (servicios ?? []).map(s => {
+      // Extract filename from URL, ignoring ?v= query string
+      const url = s.imagen_url.split('?')[0];
+      return url.split('/').pop();
+    })
+  );
+
+  // 3. Find orphan filenames
+  const orphans = (files ?? [])
+    .map(f => f.name)
+    .filter(name => !validPaths.has(name));
+
+  if (orphans.length === 0) return { deleted: [], errors: [] };
+
+  // 4. Delete them
+  const { error: delErr } = await supabase.storage
+    .from('servicios')
+    .remove(orphans);
+
+  if (delErr) return { deleted: [], errors: [delErr.message] };
+  return { deleted: orphans, errors: [] };
 }
 
 /**
