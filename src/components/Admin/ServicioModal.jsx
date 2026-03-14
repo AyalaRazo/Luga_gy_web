@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { X, Save, AlertCircle, Upload, ImageOff } from 'lucide-react';
+import { X, Save, AlertCircle, Upload, ImageOff, Trash2 } from 'lucide-react';
 import { createServicio, updateServicio, uploadServicioImagen, deleteServicioImagen } from '../../lib/supabase';
 
 const CATEGORIAS    = ['Pedicure', 'Uñas', 'Pestañas', 'Cejas', 'General'];
@@ -13,11 +13,15 @@ const EMPTY = {
 export default function ServicioModal({ servicio, totalServicios = 0, onClose, onSaved }) {
   const isEdit    = Boolean(servicio);
   const [form,    setForm]    = useState(isEdit ? { ...EMPTY, ...servicio, precio: String(servicio.precio) } : { ...EMPTY });
-  const [loading, setLoading] = useState(false);
-  const [error,   setError]   = useState('');
-  const [preview, setPreview] = useState(servicio?.imagen_url ?? null);
-  const [imgFile, setImgFile] = useState(null);
+  const [loading,     setLoading]     = useState(false);
+  const [deletingImg, setDeletingImg] = useState(false);
+  const [error,       setError]       = useState('');
+  const [preview,     setPreview]     = useState(servicio?.imagen_url ?? null);
+  const [imgFile,     setImgFile]     = useState(null);
   const fileRef = useRef();
+
+  // True when the current preview is the image already saved in DB (not a local selection)
+  const hasSavedImage = isEdit && Boolean(servicio.imagen_url) && !imgFile && Boolean(preview);
 
   useEffect(() => {
     const h = (e) => { if (e.key === 'Escape') onClose(); };
@@ -42,6 +46,20 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
     if (!file || !file.type.startsWith('image/')) return;
     setImgFile(file);
     setPreview(URL.createObjectURL(file));
+  }
+
+  async function handleDeleteImage() {
+    if (!servicio?.id || !servicio.imagen_url) return;
+    setDeletingImg(true);
+    setError('');
+    await deleteServicioImagen(servicio.imagen_url);
+    await updateServicio(servicio.id, { imagen_url: null });
+    // Update local state so the modal reflects the deletion immediately
+    servicio.imagen_url = null;
+    setPreview(null);
+    setImgFile(null);
+    setForm(p => ({ ...p, imagen_url: '' }));
+    setDeletingImg(false);
   }
 
   async function handleSubmit(e) {
@@ -152,13 +170,34 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
               onChange={handleImageChange}
             />
             {preview && (
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); setPreview(null); setImgFile(null); setForm(p => ({ ...p, imagen_url: '' })); }}
-                className="mt-1.5 font-poppins text-xs text-gray-400 dark:text-gray-500 hover:text-red-500 transition-colors cursor-pointer"
-              >
-                Quitar imagen
-              </button>
+              <div className="mt-2 flex items-center gap-3">
+                {/* Remove locally-selected file (not yet saved) */}
+                {imgFile && (
+                  <button
+                    type="button"
+                    onClick={() => { setPreview(servicio?.imagen_url ?? null); setImgFile(null); }}
+                    className="font-poppins text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
+                  >
+                    Cancelar cambio
+                  </button>
+                )}
+
+                {/* Delete saved image from Storage + DB immediately */}
+                {hasSavedImage && (
+                  <button
+                    type="button"
+                    disabled={deletingImg}
+                    onClick={handleDeleteImage}
+                    className="flex items-center gap-1.5 font-poppins text-xs text-red-400 hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  >
+                    {deletingImg
+                      ? <div className="w-3 h-3 border border-red-400 border-t-transparent rounded-full animate-spin" />
+                      : <Trash2 size={12} />
+                    }
+                    {deletingImg ? 'Eliminando…' : 'Eliminar imagen'}
+                  </button>
+                )}
+              </div>
             )}
           </div>
 
