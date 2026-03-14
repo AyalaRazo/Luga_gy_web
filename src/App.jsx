@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Public site
@@ -17,24 +17,24 @@ import WhatsAppFloat from './components/UI/WhatsAppFloat';
 // Theme
 import { ThemeProvider } from './context/ThemeContext';
 
-// Admin
+// Admin — lazy loaded (no se descargan al visitar el sitio público)
 import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/Admin/ProtectedRoute';
-import AdminGuard from './components/Admin/AdminGuard';
-import AdminLogin from './pages/admin/AdminLogin';
-import AdminLayout from './pages/admin/AdminLayout';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminCitas from './pages/admin/AdminCitas';
-import AdminSettings from './pages/admin/AdminSettings';
-import AdminCalendar from './pages/admin/AdminCalendar';
-import AdminServicios from './pages/admin/AdminServicios';
-import AdminIngresos from './pages/admin/AdminIngresos';
-import AdminHorario from './pages/admin/AdminHorario';
-import AdminClientas from './pages/admin/AdminClientas';
-import AdminUsuarios from './pages/admin/AdminUsuarios';
-import AcceptInvite from './pages/admin/AcceptInvite';
-import ConfirmarCita from './pages/public/ConfirmarCita';
-import CancelarCita from './pages/public/CancelarCita';
+const ProtectedRoute  = lazy(() => import('./components/Admin/ProtectedRoute'));
+const AdminGuard      = lazy(() => import('./components/Admin/AdminGuard'));
+const AdminLogin      = lazy(() => import('./pages/admin/AdminLogin'));
+const AdminLayout     = lazy(() => import('./pages/admin/AdminLayout'));
+const AdminDashboard  = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminCitas      = lazy(() => import('./pages/admin/AdminCitas'));
+const AdminSettings   = lazy(() => import('./pages/admin/AdminSettings'));
+const AdminCalendar   = lazy(() => import('./pages/admin/AdminCalendar'));
+const AdminServicios  = lazy(() => import('./pages/admin/AdminServicios'));
+const AdminIngresos   = lazy(() => import('./pages/admin/AdminIngresos'));
+const AdminHorario    = lazy(() => import('./pages/admin/AdminHorario'));
+const AdminClientas   = lazy(() => import('./pages/admin/AdminClientas'));
+const AdminUsuarios   = lazy(() => import('./pages/admin/AdminUsuarios'));
+const AcceptInvite    = lazy(() => import('./pages/admin/AcceptInvite'));
+const ConfirmarCita   = lazy(() => import('./pages/public/ConfirmarCita'));
+const CancelarCita    = lazy(() => import('./pages/public/CancelarCita'));
 
 function PublicSite() {
   return (
@@ -61,40 +61,42 @@ function App() {
     <BrowserRouter>
       <ThemeProvider>
       <AuthProvider>
-        <Routes>
-          {/* Public site */}
-          <Route path="/" element={<PublicSite />} />
+        <Suspense fallback={null}>
+          <Routes>
+            {/* Public site */}
+            <Route path="/" element={<PublicSite />} />
 
-          {/* Confirmación / Cancelación pública */}
-          <Route path="/cita/confirmar" element={<ConfirmarCita />} />
-          <Route path="/cita/cancelar"  element={<CancelarCita />} />
+            {/* Confirmación / Cancelación pública */}
+            <Route path="/cita/confirmar" element={<ConfirmarCita />} />
+            <Route path="/cita/cancelar"  element={<CancelarCita />} />
 
-          {/* Accept invite (public — sets password after email invite) */}
-          <Route path="/admin/accept-invite" element={<AcceptInvite />} />
+            {/* Accept invite (public — sets password after email invite) */}
+            <Route path="/admin/accept-invite" element={<AcceptInvite />} />
 
-          {/* Admin login */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+            {/* Admin login */}
+            <Route path="/admin/login" element={<AdminLogin />} />
 
-          {/* Admin panel (protected) */}
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
-                <AdminLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<AdminGuard><AdminDashboard /></AdminGuard>} />
-            <Route path="citas" element={<AdminCitas />} />
-            <Route path="calendario" element={<AdminCalendar />} />
-            <Route path="servicios"  element={<AdminGuard><AdminServicios /></AdminGuard>} />
-            <Route path="ingresos"   element={<AdminGuard><AdminIngresos /></AdminGuard>} />
-            <Route path="horario"    element={<AdminGuard><AdminHorario /></AdminGuard>} />
-            <Route path="clientas"   element={<AdminClientas />} />
-            <Route path="usuarios"   element={<AdminGuard><AdminUsuarios /></AdminGuard>} />
-            <Route path="settings"   element={<AdminGuard superAdminOnly><AdminSettings /></AdminGuard>} />
-          </Route>
-        </Routes>
+            {/* Admin panel (protected) */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<AdminGuard><AdminDashboard /></AdminGuard>} />
+              <Route path="citas" element={<AdminCitas />} />
+              <Route path="calendario" element={<AdminCalendar />} />
+              <Route path="servicios"  element={<AdminGuard><AdminServicios /></AdminGuard>} />
+              <Route path="ingresos"   element={<AdminGuard><AdminIngresos /></AdminGuard>} />
+              <Route path="horario"    element={<AdminGuard><AdminHorario /></AdminGuard>} />
+              <Route path="clientas"   element={<AdminClientas />} />
+              <Route path="usuarios"   element={<AdminGuard><AdminUsuarios /></AdminGuard>} />
+              <Route path="settings"   element={<AdminGuard superAdminOnly><AdminSettings /></AdminGuard>} />
+            </Route>
+          </Routes>
+        </Suspense>
       </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>

@@ -19,11 +19,10 @@ const HeroSection = () => {
       className="relative min-h-screen flex items-center overflow-hidden bg-hero-gradient dark:bg-gray-900 pt-20"
       aria-label="Sección principal"
     >
-      {/* Background decorative circles */}
+      {/* Background decorative circles — blur-2xl es menos costoso en GPU */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="absolute -top-32 -right-32 w-[600px] h-[600px] bg-pink-200/30 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-20 w-[500px] h-[500px] bg-pink-300/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gold-300/10 rounded-full blur-3xl" />
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-pink-200/30 rounded-full blur-2xl" />
+        <div className="absolute -bottom-40 -left-20 w-80 h-80 bg-pink-300/20 rounded-full blur-2xl" />
       </div>
 
       <div className="container-custom relative z-10">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ExternalLink } from 'lucide-react';
 import SectionTitle from '../UI/SectionTitle';
 import { TikTokIcon, SOCIAL_LINKS } from '../UI/SocialIcons';
@@ -26,21 +26,47 @@ const videos = [
   },
 ];
 
-const VideoCard = ({ video }) => (
-  <div className="relative group rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300">
-    <div className="w-full aspect-[9/16] bg-gray-900 relative">
-      <video
-        src={video.src}
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="w-full h-full object-cover"
-      />
+const VideoCard = ({ video }) => {
+  const videoRef = useRef(null);
+  const [visible, setVisible] = useState(false);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    if (videoRef.current) observer.observe(videoRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (visible && el) el.play().catch(() => {});
+  }, [visible]);
+
+  return (
+    <div className="relative group rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300">
+      <div ref={videoRef} className="w-full aspect-[9/16] bg-gray-900 relative">
+        {visible && (
+          <video
+            src={video.src}
+            muted
+            loop
+            playsInline
+            preload="none"
+            autoPlay
+            className="w-full h-full object-cover"
+          />
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const TikTokFeed = () => (
   <section id="tiktok" className="section-padding bg-gray-950">
