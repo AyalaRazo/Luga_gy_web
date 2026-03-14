@@ -10,17 +10,20 @@ const PERIODOS = [
   { label: 'Personalizado', value: 'custom' },
 ];
 
-const hoyISO = new Date().toISOString().slice(0, 10);
+function localISO(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+const hoyISO = localISO();
 
 function getRango(periodo) {
   const hoy = new Date();
-  const fin = hoy.toISOString().slice(0, 10);
+  const fin = localISO(hoy);
   let inicio;
   if (periodo === 'semana') {
     const d = new Date(hoy);
     const day = d.getDay();
     d.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
-    inicio = d.toISOString().slice(0, 10);
+    inicio = localISO(d);
   } else if (periodo === 'mes') {
     inicio = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-01`;
   } else {

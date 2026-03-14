@@ -51,7 +51,10 @@ const BookingSection = () => {
   const [availableSlots, setAvailableSlots] = useState([]);
   const [dateBlocked,   setDateBlocked]     = useState(false);
 
-  const todayISO = new Date().toISOString().split('T')[0];
+  const todayISO = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  })();
 
   // Cargar horario y días bloqueados al montar
   useEffect(() => {

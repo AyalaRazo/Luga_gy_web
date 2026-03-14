@@ -39,7 +39,7 @@ export default function AdminHorario() {
   const [nuevoMotivo,     setNuevoMotivo]      = useState('');
   const [addingDay,       setAddingDay]        = useState(false);
 
-  const todayISO = new Date().toISOString().split('T')[0];
+  const todayISO = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
 
   function showToast(msg, type = 'ok') {
     setToast({ msg, type });

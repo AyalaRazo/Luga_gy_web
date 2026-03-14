@@ -35,7 +35,8 @@ export default function AdminDashboard() {
     setLoading(true);
     setFetchErr('');
     try {
-      const today = new Date().toISOString().slice(0, 10);
+      const _d = new Date();
+      const today = `${_d.getFullYear()}-${String(_d.getMonth()+1).padStart(2,'0')}-${String(_d.getDate()).padStart(2,'0')}`;
       const [{ data: st, error: e1 }, { data: ct, error: e2 }] = await Promise.all([
         getCitasStats(),
         getCitasAdmin({ fecha: today }),

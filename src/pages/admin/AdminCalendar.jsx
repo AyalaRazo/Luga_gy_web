@@ -54,7 +54,11 @@ function getMonday(date) {
   return d;
 }
 function addDays(date, n) { const d = new Date(date); d.setDate(d.getDate() + n); return d; }
-function toDateStr(d)     { return d.toISOString().slice(0, 10); }
+function toDateStr(d) {
+  // Use LOCAL date components — toISOString() is always UTC and would
+  // return the wrong date after 5 PM in Tijuana (UTC-7/UTC-8).
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
 function timeToMinutes(t) { const [h, m] = (t ?? '00:00').slice(0, 5).split(':').map(Number); return h * 60 + m; }
 function minutesToPx(min) { return (min / 60) * PX_PER_HOUR; }
 
