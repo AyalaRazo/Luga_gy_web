@@ -27,21 +27,20 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
  * @returns {{ data, error }}
  */
 export async function crearCita(cita) {
-  const { data, error } = await supabase
-    .from('citas')
-    .insert([{
-      nombre:   cita.nombre   || 'Clienta',
-      servicio: cita.servicio,
-      fecha:    cita.fecha,
-      hora:     cita.hora,
-      estado:   'pendiente',
-      email:    cita.email    || null,
-      telefono: cita.telefono || null,
-    }])
-    .select()
-    .single();
+  // Uses a SECURITY DEFINER function to bypass RLS on RETURNING,
+  // since anon has INSERT but no SELECT on the citas table.
+  const { data, error } = await supabase.rpc('crear_cita_publica', {
+    p_nombre:   cita.nombre   || '',
+    p_servicio: cita.servicio,
+    p_fecha:    cita.fecha,
+    p_hora:     cita.hora,
+    p_email:    cita.email    || null,
+    p_telefono: cita.telefono || null,
+  });
 
-  return { data, error };
+  // rpc returns an array of rows; grab the first
+  const row = Array.isArray(data) ? data[0] : data;
+  return { data: row ?? null, error };
 }
 
 const EDGE_FN_URL = 'https://xewcrgwgzmrsuzhqjpwq.supabase.co/functions/v1/send-booking-email';
@@ -73,14 +72,14 @@ export async function sendConfirmedEmail({ email, name, servicio, fecha, hora })
  * @param {string} fecha — formato YYYY-MM-DD
  */
 export async function getCitasPorFecha(fecha) {
-  const { data, error } = await supabase
-    .from('citas')
-    .select('hora, servicio, estado')
-    .eq('fecha', fecha)
-    .neq('estado', 'cancelada')
-    .order('hora');
+  // Uses a SECURITY DEFINER function — anon has no SELECT on citas
+  // so we expose only the booked hours (no personal data).
+  const { data, error } = await supabase.rpc('get_disponibilidad_fecha', {
+    p_fecha: fecha,
+  });
 
-  return { data, error };
+  // Normalize to the same shape the caller expects: [{ hora }]
+  return { data: data ?? [], error };
 }
 
 /**
@@ -217,6 +216,20 @@ export async function uploadServicioImagen(file, servicioId) {
   if (error) return { url: null, error };
   const { data } = supabase.storage.from('servicios').getPublicUrl(path);
   return { url: data.publicUrl, error: null };
+}
+
+/**
+ * Elimina la imagen anterior de un servicio del bucket.
+ * @param {string} imagenUrl — URL pública de la imagen a eliminar
+ */
+export async function deleteServicioImagen(imagenUrl) {
+  if (!imagenUrl) return;
+  // Extract path after "/servicios/" from the public URL
+  const marker = '/servicios/';
+  const idx    = imagenUrl.indexOf(marker);
+  if (idx === -1) return;
+  const path = imagenUrl.slice(idx + marker.length).split('?')[0];
+  await supabase.storage.from('servicios').remove([path]);
 }
 
 // ─── Ingresos ─────────────────────────────────────────────────────────────────

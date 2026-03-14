@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { X, Save, AlertCircle, Upload, ImageOff } from 'lucide-react';
-import { createServicio, updateServicio, uploadServicioImagen } from '../../lib/supabase';
+import { createServicio, updateServicio, uploadServicioImagen, deleteServicioImagen } from '../../lib/supabase';
 
 const CATEGORIAS    = ['Pedicure', 'Uñas', 'Pestañas', 'Cejas', 'General'];
 const DURACIONES_OPT = [15, 30, 45, 60, 75, 90, 105, 120, 150, 180];
@@ -72,6 +72,10 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
 
     // Upload new image if selected
     if (imgFile && saved?.id) {
+      // Delete the previous image from storage before uploading the new one
+      const oldUrl = isEdit ? servicio.imagen_url : null;
+      if (oldUrl) await deleteServicioImagen(oldUrl);
+
       const { url, error: uploadErr } = await uploadServicioImagen(imgFile, saved.id);
       if (uploadErr) {
         setError('Servicio guardado, pero falló la subida de imagen: ' + uploadErr.message);
