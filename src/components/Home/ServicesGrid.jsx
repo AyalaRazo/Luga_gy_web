@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import ServiceCard from './ServiceCard';
 import SectionTitle from '../UI/SectionTitle';
 import { getServiciosPublic } from '../../lib/supabase';
+import { getStorageUrl } from '../../lib/storage';
 import { X, Clock } from 'lucide-react';
 
 const categoryColors = {
@@ -120,7 +121,7 @@ function dbToCard(s) {
     description: s.descripcion ?? '',
     price:       String(Math.round(s.precio)),
     duration:    s.duracion,
-    image:       s.imagen_url ?? null,
+    image:       getStorageUrl(s.imagen_url) ?? null,
     category:    (s.categoria ?? 'general').toLowerCase(),
   };
 }

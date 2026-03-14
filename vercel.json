@@ -1,5 +1,9 @@
 {
   "rewrites": [
+    {
+      "source": "/img/:path*",
+      "destination": "https://xewcrgwgzmrsuzhqjpwq.supabase.co/storage/v1/object/public/:path*"
+    },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

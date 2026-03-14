@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { X, Save, AlertCircle, Upload, ImageOff, Trash2 } from 'lucide-react';
 import { createServicio, updateServicio, uploadServicioImagen, deleteServicioImagen } from '../../lib/supabase';
+import { getStorageUrl } from '../../lib/storage';
 
 const CATEGORIAS    = ['Pedicure', 'Uñas', 'Pestañas', 'Cejas', 'General'];
 const DURACIONES_OPT = [15, 30, 45, 60, 75, 90, 105, 120, 150, 180];
@@ -146,7 +147,7 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
             >
               {preview ? (
                 <>
-                  <img src={preview} alt="preview" className="w-full h-full object-cover" />
+                  <img src={getStorageUrl(preview)} alt="preview" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                     <Upload size={18} className="text-white" />
                     <span className="font-poppins text-sm text-white font-medium">Cambiar imagen</span>

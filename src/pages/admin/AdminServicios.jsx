@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, RefreshCw, ToggleLeft, ToggleRight, AlertCircle, ImageOff } from 'lucide-react';
 import { getServiciosAdmin, updateServicio, deleteServicio } from '../../lib/supabase';
+import { getStorageUrl } from '../../lib/storage';
 import ServicioModal from '../../components/Admin/ServicioModal';
 
 const CAT_COLORS = {
@@ -148,7 +149,7 @@ export default function AdminServicios() {
                 {/* Image */}
                 <div className="w-full h-36 overflow-hidden rounded-t-2xl bg-pink-50 flex items-center justify-center relative">
                   {s.imagen_url ? (
-                    <img src={s.imagen_url} alt={s.nombre} className="w-full h-full object-cover" />
+                    <img src={getStorageUrl(s.imagen_url)} alt={s.nombre} className="w-full h-full object-cover" />
                   ) : (
                     <div className="flex flex-col items-center gap-1.5 text-pink-200">
                       <ImageOff size={28} />
