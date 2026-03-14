@@ -3,7 +3,7 @@ import {
   Plus, Search, Filter, Pencil, Trash2, RefreshCw,
   CalendarDays, ChevronDown, AlertCircle, Calendar, Check, X, Mail, Phone, CheckCircle2,
 } from 'lucide-react';
-import { getCitasAdmin, deleteCita, updateCita, gcalSync, resolverCancelacion, sendConfirmedEmail } from '../../lib/supabase';
+import { getCitasAdmin, deleteCita, updateCita, gcalSync, vincularEventoCalendario, resolverCancelacion, sendConfirmedEmail } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -214,9 +214,25 @@ export default function AdminCitas() {
       return;
     }
     await updateCita(id, { estado: nuevoEstado });
+
+    const cita = citas.find(c => c.id === id);
+
+    // Sincronizar con Google Calendar según el nuevo estado
+    if (nuevoEstado === 'confirmada' || nuevoEstado === 'completada') {
+      if (cita) {
+        const action  = cita.google_event_id ? 'update' : 'create';
+        const eventId = cita.google_event_id ?? undefined;
+        const { data: gcalData } = await gcalSync({ action, cita, eventId });
+        if (gcalData?.eventId) await vincularEventoCalendario(id, gcalData.eventId);
+      }
+    } else if (cita?.google_event_id) {
+      // pendiente / por_confirmar / cancelada → eliminar evento existente
+      await gcalSync({ action: 'delete', eventId: cita.google_event_id });
+      await vincularEventoCalendario(id, null);
+    }
+
     // Auto-enviar correo de confirmación cuando el admin aprueba
     if (nuevoEstado === 'confirmada') {
-      const cita = citas.find(c => c.id === id);
       if (cita?.email && !cita.confirmation_sent_at) {
         const { error } = await sendConfirmedEmail({
           email:    cita.email,
@@ -244,12 +260,19 @@ export default function AdminCitas() {
   }
 
   async function handleConfirmarPago({ pagado, monto }) {
-    const { id } = pagoDialog;
+    const { id, cita } = pagoDialog;
     setPagoDialog(null);
     await updateCita(id, {
       estado:          'completada',
       precio_cobrado:  monto ?? null,
     });
+
+    // Sincronizar con Google Calendar al completar
+    const action  = cita?.google_event_id ? 'update' : 'create';
+    const eventId = cita?.google_event_id ?? undefined;
+    const { data: gcalData } = await gcalSync({ action, cita: { ...cita, estado: 'completada' }, eventId });
+    if (gcalData?.eventId) await vincularEventoCalendario(id, gcalData.eventId);
+
     showToast(pagado && monto != null ? `Cita completada — $${monto} registrados.` : 'Cita completada sin ingreso registrado.');
     load();
   }

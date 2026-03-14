@@ -72,21 +72,29 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
   }
 
   async function syncCalendar(savedCita) {
-    setCalSync('syncing');
-    const action   = isEdit && cita.google_event_id ? 'update' : 'create';
-    const eventId  = cita?.google_event_id ?? undefined;
-    const { data, error: fnError } = await gcalSync({ action, cita: savedCita, eventId });
+    const estadosConEvento = ['confirmada', 'completada'];
+    const eventIdExistente = savedCita.google_event_id ?? cita?.google_event_id ?? null;
+    const tieneEvento      = Boolean(eventIdExistente);
 
-    if (fnError || data?.error) {
-      console.warn('[GCal] No se pudo sincronizar:', fnError ?? data?.error);
-      setCalSync('error');
-      return;
-    }
+    if (estadosConEvento.includes(savedCita.estado)) {
+      // Crear o actualizar evento según si ya existe
+      setCalSync('syncing');
+      const action  = tieneEvento ? 'update' : 'create';
+      const { data, error: fnError } = await gcalSync({ action, cita: savedCita, eventId: eventIdExistente ?? undefined });
+      if (fnError || data?.error) {
+        console.warn('[GCal] No se pudo sincronizar:', fnError ?? data?.error);
+        setCalSync('error');
+        return;
+      }
+      if (data?.eventId) await vincularEventoCalendario(savedCita.id, data.eventId);
+      setCalSync('ok');
 
-    if (data?.eventId) {
-      await vincularEventoCalendario(savedCita.id, data.eventId);
+    } else if (tieneEvento) {
+      // Estado no requiere evento → eliminar del calendario y limpiar DB
+      await gcalSync({ action: 'delete', eventId: eventIdExistente });
+      await vincularEventoCalendario(savedCita.id, null);
     }
-    setCalSync('ok');
+    // pendiente / por_confirmar / cancelada sin evento → no hacer nada
   }
 
   async function handleSubmit(e) {
