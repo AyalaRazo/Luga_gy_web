@@ -52,7 +52,7 @@ const AboutSection = () => (
 
             {/* Floating stat cards */}
             <div className="absolute -top-4 -right-4 bg-white dark:bg-gray-800 rounded-2xl px-4 py-3 shadow-pink-md border border-pink-100 dark:border-gray-700">
-              <div className="font-playfair text-2xl font-bold text-pink-400">5+</div>
+              <div className="font-playfair text-2xl font-bold text-pink-400">2+</div>
               <div className="font-poppins text-xs text-gray-500 dark:text-gray-400">años de experiencia</div>
             </div>
             <div className="absolute -bottom-4 -left-4 bg-white dark:bg-gray-800 rounded-2xl px-4 py-3 shadow-pink-md border border-pink-100 dark:border-gray-700">
