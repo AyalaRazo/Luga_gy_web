@@ -1,6 +1,8 @@
 import React from 'react';
 import { Sparkles, ChevronDown } from 'lucide-react';
 import ElegantButton from '../UI/ElegantButton';
+import { scrollToSection } from '../../lib/scrollTo';
+import FadeIn from '../UI/FadeIn';
 
 const FloatingBadge = ({ icon, label, className }) => (
   <div
@@ -29,7 +31,7 @@ const HeroSection = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[85vh]">
 
           {/* Left: Text content */}
-          <div className="flex flex-col gap-6 text-center lg:text-left">
+          <FadeIn delay={0.1} className="flex flex-col gap-6 text-center lg:text-left">
             {/* Tag */}
             <div className="inline-flex items-center gap-2 bg-pink-100/80 text-pink-600 rounded-full px-4 py-1.5 text-xs font-poppins font-medium tracking-wide w-fit mx-auto lg:mx-0">
               <Sparkles size={14} aria-hidden="true" />
@@ -73,7 +75,7 @@ const HeroSection = () => {
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
               <ElegantButton
                 size="large"
-                onClick={() => document.getElementById('reservar')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => scrollToSection('reservar')}
               >
                 <Sparkles size={16} aria-hidden="true" />
                 RESERVAR CITA
@@ -81,15 +83,15 @@ const HeroSection = () => {
               <ElegantButton
                 variant="secondary"
                 size="large"
-                onClick={() => document.getElementById('servicios')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => scrollToSection('servicios')}
               >
                 VER SERVICIOS
               </ElegantButton>
             </div>
-          </div>
+          </FadeIn>
 
           {/* Right: Visual card */}
-          <div className="relative flex justify-center items-center">
+          <FadeIn delay={0.25} className="relative flex justify-center items-center">
             {/* Main hero image placeholder */}
             <div className="relative w-80 h-96 md:w-96 md:h-[480px] animate-float">
               <div className="w-full h-full rounded-3xl bg-gradient-to-br from-pink-200 via-pink-300 to-pink-400 shadow-pink-lg overflow-hidden">
@@ -125,7 +127,7 @@ const HeroSection = () => {
             <FloatingBadge icon="💅" label="Nails perfectas" className="-top-4 -left-4 animate-gentle-pulse" />
             <FloatingBadge icon="⭐" label="Recomendacion de clientela" className="-bottom-4 -right-4" />
             <FloatingBadge icon="🌸" label="Experiencia premium" className="top-1/2 -right-8 -translate-y-1/2" />
-          </div>
+          </FadeIn>
         </div>
 
         {/* Scroll indicator */}

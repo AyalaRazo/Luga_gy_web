@@ -1,6 +1,7 @@
 import React from 'react';
 import { Clock } from 'lucide-react';
 import ElegantButton from '../UI/ElegantButton';
+import { scrollToSection } from '../../lib/scrollTo';
 
 const categoryColors = {
   pedicure: 'bg-rose-50 text-rose-500 border-rose-100',
@@ -12,9 +13,7 @@ const categoryColors = {
 const ServiceCard = ({ title, description, price, duration, image, icon, category, onSelect }) => {
   const categoryClass = categoryColors[category] || 'bg-pink-50 text-pink-500 border-pink-100';
 
-  const scrollToBooking = () => {
-    document.getElementById('reservar')?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const scrollToBooking = () => scrollToSection('reservar');
 
   return (
     <article

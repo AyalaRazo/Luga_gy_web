@@ -2,6 +2,7 @@ import React from 'react';
 import { Star } from 'lucide-react';
 import SectionTitle from '../UI/SectionTitle';
 import { TikTokIcon, SOCIAL_LINKS } from '../UI/SocialIcons';
+import FadeIn from '../UI/FadeIn';
 
 const testimonials = [
   {
@@ -99,13 +100,15 @@ const TestimonialCard = ({ testimonial }) => (
 const Testimonials = () => (
   <section id="reseñas" className="section-padding bg-pink-50/40 dark:bg-gray-900">
     <div className="container-custom">
-      <SectionTitle
-        title="Lo que dicen nuestras clientas"
-        subtitle="Experiencias reales de mujeres que confían en Luga Gy"
-      />
+      <FadeIn>
+        <SectionTitle
+          title="Lo que dicen nuestras clientas"
+          subtitle="Experiencias reales de mujeres que confían en Luga Gy"
+        />
+      </FadeIn>
 
       {/* Overall rating */}
-      <div className="flex justify-center mb-10">
+      <FadeIn delay={0.1} className="flex justify-center mb-10">
         <div className="bg-white dark:bg-gray-800 rounded-2xl px-8 py-5 shadow-card border border-pink-100 dark:border-gray-700 flex items-center gap-6">
           <div className="text-center">
             <div className="font-playfair text-5xl font-bold text-pink-400">4.8</div>
@@ -118,17 +121,19 @@ const Testimonials = () => (
             <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-1">Clientas satisfechas</p>
           </div>
         </div>
-      </div>
+      </FadeIn>
 
       {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {testimonials.map((t) => (
-          <TestimonialCard key={t.id} testimonial={t} />
+        {testimonials.map((t, i) => (
+          <FadeIn key={t.id} delay={i * 0.08}>
+            <TestimonialCard testimonial={t} />
+          </FadeIn>
         ))}
       </div>
 
       {/* TikTok reviews link */}
-      <div className="text-center mt-10">
+      <FadeIn delay={0.2} className="text-center mt-10">
         <p className="font-poppins text-sm text-gray-400 dark:text-gray-500 mb-3">
           Mirá más reseñas y procesos en nuestro TikTok
         </p>
@@ -141,7 +146,7 @@ const Testimonials = () => (
           <TikTokIcon size={16} />
           {SOCIAL_LINKS.tiktokHandle}
         </a>
-      </div>
+      </FadeIn>
     </div>
   </section>
 );

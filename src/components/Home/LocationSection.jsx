@@ -2,6 +2,7 @@ import React from 'react';
 import { MapPin, Clock, Phone, ExternalLink } from 'lucide-react';
 import { BUSINESS_INFO, SOCIAL_LINKS, WhatsAppIcon } from '../UI/SocialIcons';
 import SectionTitle from '../UI/SectionTitle';
+import FadeIn from '../UI/FadeIn';
 
 const HOURS = [
   { day: 'Lunes – Viernes', hours: '10:00 – 20:00' },
@@ -16,15 +17,17 @@ export default function LocationSection() {
   return (
     <section id="ubicacion" className="section-padding bg-white dark:bg-gray-900">
       <div className="container-custom">
-        <SectionTitle
-          title="¿Dónde estamos?"
-          subtitle="Visítanos en el corazón de Mexicali. Siempre listas para consentirte"
-        />
+        <FadeIn>
+          <SectionTitle
+            title="¿Dónde estamos?"
+            subtitle="Visítanos en el corazón de Mexicali. Siempre listas para consentirte"
+          />
+        </FadeIn>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-stretch">
 
           {/* Mapa */}
-          <div className="lg:col-span-3 rounded-3xl overflow-hidden shadow-lg border border-pink-100 dark:border-gray-700 min-h-72">
+          <FadeIn delay={0.1} className="lg:col-span-3 rounded-3xl overflow-hidden shadow-lg border border-pink-100 dark:border-gray-700 min-h-72">
             <iframe
               title="Ubicación Luga Gy"
               src={MAP_EMBED}
@@ -35,10 +38,10 @@ export default function LocationSection() {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
-          </div>
+          </FadeIn>
 
           {/* Info */}
-          <div className="lg:col-span-2 flex flex-col gap-5">
+          <FadeIn delay={0.2} className="lg:col-span-2 flex flex-col gap-5">
 
             {/* Dirección */}
             <div className="bg-pink-50/60 dark:bg-gray-800 rounded-2xl p-5 flex gap-4">
@@ -108,7 +111,7 @@ export default function LocationSection() {
               </div>
             </div>
 
-          </div>
+          </FadeIn>
         </div>
       </div>
     </section>

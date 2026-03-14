@@ -2,6 +2,8 @@ import React from 'react';
 import { Sparkles, Heart, Award, Clock } from 'lucide-react';
 import SectionTitle from '../UI/SectionTitle';
 import ElegantButton from '../UI/ElegantButton';
+import { scrollToSection } from '../../lib/scrollTo';
+import FadeIn from '../UI/FadeIn';
 
 const values = [
   {
@@ -32,7 +34,7 @@ const AboutSection = () => (
       <div className="grid lg:grid-cols-2 gap-12 items-center">
 
         {/* Visual */}
-        <div className="relative flex justify-center order-last lg:order-first">
+        <FadeIn delay={0.15} className="relative flex justify-center order-last lg:order-first">
           <div className="relative w-72 h-80 md:w-80 md:h-96">
             {/* Main card */}
             <div className="w-full h-full rounded-3xl bg-gradient-to-br from-pink-200 via-pink-300 to-pink-400 shadow-pink-lg flex items-center justify-center">
@@ -58,10 +60,10 @@ const AboutSection = () => (
               <div className="font-poppins text-xs text-gray-500 dark:text-gray-400">clientas felices</div>
             </div>
           </div>
-        </div>
+        </FadeIn>
 
         {/* Content */}
-        <div>
+        <FadeIn delay={0.05}>
           <SectionTitle
             title="Sobre Luga Gy"
             subtitle=""
@@ -93,13 +95,13 @@ const AboutSection = () => (
           </div>
 
           <ElegantButton
-            onClick={() => document.getElementById('reservar')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => scrollToSection('reservar')}
             size="large"
           >
             <Sparkles size={16} aria-hidden="true" />
             QUIERO UNA CITA
           </ElegantButton>
-        </div>
+        </FadeIn>
       </div>
     </div>
   </section>

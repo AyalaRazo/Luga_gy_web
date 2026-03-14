@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import SectionTitle from '../UI/SectionTitle';
+import FadeIn from '../UI/FadeIn';
 
 const gallery = [
   { id: 1, category: 'nails', description: 'Uñas acrílicas diseño francés', emoji: '💅' },
@@ -138,20 +139,26 @@ const GallerySection = () => {
   return (
     <section id="galeria" className="section-padding bg-white dark:bg-gray-900">
       <div className="container-custom">
-        <SectionTitle
-          title="Resultados Reales"
-          subtitle="Antes y después de nuestros tratamientos. La transformación habla por sí sola."
-        />
+        <FadeIn>
+          <SectionTitle
+            title="Resultados Reales"
+            subtitle="Antes y después de nuestros tratamientos. La transformación habla por sí sola."
+          />
+        </FadeIn>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {gallery.map((item) => (
-            <GalleryCard key={item.id} item={item} onClick={openModal} />
+          {gallery.map((item, i) => (
+            <FadeIn key={item.id} delay={i * 0.07}>
+              <GalleryCard item={item} onClick={openModal} />
+            </FadeIn>
           ))}
         </div>
 
-        <p className="text-center font-poppins text-sm text-gray-400 dark:text-gray-500 mt-8">
-          Próximamente: fotos reales de nuestros trabajos
-        </p>
+        <FadeIn delay={0.2} className="text-center mt-8">
+          <p className="font-poppins text-sm text-gray-400 dark:text-gray-500">
+            Próximamente: fotos reales de nuestros trabajos
+          </p>
+        </FadeIn>
       </div>
 
       {selected && (

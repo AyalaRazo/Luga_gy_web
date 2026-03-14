@@ -9,6 +9,14 @@
 
   html {
     scroll-behavior: smooth;
+    /* Compensa el header fijo: móvil ~88px, desktop ~112px */
+    scroll-padding-top: 90px;
+  }
+
+  @media (min-width: 1024px) {
+    html {
+      scroll-padding-top: 115px;
+    }
   }
 
   body {

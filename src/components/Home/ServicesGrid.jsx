@@ -4,6 +4,7 @@ import SectionTitle from '../UI/SectionTitle';
 import { getServiciosPublic } from '../../lib/supabase';
 import { getStorageUrl } from '../../lib/storage';
 import { X, Clock } from 'lucide-react';
+import { scrollToSection } from '../../lib/scrollTo';
 
 const categoryColors = {
   pedicure: 'bg-rose-50 text-rose-500 border-rose-100',
@@ -33,7 +34,7 @@ function ServiceModal({ service, onClose }) {
   const scrollToBooking = () => {
     onClose();
     setTimeout(() => {
-      document.getElementById('reservar')?.scrollIntoView({ behavior: 'smooth' });
+      scrollToSection('reservar');
     }, 200);
   };
 

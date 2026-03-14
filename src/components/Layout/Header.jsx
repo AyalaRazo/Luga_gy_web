@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import ElegantButton from '../UI/ElegantButton';
 import { useTheme } from '../../context/ThemeContext';
+import { scrollToSection } from '../../lib/scrollTo';
 
 const navLinks = [
   { href: '#inicio',    label: 'INICIO'    },
@@ -26,7 +27,7 @@ const Header = () => {
 
   const scrollToReservar = () => {
     setIsMenuOpen(false);
-    document.getElementById('reservar')?.scrollIntoView({ behavior: 'smooth' });
+    scrollToSection('reservar');
   };
 
   return (
@@ -50,6 +51,7 @@ const Header = () => {
               src="/logo.png"
               alt="Luga Gy"
               className="h-16 md:h-20 w-auto object-contain"
+              loading="eager"
             />
           </a>
 

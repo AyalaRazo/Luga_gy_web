@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ExternalLink } from 'lucide-react';
 import SectionTitle from '../UI/SectionTitle';
 import { TikTokIcon, SOCIAL_LINKS } from '../UI/SocialIcons';
+import FadeIn from '../UI/FadeIn';
 
 const videos = [
   {
@@ -44,11 +45,6 @@ const VideoCard = ({ video }) => {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    const el = videoRef.current;
-    if (visible && el) el.play().catch(() => {});
-  }, [visible]);
-
   return (
     <div className="relative group rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300">
       <div ref={videoRef} className="w-full aspect-[9/16] bg-gray-900 relative">
@@ -71,14 +67,16 @@ const VideoCard = ({ video }) => {
 const TikTokFeed = () => (
   <section id="tiktok" className="section-padding bg-gray-950">
     <div className="container-custom">
-      <SectionTitle
-        title="Síguenos en TikTok"
-        subtitle={`${SOCIAL_LINKS.tiktokHandle} — Mira nuestros procesos y resultados en acción`}
-        light
-      />
+      <FadeIn>
+        <SectionTitle
+          title="Síguenos en TikTok"
+          subtitle={`${SOCIAL_LINKS.tiktokHandle} — Mira nuestros procesos y resultados en acción`}
+          light
+        />
+      </FadeIn>
 
       {/* TikTok profile badge */}
-      <div className="flex justify-center mb-10">
+      <FadeIn delay={0.1} className="flex justify-center mb-10">
         <a
           href={SOCIAL_LINKS.tiktok}
           target="_blank"
@@ -89,17 +87,19 @@ const TikTokFeed = () => (
           <span className="font-poppins font-semibold text-sm">{SOCIAL_LINKS.tiktokHandle}</span>
           <ExternalLink size={14} className="text-white/50" aria-hidden="true" />
         </a>
-      </div>
+      </FadeIn>
 
       {/* Videos grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {videos.map((video) => (
-          <VideoCard key={video.id} video={video} />
+        {videos.map((video, i) => (
+          <FadeIn key={video.id} delay={i * 0.08}>
+            <VideoCard video={video} />
+          </FadeIn>
         ))}
       </div>
 
       {/* CTA */}
-      <div className="text-center mt-10">
+      <FadeIn delay={0.2} className="text-center mt-10">
         <a
           href={SOCIAL_LINKS.tiktok}
           target="_blank"
@@ -110,7 +110,7 @@ const TikTokFeed = () => (
           Ver todos los videos en TikTok
           <ExternalLink size={14} aria-hidden="true" />
         </a>
-      </div>
+      </FadeIn>
     </div>
   </section>
 );
