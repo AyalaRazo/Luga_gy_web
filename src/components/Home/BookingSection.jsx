@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, CheckCircle, AlertCircle, Loader } from 'lucide-react';
 import SectionTitle from '../UI/SectionTitle';
 import ElegantButton from '../UI/ElegantButton';
-import { WhatsAppIcon } from '../UI/SocialIcons';
-import { SOCIAL_LINKS, BUSINESS_INFO } from '../UI/SocialIcons';
+import { WhatsAppIcon, SOCIAL_LINKS, BUSINESS_INFO } from '../UI/SocialIcons';
 import { crearCita, getCitasPorFecha, sendBookingEmail, getHorario, getDiasBloqueados, getServiciosPublic } from '../../lib/supabase';
 
 const DIA_KEYS = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
@@ -114,12 +113,6 @@ const BookingSection = () => {
     if (emailError) console.warn('[Booking] Email no enviado:', emailError);
 
     setStatus(ESTADO.SUCCESS);
-
-    // 2. Abrir WhatsApp con la info pre-cargada (confirmación inmediata)
-    const msg = `¡Hola Luga Gy! 😊 Soy ${name || 'una clienta'} y reservé una cita:\n\n📋 *Servicio:* ${service}\n📅 *Fecha:* ${date}\n⏰ *Hora:* ${time}\n\n¿Me confirman la disponibilidad?`;
-    setTimeout(() => {
-      window.open(`${SOCIAL_LINKS.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
-    }, 800);
   };
 
   const resetForm = () => {
@@ -371,10 +364,7 @@ const BookingSection = () => {
                           Guardando...
                         </>
                       ) : (
-                        <>
-                          <WhatsAppIcon size={18} />
-                          RESERVAR CITA
-                        </>
+                        'RESERVAR CITA'
                       )}
                     </ElegantButton>
                   </form>
