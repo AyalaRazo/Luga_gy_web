@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Heart, MapPin, Clock, Phone } from 'lucide-react';
 import { TikTokIcon, InstagramIcon, WhatsAppIcon, FacebookIcon, SOCIAL_LINKS, BUSINESS_INFO } from '../UI/SocialIcons';
+import OptimizedImage from '../UI/OptimizedImage';
 import { getServiciosPublic } from '../../lib/supabase';
 
 const MAX_FOOTER_SERVICES = 6;
@@ -24,7 +25,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="lg:col-span-1">
             <div className="mb-4">
-              <img src="/logo.png" alt="Luga Gy" className="h-14 w-auto object-contain" />
+              <OptimizedImage src="/logo.png" webp="/logo.webp" alt="Luga Gy" width={500} height={500} className="h-14 w-auto object-contain" />
             </div>
             <p className="font-poppins text-sm text-gray-400 leading-relaxed mb-5">
               Especialistas en belleza femenina. Tu lugar de confianza para lucir radiante cada día.

@@ -42,6 +42,9 @@ const BeforeHalf = ({ item, gradient }) =>
         alt={`Antes — ${item.description}`}
         className="w-full h-full object-cover"
         loading="lazy"
+        decoding="async"
+        width={400}
+        height={400}
       />
       <div className="absolute top-2 left-2 bg-black/60 text-white text-xs font-poppins px-2 py-0.5 rounded font-medium">
         ANTES
@@ -66,6 +69,9 @@ const AfterHalf = ({ item, gradient }) =>
         alt={`Después — ${item.description}`}
         className="w-full h-full object-cover"
         loading="lazy"
+        decoding="async"
+        width={400}
+        height={400}
       />
       <div className="absolute top-2 right-2 bg-pink-500 text-white text-xs font-poppins px-2 py-0.5 rounded font-medium">
         DESPUÉS
@@ -141,7 +147,7 @@ const Modal = ({ item, onClose, onPrev, onNext }) => {
           {/* Before */}
           {item.before ? (
             <div className="w-1/2 relative overflow-hidden">
-              <img src={item.before} alt={`Antes — ${item.description}`} className="w-full h-full object-cover" />
+              <img src={item.before} alt={`Antes — ${item.description}`} className="w-full h-full object-cover" loading="lazy" decoding="async" width={560} height={256} />
               <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent py-2 text-center">
                 <p className="font-poppins text-sm font-semibold text-white">ANTES</p>
               </div>
@@ -157,7 +163,7 @@ const Modal = ({ item, onClose, onPrev, onNext }) => {
           {/* After */}
           {item.after ? (
             <div className="w-1/2 relative overflow-hidden">
-              <img src={item.after} alt={`Después — ${item.description}`} className="w-full h-full object-cover" />
+              <img src={item.after} alt={`Después — ${item.description}`} className="w-full h-full object-cover" loading="lazy" decoding="async" width={560} height={256} />
               <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent py-2 text-center">
                 <p className="font-poppins text-sm font-semibold text-white">DESPUÉS</p>
               </div>

@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import OptimizedImage from '../../components/UI/OptimizedImage';
 
 const NAV = [
   { to: '/admin',            label: 'Dashboard',  icon: LayoutDashboard, end: true, adminOnly: true },
@@ -35,7 +36,7 @@ export default function AdminLayout() {
     <aside className={`flex flex-col bg-white dark:bg-gray-800 border-r border-pink-100 dark:border-gray-700 ${mobile ? 'w-72' : 'w-64'} h-full`}>
       {/* Logo */}
       <div className="flex items-center gap-2.5 px-6 py-4 border-b border-pink-50 dark:border-gray-700">
-        <img src="/logo.png" alt="Luga Gy" className="h-10 w-auto object-contain" />
+        <OptimizedImage src="/logo.png" webp="/logo.webp" alt="Luga Gy" width={500} height={500} className="h-10 w-auto object-contain" />
         <span className="font-poppins text-[10px] text-gray-400 dark:text-gray-500 tracking-widest uppercase">Admin</span>
         {mobile && (
           <button onClick={() => setSidebarOpen(false)} className="ml-auto text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer">

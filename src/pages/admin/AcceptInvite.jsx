@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, CheckCircle2, AlertCircle, KeyRound } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import OptimizedImage from '../../components/UI/OptimizedImage';
 
 export default function AcceptInvite() {
   const navigate = useNavigate();
@@ -82,7 +83,7 @@ export default function AcceptInvite() {
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-pink-100 dark:border-gray-700 p-8 max-w-sm w-full">
         {/* Logo */}
         <div className="text-center mb-6">
-          <img src="/logo.png" alt="Luga Gy" className="h-12 w-auto object-contain mx-auto mb-3" />
+          <OptimizedImage src="/logo.png" webp="/logo.webp" alt="Luga Gy" width={500} height={500} className="h-12 w-auto object-contain mx-auto mb-3" eager />
           <h1 className="font-poppins text-xl font-bold text-gray-800 dark:text-gray-100">Establecer contraseña</h1>
           <p className="font-poppins text-sm text-gray-400 dark:text-gray-500 mt-1">
             Elegí una contraseña para acceder al panel.

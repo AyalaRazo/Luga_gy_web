@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { XCircle, Loader, Heart, AlertTriangle } from 'lucide-react';
 import { getCitaByToken, solicitarCancelacion } from '../../lib/supabase';
+import OptimizedImage from '../../components/UI/OptimizedImage';
 
 function formatFecha(fechaStr) {
   if (!fechaStr) return '';
@@ -37,7 +38,7 @@ export default function CancelarCita() {
     <div className="min-h-screen bg-pink-50/60 dark:bg-gray-900 flex flex-col items-center justify-center p-6">
       {/* Logo */}
       <a href="/" className="flex items-center gap-2 mb-10">
-        <img src="/logo.png" alt="Luga Gy" className="h-14 w-auto object-contain" />
+        <OptimizedImage src="/logo.png" webp="/logo.webp" alt="Luga Gy" width={500} height={500} className="h-14 w-auto object-contain" eager />
       </a>
 
       <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-pink-md border border-pink-100 dark:border-gray-700 w-full max-w-md p-8 text-center">

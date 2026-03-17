@@ -163,7 +163,7 @@ export default function AdminServicios() {
                 {/* Image */}
                 <div className="w-full h-36 overflow-hidden rounded-t-2xl bg-pink-50 flex items-center justify-center relative">
                   {s.imagen_url ? (
-                    <img src={getStorageUrl(s.imagen_url)} alt={s.nombre} className="w-full h-full object-cover" />
+                    <img src={getStorageUrl(s.imagen_url)} alt={s.nombre} className="w-full h-full object-cover" loading="lazy" decoding="async" width={400} height={144} />
                   ) : (
                     <div className="flex flex-col items-center gap-1.5 text-pink-200">
                       <ImageOff size={28} />

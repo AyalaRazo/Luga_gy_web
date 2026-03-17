@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import ElegantButton from '../UI/ElegantButton';
+import OptimizedImage from '../UI/OptimizedImage';
 import { useTheme } from '../../context/ThemeContext';
 import { scrollToSection } from '../../lib/scrollTo';
 
@@ -47,11 +48,15 @@ const Header = () => {
             className="flex items-center focus:outline-none focus:ring-2 focus:ring-pink-300 rounded-lg"
             aria-label="Luga Gy - Ir al inicio"
           >
-            <img
+            <OptimizedImage
               src="/logo.png"
+              webp="/logo.webp"
+              webp2x="/logo@2x.webp"
               alt="Luga Gy"
+              width={500}
+              height={500}
               className="h-16 md:h-20 w-auto object-contain"
-              loading="eager"
+              eager
             />
           </a>
 
