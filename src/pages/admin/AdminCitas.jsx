@@ -231,24 +231,6 @@ export default function AdminCitas() {
       await vincularEventoCalendario(id, null);
     }
 
-    // Auto-enviar correo de confirmación cuando el admin aprueba
-    if (nuevoEstado === 'confirmada') {
-      if (cita?.email && !cita.confirmation_sent_at) {
-        const { error } = await sendConfirmedEmail({
-          email:    cita.email,
-          name:     cita.nombre,
-          servicio: cita.servicio,
-          fecha:    cita.fecha,
-          hora:     cita.hora?.slice(0, 5),
-        });
-        if (!error) {
-          await updateCita(id, { confirmation_sent_at: new Date().toISOString() });
-          showToast(`Cita confirmada — correo enviado a ${cita.email}`);
-        } else {
-          showToast('Cita confirmada, pero no se pudo enviar el correo.');
-        }
-      }
-    }
     load();
   }
 
@@ -278,7 +260,7 @@ export default function AdminCitas() {
   }
 
   async function handleSendConfirmation(cita) {
-    if (!cita.email || cita.confirmation_sent_at) return;
+    if (!cita.email) return;
     const { error } = await sendConfirmedEmail({
       email:    cita.email,
       name:     cita.nombre,
@@ -287,7 +269,19 @@ export default function AdminCitas() {
       hora:     cita.hora?.slice(0, 5),
     });
     if (error) { showToast('Error al enviar el correo.'); return; }
-    await updateCita(cita.id, { confirmation_sent_at: new Date().toISOString() });
+
+    const updates = { confirmation_sent_at: new Date().toISOString() };
+
+    // Si estaba en "por_confirmar", cambiar a "confirmada" y sincronizar calendario
+    if (cita.estado === 'por_confirmar') {
+      updates.estado = 'confirmada';
+      const action  = cita.google_event_id ? 'update' : 'create';
+      const eventId = cita.google_event_id ?? undefined;
+      const { data: gcalData } = await gcalSync({ action, cita: { ...cita, estado: 'confirmada' }, eventId });
+      if (gcalData?.eventId) await vincularEventoCalendario(cita.id, gcalData.eventId);
+    }
+
+    await updateCita(cita.id, updates);
     showToast(`Confirmación enviada a ${cita.email}`);
     load();
   }
@@ -507,18 +501,22 @@ export default function AdminCitas() {
                           </div>
                         ) : (
                           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            {c.email && c.estado === 'confirmada' && (
+                            {c.email && (c.estado === 'por_confirmar' || c.estado === 'confirmada') && (
                               <button
                                 onClick={() => handleSendConfirmation(c)}
-                                disabled={!!c.confirmation_sent_at}
+                                disabled={c.estado === 'confirmada' && !!c.confirmation_sent_at}
                                 className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all ${
-                                  c.confirmation_sent_at
+                                  c.estado === 'confirmada' && c.confirmation_sent_at
                                     ? 'text-green-500 bg-green-50 cursor-not-allowed'
                                     : 'text-gray-400 hover:text-green-600 hover:bg-green-50 cursor-pointer'
                                 }`}
-                                title={c.confirmation_sent_at
-                                  ? `Confirmación enviada el ${new Date(c.confirmation_sent_at).toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })}`
-                                  : `Enviar confirmación a ${c.email}`}
+                                title={
+                                  c.estado === 'confirmada' && c.confirmation_sent_at
+                                    ? `Confirmación enviada el ${new Date(c.confirmation_sent_at).toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })}`
+                                    : c.estado === 'por_confirmar'
+                                      ? `Confirmar cita y enviar correo a ${c.email}`
+                                      : `Enviar confirmación a ${c.email}`
+                                }
                               >
                                 <Mail size={14} />
                               </button>
@@ -573,18 +571,29 @@ export default function AdminCitas() {
                   </div>
                   {c.notas && <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mb-3">{c.notas}</p>}
                   <div className="flex gap-2 flex-wrap">
-                    {c.email && c.estado === 'confirmada' && (
+                    {c.email && (c.estado === 'por_confirmar' || c.estado === 'confirmada') && (
                       <button
                         onClick={() => handleSendConfirmation(c)}
-                        disabled={!!c.confirmation_sent_at}
+                        disabled={c.estado === 'confirmada' && !!c.confirmation_sent_at}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-poppins text-xs transition-all ${
-                          c.confirmation_sent_at
+                          c.estado === 'confirmada' && c.confirmation_sent_at
                             ? 'border-green-200 bg-green-50 text-green-600 cursor-not-allowed'
                             : 'border-gray-200 text-gray-600 hover:text-green-600 hover:border-green-200 cursor-pointer'
                         }`}
-                        title={c.confirmation_sent_at ? 'Confirmación ya enviada' : 'Reenviar confirmación'}
+                        title={
+                          c.estado === 'confirmada' && c.confirmation_sent_at
+                            ? 'Confirmación ya enviada'
+                            : c.estado === 'por_confirmar'
+                              ? 'Confirmar cita y enviar correo'
+                              : 'Enviar confirmación'
+                        }
                       >
-                        <Mail size={12} /> {c.confirmation_sent_at ? 'Enviado' : 'Reenviar'}
+                        <Mail size={12} />
+                        {c.estado === 'confirmada' && c.confirmation_sent_at
+                          ? 'Enviado'
+                          : c.estado === 'por_confirmar'
+                            ? 'Confirmar y enviar'
+                            : 'Enviar correo'}
                       </button>
                     )}
                     <button

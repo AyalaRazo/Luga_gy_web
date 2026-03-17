@@ -67,6 +67,17 @@ export async function sendConfirmedEmail({ email, name, servicio, fecha, hora })
   return { data, error: null };
 }
 
+export async function sendAdminNotification({ name, servicio, fecha, hora, email, telefono }) {
+  const res = await fetch(EDGE_FN_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'admin_notification', name, servicio, fecha, hora, email: email ?? '', telefono: telefono ?? '' }),
+  });
+  const data = await res.json().catch(() => null);
+  if (!res.ok) return { data: null, error: data };
+  return { data, error: null };
+}
+
 /**
  * Obtiene todas las citas de una fecha (para ver disponibilidad).
  * @param {string} fecha — formato YYYY-MM-DD
@@ -162,7 +173,7 @@ export async function deleteServicio(id) {
 export async function getCitaByToken(token) {
   const { data, error } = await supabase
     .from('citas')
-    .select('id, nombre, servicio, fecha, hora, estado')
+    .select('id, nombre, servicio, fecha, hora, estado, email, telefono')
     .eq('confirmation_token', token)
     .single();
   return { data, error };

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CheckCircle2, XCircle, Loader, Heart } from 'lucide-react';
-import { getCitaByToken, confirmarCita } from '../../lib/supabase';
+import { getCitaByToken, confirmarCita, sendAdminNotification } from '../../lib/supabase';
 
 function formatFecha(fechaStr) {
   if (!fechaStr) return '';
@@ -28,6 +28,19 @@ export default function ConfirmarCita() {
     setStatus('confirming');
     const { error } = await confirmarCita(token);
     if (error) { setStatus('invalid'); return; }
+
+    // Notificar al admin que el cliente confirmó
+    if (cita) {
+      sendAdminNotification({
+        name:     cita.nombre,
+        servicio: cita.servicio,
+        fecha:    cita.fecha,
+        hora:     cita.hora?.slice(0, 5),
+        email:    cita.email ?? '',
+        telefono: cita.telefono ?? '',
+      }).catch(() => {}); // no bloquear aunque falle
+    }
+
     setStatus('done');
   }
 
