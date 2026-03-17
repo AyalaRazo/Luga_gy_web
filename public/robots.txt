@@ -1,4 +1,38 @@
+# Luga Gy — lugagy.com
+# Traditional search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# AI search engines — allow citation and indexing
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+# Block admin panel from indexing
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /confirmar
+Disallow: /cancelar
 
 Sitemap: https://lugagy.com/sitemap.xml
