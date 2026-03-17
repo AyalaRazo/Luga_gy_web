@@ -10,7 +10,7 @@ import React from 'react';
  *   alt       — texto alternativo (siempre requerido)
  *   width     — ancho intrínseco para evitar CLS
  *   height    — alto intrínseco para evitar CLS
- *   eager     — si true usa loading="eager" + fetchpriority="high" (above the fold)
+ *   eager     — si true usa loading="eager" + fetchPriority="high" (above the fold)
  *   className — clases CSS adicionales
  *   sizes     — atributo sizes para imágenes responsive
  */
@@ -27,7 +27,7 @@ export default function OptimizedImage({
   ...rest
 }) {
   const loading        = eager ? 'eager'  : 'lazy';
-  const fetchpriority  = eager ? 'high'   : 'low';
+  const fetchPriority  = eager ? 'high'   : 'low';
   const decoding       = eager ? 'sync'   : 'async';
 
   const imgEl = (
@@ -37,7 +37,7 @@ export default function OptimizedImage({
       width={width}
       height={height}
       loading={loading}
-      fetchpriority={fetchpriority}
+      fetchPriority={fetchPriority}
       decoding={decoding}
       className={className}
       sizes={sizes}
