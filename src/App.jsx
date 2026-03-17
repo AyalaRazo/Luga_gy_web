@@ -67,8 +67,8 @@ function App() {
             <Route path="/" element={<PublicSite />} />
 
             {/* Confirmación / Cancelación pública */}
-            <Route path="/cita/confirmar" element={<ConfirmarCita />} />
-            <Route path="/cita/cancelar"  element={<CancelarCita />} />
+            <Route path="/confirmar" element={<ConfirmarCita />} />
+            <Route path="/cancelar"  element={<CancelarCita />} />
 
             {/* Accept invite (public — sets password after email invite) */}
             <Route path="/admin/accept-invite" element={<AcceptInvite />} />

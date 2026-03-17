@@ -171,34 +171,25 @@ export async function deleteServicio(id) {
 // ─── Confirmación / Cancelación pública (por token) ──────────────────────────
 
 export async function getCitaByToken(token) {
-  const { data, error } = await supabase
-    .from('citas')
-    .select('id, nombre, servicio, fecha, hora, estado, email, telefono')
-    .eq('confirmation_token', token)
-    .single();
-  return { data, error };
+  const { data, error } = await supabase.rpc('get_cita_by_token', { p_token: token });
+  // rpc returns an array; grab the first row
+  const row = Array.isArray(data) ? data[0] : data;
+  return { data: row ?? null, error: row ? null : (error ?? { message: 'No encontrada' }) };
 }
 
 export async function confirmarCita(token) {
-  const { data, error } = await supabase
-    .from('citas')
-    .update({ estado: 'por_confirmar' })
-    .eq('confirmation_token', token)
-    .eq('estado', 'pendiente')
-    .select('id, estado')
-    .single();
-  return { data, error };
+  const { data, error } = await supabase.rpc('confirmar_cita_publica', { p_token: token });
+  const row = Array.isArray(data) ? data[0] : data;
+  return { data: row ?? null, error: row ? null : (error ?? { message: 'No se pudo confirmar' }) };
 }
 
 export async function solicitarCancelacion(token, motivo = '') {
-  const { data, error } = await supabase
-    .from('citas')
-    .update({ estado: 'solicitud_cancelacion', cancel_reason: motivo || null })
-    .eq('confirmation_token', token)
-    .in('estado', ['pendiente', 'confirmada'])
-    .select('id, estado')
-    .single();
-  return { data, error };
+  const { data, error } = await supabase.rpc('solicitar_cancelacion_publica', {
+    p_token: token,
+    p_motivo: motivo || null,
+  });
+  const row = Array.isArray(data) ? data[0] : data;
+  return { data: row ?? null, error: row ? null : (error ?? { message: 'No se pudo cancelar' }) };
 }
 
 export async function resolverCancelacion(id, accion) {
