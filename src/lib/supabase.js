@@ -44,12 +44,13 @@ export async function crearCita(cita) {
 }
 
 const EDGE_FN_URL = 'https://xewcrgwgzmrsuzhqjpwq.supabase.co/functions/v1/send-booking-email';
+const SITE_URL    = import.meta.env.VITE_SITE_URL ?? 'https://luga-gy-web.vercel.app';
 
 export async function sendBookingEmail({ email, name, servicio, fecha, hora, token, telefono }) {
   const res = await fetch(EDGE_FN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type: 'booking', email, name, servicio, fecha, hora, token, telefono, siteUrl: window.location.origin }),
+    body: JSON.stringify({ type: 'booking', email, name, servicio, fecha, hora, token, telefono, siteUrl: SITE_URL }),
   });
   const data = await res.json().catch(() => null);
   if (!res.ok) return { data: null, error: data };
