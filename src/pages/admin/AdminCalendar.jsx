@@ -137,9 +137,11 @@ function SlotListPanel({ hora, fecha, citas, onSelectCita, onClose }) {
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-pink-200 dark:hover:border-pink-800 hover:bg-pink-50/50 dark:hover:bg-pink-900/20 transition-all cursor-pointer text-left group">
               {/* Color dot */}
               <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${
-                c.estado === 'confirmada' ? 'bg-green-500' :
-                c.estado === 'completada' ? 'bg-purple-400' :
-                c.estado === 'cancelada'  ? 'bg-gray-300'  : 'bg-amber-400'
+                c.estado === 'confirmada'            ? 'bg-green-500'  :
+                c.estado === 'por_confirmar'         ? 'bg-blue-400'   :
+                c.estado === 'completada'            ? 'bg-purple-400' :
+                c.estado === 'cancelada'             ? 'bg-gray-300'   :
+                c.estado === 'solicitud_cancelacion' ? 'bg-red-400'    : 'bg-amber-400'
               }`} />
               <div className="flex-1 min-w-0">
                 <p className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">{c.nombre}</p>
@@ -570,10 +572,11 @@ export default function AdminCalendar() {
       {/* Legend */}
       <div className="shrink-0 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 px-4 py-2 flex items-center gap-4 flex-wrap">
         {[
-          { label: 'Pendiente',  cls: 'bg-amber-400'  },
-          { label: 'Confirmada', cls: 'bg-green-500'  },
-          { label: 'Completada', cls: 'bg-purple-400' },
-          { label: 'Múltiples',  cls: 'bg-pink-500'   },
+          { label: 'Pendiente',     cls: 'bg-amber-400'  },
+          { label: 'Por confirmar', cls: 'bg-blue-400'   },
+          { label: 'Confirmada',    cls: 'bg-green-500'  },
+          { label: 'Completada',    cls: 'bg-purple-400' },
+          { label: 'Múltiples',     cls: 'bg-pink-500'   },
         ].map(({ label, cls }) => (
           <div key={label} className="flex items-center gap-1.5">
             <div className={`w-2.5 h-2.5 rounded-sm ${cls}`} />
