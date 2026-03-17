@@ -154,7 +154,7 @@ export default function AdminSettings() {
           <div>
             <h2 className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100">Email de notificaciones</h2>
             <p className="font-poppins text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
-              Cuando un cliente reserve una cita, recibirás un aviso en este correo (vía MailerLite).
+              Cuando un cliente reserve una cita, recibirás un aviso en este correo (vía Resend).
             </p>
           </div>
         </div>
