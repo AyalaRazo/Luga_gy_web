@@ -27,8 +27,9 @@ const AdminDashboard  = lazy(() => import('./pages/admin/AdminDashboard'));
 const AdminCitas      = lazy(() => import('./pages/admin/AdminCitas'));
 const AdminSettings   = lazy(() => import('./pages/admin/AdminSettings'));
 const AdminCalendar   = lazy(() => import('./pages/admin/AdminCalendar'));
-const AdminServicios  = lazy(() => import('./pages/admin/AdminServicios'));
-const AdminIngresos   = lazy(() => import('./pages/admin/AdminIngresos'));
+const AdminServicios   = lazy(() => import('./pages/admin/AdminServicios'));
+const AdminPromociones = lazy(() => import('./pages/admin/AdminPromociones'));
+const AdminIngresos    = lazy(() => import('./pages/admin/AdminIngresos'));
 const AdminHorario    = lazy(() => import('./pages/admin/AdminHorario'));
 const AdminClientas   = lazy(() => import('./pages/admin/AdminClientas'));
 const AdminUsuarios   = lazy(() => import('./pages/admin/AdminUsuarios'));
@@ -88,8 +89,9 @@ function App() {
               <Route index element={<AdminGuard><AdminDashboard /></AdminGuard>} />
               <Route path="citas" element={<AdminCitas />} />
               <Route path="calendario" element={<AdminCalendar />} />
-              <Route path="servicios"  element={<AdminGuard><AdminServicios /></AdminGuard>} />
-              <Route path="ingresos"   element={<AdminGuard><AdminIngresos /></AdminGuard>} />
+              <Route path="servicios"   element={<AdminGuard><AdminServicios /></AdminGuard>} />
+              <Route path="promociones" element={<AdminGuard><AdminPromociones /></AdminGuard>} />
+              <Route path="ingresos"    element={<AdminGuard><AdminIngresos /></AdminGuard>} />
               <Route path="horario"    element={<AdminGuard><AdminHorario /></AdminGuard>} />
               <Route path="clientas"   element={<AdminClientas />} />
               <Route path="usuarios"   element={<AdminGuard><AdminUsuarios /></AdminGuard>} />

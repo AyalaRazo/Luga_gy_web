@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock } from 'lucide-react';
+import { Clock, Tag } from 'lucide-react';
 import ElegantButton from '../UI/ElegantButton';
 import { scrollToSection } from '../../lib/scrollTo';
 
@@ -10,7 +10,7 @@ const categoryColors = {
   brows: 'bg-amber-50 text-amber-600 border-amber-100',
 };
 
-const ServiceCard = ({ title, description, price, duration, image, icon, category, onSelect }) => {
+const ServiceCard = ({ title, description, price, precioFinal, promoActiva, duration, image, icon, category, onSelect }) => {
   const categoryClass = categoryColors[category] || 'bg-pink-50 text-pink-500 border-pink-100';
 
   const scrollToBooking = () => scrollToSection('reservar');
@@ -18,7 +18,7 @@ const ServiceCard = ({ title, description, price, duration, image, icon, categor
   return (
     <article
       className="card-base dark:bg-gray-800 group overflow-hidden cursor-pointer flex flex-col h-full"
-      onClick={() => onSelect?.({ title, description, price, duration, image, category })}
+      onClick={() => onSelect?.({ title, description, price, precioFinal, promoActiva, duration, image, category })}
     >
       {/* Image */}
       <div className="relative h-52 overflow-hidden bg-gradient-to-br from-pink-100 to-pink-200 shrink-0">
@@ -44,6 +44,16 @@ const ServiceCard = ({ title, description, price, duration, image, icon, categor
         <div className={`absolute top-3 left-3 border rounded-full px-2.5 py-0.5 text-xs font-poppins font-medium ${categoryClass}`}>
           {category.charAt(0).toUpperCase() + category.slice(1)}
         </div>
+
+        {/* Promo badge */}
+        {promoActiva && (
+          <div className="absolute bottom-3 left-3 bg-pink-500 text-white rounded-full px-2.5 py-0.5 text-xs font-poppins font-bold shadow-md flex items-center gap-1">
+            <Tag size={10} aria-hidden="true" />
+            {promoActiva.tipo_descuento === 'porcentaje'
+              ? `${promoActiva.valor_descuento}% OFF`
+              : 'Precio especial'}
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -59,8 +69,13 @@ const ServiceCard = ({ title, description, price, duration, image, icon, categor
         </p>
 
         <div className="flex items-center justify-between mt-auto pt-3 border-t border-pink-50 dark:border-gray-700">
-          <div className="flex items-baseline gap-0.5">
-            <span className="font-great-vibes text-3xl text-pink-400 leading-none">${price}</span>
+          <div className="flex items-baseline gap-1.5">
+            {promoActiva && (
+              <span className="font-poppins text-sm text-gray-400 line-through leading-none">${price}</span>
+            )}
+            <span className="font-great-vibes text-3xl text-pink-400 leading-none">
+              ${promoActiva ? precioFinal : price}
+            </span>
           </div>
           <ElegantButton variant="secondary" size="small" onClick={scrollToBooking}>
             RESERVAR

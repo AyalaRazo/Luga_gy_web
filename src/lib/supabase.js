@@ -528,6 +528,51 @@ export async function getCitasDeCliente(email, nombre) {
   return { data, error };
 }
 
+// ─── Promociones ─────────────────────────────────────────────────────────────
+
+export async function getPromocionesPublic() {
+  const { data, error } = await supabase
+    .from('promociones')
+    .select('*')
+    .eq('activo', true)
+    .order('created_at', { ascending: false });
+  return { data, error };
+}
+
+export async function getPromocionesAdmin() {
+  const { data, error } = await supabase
+    .from('promociones')
+    .select('*')
+    .order('created_at', { ascending: false });
+  return { data, error };
+}
+
+export async function createPromocion(campos) {
+  const { data, error } = await supabase
+    .from('promociones')
+    .insert([campos])
+    .select()
+    .single();
+  return { data, error };
+}
+
+export async function updatePromocion(id, campos) {
+  const { data, error } = await supabase
+    .from('promociones')
+    .update({ ...campos, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+  return { data, error };
+}
+
+export async function deletePromocion(id) {
+  const { error } = await supabase.from('promociones').delete().eq('id', id);
+  return { error };
+}
+
+// ─── Citas (admin) ────────────────────────────────────────────────────────────
+
 export async function crearCitaAdmin(cita) {
   const { data, error } = await supabase
     .from('citas')

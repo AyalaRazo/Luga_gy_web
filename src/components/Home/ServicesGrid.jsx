@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ServiceCard from './ServiceCard';
 import SectionTitle from '../UI/SectionTitle';
-import { getServiciosPublic } from '../../lib/supabase';
+import { getServiciosPublic, getPromocionesPublic } from '../../lib/supabase';
+import { promosParaHoy, calcularPrecioEfectivo } from '../../lib/promociones';
 import { getStorageUrl } from '../../lib/storage';
-import { X, Clock } from 'lucide-react';
+import { X, Clock, Tag } from 'lucide-react';
 import { scrollToSection } from '../../lib/scrollTo';
 
 const categoryColors = {
@@ -89,7 +90,14 @@ function ServiceModal({ service, onClose }) {
           <div className="flex items-center justify-between pt-4 border-t border-pink-50 dark:border-gray-700">
             <div>
               <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mb-0.5">Precio</p>
-              <span className="font-great-vibes text-4xl text-pink-400 leading-none">${service.price}</span>
+              {service.promoActiva ? (
+                <div className="flex items-baseline gap-2">
+                  <span className="font-poppins text-sm text-gray-400 line-through">${service.price}</span>
+                  <span className="font-great-vibes text-4xl text-pink-400 leading-none">${service.precioFinal}</span>
+                </div>
+              ) : (
+                <span className="font-great-vibes text-4xl text-pink-400 leading-none">${service.price}</span>
+              )}
             </div>
             <button
               onClick={scrollToBooking}
@@ -116,11 +124,15 @@ const FALLBACK = [
   { title: 'Spa de Pies Completo',    description: 'Pedicure premium con exfoliación, mascarilla, hidratación, esmaltado y masaje de piernas.',                                  price: '550', duration: 75,  image: null, category: 'pedicure' },
 ];
 
-function dbToCard(s) {
+function dbToCard(s, promosHoy = []) {
+  const { precioFinal, promo } = calcularPrecioEfectivo(Number(s.precio), promosHoy, s.id);
   return {
+    id:          s.id,
     title:       s.nombre,
     description: s.descripcion ?? '',
     price:       String(Math.round(s.precio)),
+    precioFinal: promo ? String(precioFinal) : null,
+    promoActiva: promo ?? null,
     duration:    s.duracion,
     image:       getStorageUrl(s.imagen_url) ?? null,
     category:    (s.categoria ?? 'general').toLowerCase(),
@@ -132,16 +144,20 @@ const ServicesGrid = () => {
   const [activeCategory,  setActiveCategory]  = useState('Todos');
   const [categories,      setCategories]      = useState(['Todos', 'Pedicure', 'Uñas', 'Pestañas', 'Cejas']);
   const [selected,        setSelected]        = useState(null);
+  const [promosHoy,       setPromosHoy]       = useState([]);
 
   useEffect(() => {
-    getServiciosPublic().then(({ data }) => {
-      if (!data?.length) return;
-      const cards = data.map(dbToCard);
-      setServices(cards);
-      // Build unique category list in order
-      const cats = ['Todos', ...new Set(data.map(s => s.categoria))];
-      setCategories(cats);
-    });
+    Promise.all([getServiciosPublic(), getPromocionesPublic()]).then(
+      ([{ data: svcs }, { data: promos }]) => {
+        const hoy = promosParaHoy(promos ?? []);
+        setPromosHoy(hoy);
+        if (!svcs?.length) return;
+        const cards = svcs.map(s => dbToCard(s, hoy));
+        setServices(cards);
+        const cats = ['Todos', ...new Set(svcs.map(s => s.categoria))];
+        setCategories(cats);
+      }
+    );
   }, []);
 
   const filtered =
@@ -156,6 +172,16 @@ const ServicesGrid = () => {
           title="Nuestros Servicios"
           subtitle="Descubre todo lo que tenemos para consentirte y resaltar tu belleza natural"
         />
+
+        {/* Promo banner */}
+        {promosHoy.length > 0 && (
+          <div className="flex items-center gap-2.5 bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800/50 rounded-2xl px-5 py-3 mb-8">
+            <Tag size={15} className="text-pink-500 shrink-0" />
+            <p className="font-poppins text-sm text-pink-700 dark:text-pink-300">
+              <strong>¡Hoy tenemos promociones activas!</strong> Revisa los servicios marcados con descuento.
+            </p>
+          </div>
+        )}
 
         {/* Category filters */}
         <div className="flex flex-wrap justify-center gap-2 mb-10" role="group" aria-label="Filtrar por categoría">

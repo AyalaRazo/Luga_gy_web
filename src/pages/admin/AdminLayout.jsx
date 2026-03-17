@@ -3,7 +3,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, CalendarDays, Calendar, LogOut,
   Menu, X, ChevronRight, Settings, Scissors, TrendingUp, Clock, Users, UserCog, ExternalLink,
-  Sun, Moon,
+  Sun, Moon, Tag,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -14,8 +14,9 @@ const NAV = [
   { to: '/admin/citas',      label: 'Citas',       icon: CalendarDays                               },
   { to: '/admin/clientas',   label: 'Clientas',    icon: Users                                      },
   { to: '/admin/calendario', label: 'Calendario',  icon: Calendar                                   },
-  { to: '/admin/servicios',  label: 'Servicios',   icon: Scissors,        adminOnly: true           },
-  { to: '/admin/ingresos',   label: 'Ingresos',    icon: TrendingUp,      adminOnly: true           },
+  { to: '/admin/servicios',   label: 'Servicios',   icon: Scissors,  adminOnly: true },
+  { to: '/admin/promociones', label: 'Promociones', icon: Tag,       adminOnly: true },
+  { to: '/admin/ingresos',    label: 'Ingresos',    icon: TrendingUp, adminOnly: true },
   { to: '/admin/horario',    label: 'Horario',     icon: Clock,           adminOnly: true           },
   { to: '/admin/usuarios',   label: 'Usuarios',    icon: UserCog,         adminOnly: true           },
   { to: '/admin/settings',   label: 'Ajustes',     icon: Settings,        superAdminOnly: true      },
