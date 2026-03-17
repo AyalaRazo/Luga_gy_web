@@ -4,18 +4,7 @@ import SectionTitle from '../UI/SectionTitle';
 import ElegantButton from '../UI/ElegantButton';
 import { WhatsAppIcon } from '../UI/SocialIcons';
 import { SOCIAL_LINKS, BUSINESS_INFO } from '../UI/SocialIcons';
-import { crearCita, getCitasPorFecha, sendBookingEmail, getHorario, getDiasBloqueados } from '../../lib/supabase';
-
-const serviceOptions = [
-  'Pedicure Spa',
-  'Manicure Gel',
-  'Uñas Acrílicas',
-  'Extensiones de Pestañas',
-  'Lifting de Pestañas',
-  'Diseño de Cejas',
-  'Laminado de Cejas',
-  'Spa de Pies Completo',
-];
+import { crearCita, getCitasPorFecha, sendBookingEmail, getHorario, getDiasBloqueados, getServiciosPublic } from '../../lib/supabase';
 
 const DIA_KEYS = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
 
@@ -46,22 +35,26 @@ const BookingSection = () => {
   const [errorMsg, setErrorMsg]       = useState('');
   const [bookedSlots, setBookedSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
-  const [horario,       setHorario]   = useState(null);
+  const [horario,        setHorario]        = useState(null);
   const [diasBloqueados, setDiasBloqueados] = useState([]);
   const [availableSlots, setAvailableSlots] = useState([]);
-  const [dateBlocked,   setDateBlocked]     = useState(false);
+  const [dateBlocked,    setDateBlocked]    = useState(false);
+  const [serviceOptions, setServiceOptions] = useState([]);
 
   const todayISO = (() => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   })();
 
-  // Cargar horario y días bloqueados al montar
+  // Cargar horario, días bloqueados y servicios activos al montar
   useEffect(() => {
-    Promise.all([getHorario(), getDiasBloqueados()]).then(([{ data: h }, { data: dias }]) => {
-      if (h) setHorario(h);
-      setDiasBloqueados((dias ?? []).map(d => d.fecha));
-    });
+    Promise.all([getHorario(), getDiasBloqueados(), getServiciosPublic()]).then(
+      ([{ data: h }, { data: dias }, { data: svcs }]) => {
+        if (h) setHorario(h);
+        setDiasBloqueados((dias ?? []).map(d => d.fecha));
+        setServiceOptions((svcs ?? []).map(s => s.nombre));
+      }
+    );
   }, []);
 
   // Cuando cambia la fecha: calcular slots disponibles según horario + días bloqueados
@@ -271,9 +264,12 @@ const BookingSection = () => {
                         value={service}
                         onChange={(e) => setService(e.target.value)}
                         required
-                        className="w-full px-4 py-3 rounded-xl border border-pink-200 dark:border-gray-600 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-800 transition-colors cursor-pointer"
+                        disabled={serviceOptions.length === 0}
+                        className="w-full px-4 py-3 rounded-xl border border-pink-200 dark:border-gray-600 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-800 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        <option value="">Elige un servicio...</option>
+                        <option value="">
+                          {serviceOptions.length === 0 ? 'Cargando servicios…' : 'Elige un servicio...'}
+                        </option>
                         {serviceOptions.map((s) => (
                           <option key={s} value={s}>{s}</option>
                         ))}
