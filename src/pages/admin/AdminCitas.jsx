@@ -12,6 +12,8 @@ function isAuthErr(e) { return AUTH_ERRS.some(k => String(e?.message ?? e?.code 
 import CitaStatusBadge from '../../components/Admin/CitaStatusBadge';
 import CitaModal from '../../components/Admin/CitaModal';
 import Pagination from '../../components/Admin/Pagination';
+import CitaFlowGuide from '../../components/Admin/CitaFlowGuide';
+import Tooltip from '../../components/UI/Tooltip';
 
 const ESTADOS_FILTER = ['todos', 'pendiente', 'por_confirmar', 'confirmada', 'completada', 'cancelada', 'solicitud_cancelacion'];
 
@@ -337,22 +339,29 @@ export default function AdminCitas() {
           </p>
         </div>
         <div className="flex gap-3">
-          <button
-            onClick={load}
-            disabled={loading}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-500 dark:text-gray-400 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-all cursor-pointer"
-          >
-            <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
-          </button>
-          <button
-            onClick={() => setModal({})}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-poppins text-sm font-semibold transition-all cursor-pointer shadow-pink-sm"
-          >
-            <Plus size={16} />
-            Nueva cita
-          </button>
+          <Tooltip content="Actualizar lista de citas" position="bottom">
+            <button
+              onClick={load}
+              disabled={loading}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-500 dark:text-gray-400 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-all cursor-pointer"
+            >
+              <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
+            </button>
+          </Tooltip>
+          <Tooltip content="Agregar cita manualmente (sin pasar por el formulario web)" position="bottom" maxWidth="max-w-[180px]">
+            <button
+              onClick={() => setModal({})}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-poppins text-sm font-semibold transition-all cursor-pointer shadow-pink-sm"
+            >
+              <Plus size={16} />
+              Nueva cita
+            </button>
+          </Tooltip>
         </div>
       </div>
+
+      {/* Flow guide */}
+      <CitaFlowGuide />
 
       {/* Filters */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-4 mb-5 flex flex-col sm:flex-row gap-3">
@@ -502,39 +511,46 @@ export default function AdminCitas() {
                         ) : (
                           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             {c.email && (c.estado === 'por_confirmar' || c.estado === 'confirmada') && (
-                              <button
-                                onClick={() => handleSendConfirmation(c)}
-                                disabled={c.estado === 'confirmada' && !!c.confirmation_sent_at}
-                                className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all ${
+                              <Tooltip
+                                content={
                                   c.estado === 'confirmada' && c.confirmation_sent_at
-                                    ? 'text-green-500 bg-green-50 cursor-not-allowed'
-                                    : 'text-gray-400 hover:text-green-600 hover:bg-green-50 cursor-pointer'
-                                }`}
-                                title={
-                                  c.estado === 'confirmada' && c.confirmation_sent_at
-                                    ? `Confirmación enviada el ${new Date(c.confirmation_sent_at).toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })}`
+                                    ? `Correo enviado el ${new Date(c.confirmation_sent_at).toLocaleDateString('es-MX', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })}`
                                     : c.estado === 'por_confirmar'
-                                      ? `Confirmar cita y enviar correo a ${c.email}`
-                                      : `Enviar confirmación a ${c.email}`
+                                      ? `La clienta confirmó por email. Enviar correo de confirmación final a ${c.email}`
+                                      : `Enviar correo de confirmación a ${c.email}`
                                 }
+                                position="top"
+                                maxWidth="max-w-[200px]"
                               >
-                                <Mail size={14} />
-                              </button>
+                                <button
+                                  onClick={() => handleSendConfirmation(c)}
+                                  disabled={c.estado === 'confirmada' && !!c.confirmation_sent_at}
+                                  className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all ${
+                                    c.estado === 'confirmada' && c.confirmation_sent_at
+                                      ? 'text-green-500 bg-green-50 cursor-not-allowed'
+                                      : 'text-gray-400 hover:text-green-600 hover:bg-green-50 cursor-pointer'
+                                  }`}
+                                >
+                                  <Mail size={14} />
+                                </button>
+                              </Tooltip>
                             )}
-                            <button
-                              onClick={() => setModal({ cita: c })}
-                              className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-pink-500 hover:bg-pink-50 transition-all cursor-pointer"
-                              title="Editar"
-                            >
-                              <Pencil size={14} />
-                            </button>
-                            <button
-                              onClick={() => setConfirm({ id: c.id, nombre: c.nombre })}
-                              className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all cursor-pointer"
-                              title="Eliminar"
-                            >
-                              <Trash2 size={14} />
-                            </button>
+                            <Tooltip content="Editar cita" position="top">
+                              <button
+                                onClick={() => setModal({ cita: c })}
+                                className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-pink-500 hover:bg-pink-50 transition-all cursor-pointer"
+                              >
+                                <Pencil size={14} />
+                              </button>
+                            </Tooltip>
+                            <Tooltip content="Eliminar cita" position="top">
+                              <button
+                                onClick={() => setConfirm({ id: c.id, nombre: c.nombre })}
+                                className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all cursor-pointer"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </Tooltip>
                           </div>
                         )}
                       </td>
