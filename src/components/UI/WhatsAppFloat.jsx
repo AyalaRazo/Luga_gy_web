@@ -50,7 +50,7 @@ const WhatsAppFloat = () => {
 
       {/* FAB button */}
       <a
-        href={`${SOCIAL_LINKS.whatsapp}?text=Hola%20Luga%20Gy%21%20Quiero%20consultar%20sobre%20sus%20servicios.`}
+        href={`${SOCIAL_LINKS.whatsapp}?text=Hola%20Luga%20Gy%21%20Quiero%20reservar%20una%20cita.`}
         target="_blank"
         rel="noopener noreferrer"
         className="w-14 h-14 bg-green-500 hover:bg-green-600 active:bg-green-700 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2"
