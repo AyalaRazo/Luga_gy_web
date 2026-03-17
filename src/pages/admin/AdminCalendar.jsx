@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus, RefreshCw, CalendarDays, X, Pencil, Mail, Phone, Clock, Tag, FileText, DollarSign, Users, ChevronRight as Arrow } from 'lucide-react';
-import { getCitasRango } from '../../lib/supabase';
+import { ChevronLeft, ChevronRight, Plus, RefreshCw, CalendarDays, X, Pencil, Mail, Phone, Clock, Tag, FileText, DollarSign, Users, ChevronRight as Arrow, Loader } from 'lucide-react';
+import { getCitasRango, sendConfirmedEmail, updateCita, gcalSync, vincularEventoCalendario } from '../../lib/supabase';
 import CitaModal from '../../components/Admin/CitaModal';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -158,8 +158,15 @@ function SlotListPanel({ hora, fecha, citas, onSelectCita, onClose }) {
 }
 
 // ─── Panel: detalle de una cita ───────────────────────────────────────────────
-function CitaDetail({ cita, onClose, onEdit, onBack }) {
+function CitaDetail({ cita, onClose, onEdit, onBack, onSendConfirmation, sendingEmail }) {
   const estado = cita.estado ?? 'pendiente';
+
+  const showMailBtn = cita.email && (
+    estado === 'por_confirmar' ||
+    (estado === 'confirmada' && !cita.confirmation_sent_at)
+  );
+  const mailSent = cita.email && estado === 'confirmada' && cita.confirmation_sent_at;
+
   return (
     <Overlay onClose={onClose}>
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden">
@@ -198,12 +205,30 @@ function CitaDetail({ cita, onClose, onEdit, onBack }) {
         </div>
 
         {/* Actions */}
-        <div className="px-6 pb-6 flex gap-2">
+        <div className="px-6 pb-6 flex gap-2 flex-wrap">
           {onBack && (
             <button onClick={onBack}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all cursor-pointer">
+              className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all cursor-pointer">
               <ChevronLeft size={14} /> Volver
             </button>
+          )}
+          {showMailBtn && (
+            <button
+              onClick={() => onSendConfirmation(cita)}
+              disabled={sendingEmail}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-green-500 hover:bg-green-600 disabled:bg-green-300 text-white font-poppins text-sm font-semibold transition-all cursor-pointer"
+              title={estado === 'por_confirmar' ? `Confirmar cita y enviar correo a ${cita.email}` : `Enviar confirmación a ${cita.email}`}
+            >
+              {sendingEmail
+                ? <Loader size={14} className="animate-spin" />
+                : <Mail size={14} />}
+              {estado === 'por_confirmar' ? 'Confirmar y enviar correo' : 'Enviar correo'}
+            </button>
+          )}
+          {mailSent && (
+            <span className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-green-50 border border-green-200 text-green-600 font-poppins text-sm">
+              <Mail size={14} /> Correo enviado
+            </span>
           )}
           <button onClick={onEdit}
             className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-poppins text-sm font-semibold transition-all cursor-pointer shadow-pink-sm">
@@ -235,7 +260,8 @@ export default function AdminCalendar() {
   const [modal,   setModal]   = useState(null);   // { cita? } | null → CitaModal
   const [slotPanel, setSlotPanel] = useState(null); // { hora, fecha, citas }
   const [detail,    setDetail]    = useState(null); // { cita, fromSlot? }
-  const [toast,   setToast]   = useState('');
+  const [toast,      setToast]      = useState('');
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(monday, i));
   const todayStr = toDateStr(new Date());
@@ -262,6 +288,41 @@ export default function AdminCalendar() {
       return `${MONTHS_ES[s.getMonth()]} ${s.getFullYear()}`;
     return `${MONTHS_ES[s.getMonth()]} – ${MONTHS_ES[e.getMonth()]} ${e.getFullYear()}`;
   })();
+
+  async function handleSendConfirmation(cita) {
+    if (!cita.email) return;
+    setSendingEmail(true);
+    const { error } = await sendConfirmedEmail({
+      email:    cita.email,
+      name:     cita.nombre,
+      servicio: cita.servicio,
+      fecha:    cita.fecha,
+      hora:     cita.hora?.slice(0, 5),
+    });
+    if (error) {
+      showToast('Error al enviar el correo.');
+      setSendingEmail(false);
+      return;
+    }
+
+    const updates = { confirmation_sent_at: new Date().toISOString() };
+    if (cita.estado === 'por_confirmar') {
+      updates.estado = 'confirmada';
+      const action  = cita.google_event_id ? 'update' : 'create';
+      const eventId = cita.google_event_id ?? undefined;
+      const { data: gcalData } = await gcalSync({ action, cita: { ...cita, estado: 'confirmada' }, eventId });
+      if (gcalData?.eventId) await vincularEventoCalendario(cita.id, gcalData.eventId);
+    }
+    await updateCita(cita.id, updates);
+
+    // Update the detail panel with new cita state
+    const updatedCita = { ...cita, ...updates };
+    setDetail(d => d ? { ...d, cita: updatedCita } : d);
+
+    showToast(`Confirmación enviada a ${cita.email}`);
+    setSendingEmail(false);
+    load();
+  }
 
   function handleSlotClick(dateStr, hour) {
     const h = String(hour).padStart(2, '0');
@@ -304,6 +365,8 @@ export default function AdminCalendar() {
           onClose={() => setDetail(null)}
           onBack={detail.fromSlot ? () => { setDetail(null); setSlotPanel(detail.fromSlot); } : null}
           onEdit={() => { setDetail(null); setSlotPanel(null); setModal({ cita: detail.cita }); }}
+          onSendConfirmation={handleSendConfirmation}
+          sendingEmail={sendingEmail}
         />
       )}
 
