@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Heart, MapPin, Clock, Phone } from 'lucide-react';
 import { TikTokIcon, InstagramIcon, WhatsAppIcon, FacebookIcon, SOCIAL_LINKS, BUSINESS_INFO } from '../UI/SocialIcons';
+import { getServiciosPublic } from '../../lib/supabase';
+
+const MAX_FOOTER_SERVICES = 6;
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [servicios, setServicios] = useState([]);
+
+  useEffect(() => {
+    getServiciosPublic().then(({ data }) => {
+      setServicios((data ?? []).map(s => s.nombre).slice(0, MAX_FOOTER_SERVICES));
+    });
+  }, []);
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -66,25 +76,25 @@ const Footer = () => {
               Servicios
             </h3>
             <ul className="space-y-2.5">
-              {[
-                'Pedicure Spa',
-                'Manicure Gel',
-                'Uñas Acrílicas',
-                'Extensiones de Pestañas',
-                'Lifting de Pestañas',
-                'Diseño de Cejas',
-                'Laminado de Cejas',
-              ].map((service) => (
-                <li key={service}>
+              {servicios.map((nombre) => (
+                <li key={nombre}>
                   <a
                     href="#servicios"
                     className="font-poppins text-sm text-gray-400 hover:text-pink-300 transition-colors duration-200 focus:outline-none focus:text-pink-300 cursor-pointer"
                   >
-                    {service}
+                    {nombre}
                   </a>
                 </li>
               ))}
             </ul>
+            {servicios.length === MAX_FOOTER_SERVICES && (
+              <a
+                href="#servicios"
+                className="inline-block mt-3 font-poppins text-xs text-pink-400 hover:text-pink-300 transition-colors cursor-pointer"
+              >
+                Ver todos los servicios →
+              </a>
+            )}
           </div>
 
           {/* Hours */}
