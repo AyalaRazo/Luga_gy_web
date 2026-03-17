@@ -1,23 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import SectionTitle from '../UI/SectionTitle';
 import FadeIn from '../UI/FadeIn';
+import { getGaleriaPublic } from '../../lib/supabase';
+import { getStorageUrl } from '../../lib/storage';
 
-const gallery = [
-  { id: 1, category: 'nails',    description: 'Uñas acrílicas diseño francés',      emoji: '💅' },
-  { id: 2, category: 'lashes',   description: 'Extensiones de pestañas volumen',     emoji: '👁️' },
-  {
-    id: 3,
-    category: 'brows',
-    description: 'Diseño y laminado de cejas',
-    emoji: '✨',
-    before: '/images/antes/cejas_diseno/cejas_diseno_antes.png',
-    after:  '/images/despues/cejas_diseno/cejas_diseno_despues.png',
-  },
-  { id: 4, category: 'pedicure', description: 'Pedicure spa con esmaltado',          emoji: '🦶' },
-  { id: 5, category: 'nails',    description: 'Manicure gel color rojo pasión',      emoji: '💅' },
-  { id: 6, category: 'lashes',   description: 'Lifting de pestañas natural',         emoji: '💫' },
-];
+const EMOJI_BY_CAT = {
+  pedicure: '🦶',
+  uñas:     '💅',
+  nails:    '💅',
+  pestañas: '👁️',
+  lashes:   '👁️',
+  cejas:    '✨',
+  brows:    '✨',
+};
+
+function dbToGallery(s) {
+  return {
+    id:          s.id,
+    category:    (s.categoria ?? 'general').toLowerCase(),
+    description: s.nombre,
+    emoji:       EMOJI_BY_CAT[(s.categoria ?? '').toLowerCase()] ?? '✨',
+    before:      s.antes_url   ? getStorageUrl(s.antes_url)   : null,
+    after:       s.despues_url ? getStorageUrl(s.despues_url) : null,
+  };
+}
 
 const categoryColors = {
   pedicure: 'from-rose-200 to-rose-400',
@@ -190,13 +197,25 @@ const Modal = ({ item, onClose, onPrev, onNext }) => {
 };
 
 const GallerySection = () => {
+  const [gallery,  setGallery]  = useState([]);
+  const [loading,  setLoading]  = useState(true);
   const [selected, setSelected] = useState(null);
   const selectedIndex = gallery.findIndex((g) => g.id === selected?.id);
 
-  const openModal = (item) => setSelected(item);
+  useEffect(() => {
+    getGaleriaPublic().then(({ data }) => {
+      if (data?.length) setGallery(data.map(dbToGallery));
+      setLoading(false);
+    });
+  }, []);
+
+  const openModal  = (item) => setSelected(item);
   const closeModal = () => setSelected(null);
-  const prevItem = () => setSelected(gallery[(selectedIndex - 1 + gallery.length) % gallery.length]);
-  const nextItem = () => setSelected(gallery[(selectedIndex + 1) % gallery.length]);
+  const prevItem   = () => setSelected(gallery[(selectedIndex - 1 + gallery.length) % gallery.length]);
+  const nextItem   = () => setSelected(gallery[(selectedIndex + 1) % gallery.length]);
+
+  if (loading) return null;
+  if (!gallery.length) return null;
 
   return (
     <section id="galeria" className="section-padding bg-white dark:bg-gray-900">

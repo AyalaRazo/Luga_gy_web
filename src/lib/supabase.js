@@ -222,6 +222,52 @@ export async function uploadServicioImagen(file, servicioId) {
 }
 
 /**
+ * Sube una imagen de galería (antes o después) al bucket "servicios".
+ * @param {File}   file
+ * @param {string} servicioId
+ * @param {'antes'|'despues'} tipo
+ * @returns {{ url: string|null, error }}
+ */
+export async function uploadGaleriaImagen(file, servicioId, tipo) {
+  const ext  = file.name.split('.').pop();
+  const path = `${servicioId}_${tipo}.${ext}`;
+  const { error } = await supabase.storage
+    .from('servicios')
+    .upload(path, file, { upsert: true, contentType: file.type });
+  if (error) return { url: null, error };
+  const { data } = supabase.storage.from('servicios').getPublicUrl(path);
+  const url = `${data.publicUrl}?v=${Date.now()}`;
+  return { url, error: null };
+}
+
+/**
+ * Elimina una imagen de galería del bucket "servicios".
+ * @param {string} url — URL pública almacenada en antes_url / despues_url
+ */
+export async function deleteGaleriaImagen(url) {
+  if (!url) return;
+  const marker = '/servicios/';
+  const idx    = url.indexOf(marker);
+  if (idx === -1) return;
+  const path = url.slice(idx + marker.length).split('?')[0];
+  await supabase.storage.from('servicios').remove([path]);
+}
+
+/**
+ * Devuelve los servicios que tienen al menos una imagen de galería (antes o después).
+ * Usada por GallerySection para mostrar resultados reales.
+ */
+export async function getGaleriaPublic() {
+  const { data, error } = await supabase
+    .from('servicios')
+    .select('id, nombre, descripcion, categoria, antes_url, despues_url')
+    .eq('activo', true)
+    .or('antes_url.not.is.null,despues_url.not.is.null')
+    .order('orden');
+  return { data, error };
+}
+
+/**
  * Elimina del bucket 'servicios' todos los archivos que no están referenciados
  * en ningún imagen_url de la tabla servicios.
  * @returns {{ deleted: string[], errors: string[] }}

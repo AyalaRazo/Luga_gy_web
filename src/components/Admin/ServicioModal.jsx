@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { X, Save, AlertCircle, Upload, ImageOff, Trash2 } from 'lucide-react';
-import { createServicio, updateServicio, uploadServicioImagen, deleteServicioImagen } from '../../lib/supabase';
+import { X, Save, AlertCircle, Upload, Trash2 } from 'lucide-react';
+import { createServicio, updateServicio, uploadServicioImagen, deleteServicioImagen, uploadGaleriaImagen, deleteGaleriaImagen } from '../../lib/supabase';
 import { getStorageUrl } from '../../lib/storage';
 
 const CATEGORIAS    = ['Pedicure', 'Uñas', 'Pestañas', 'Cejas', 'General'];
@@ -11,6 +11,58 @@ const EMPTY = {
   categoria: 'General', activo: true, orden: 0, imagen_url: '',
 };
 
+// Reusable image-upload zone for antes/después
+function GaleriaUploadZone({ label, preview, onFileSelect, onDelete, deleting, tag, tagColor }) {
+  const ref = useRef();
+  function handleDrop(e) {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) onFileSelect(file);
+  }
+  return (
+    <div className="flex-1 min-w-0">
+      <p className="font-poppins text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1.5">{label}</p>
+      <div
+        className="relative rounded-xl overflow-hidden border-2 border-dashed border-pink-200 hover:border-pink-400 transition-colors cursor-pointer group"
+        style={{ height: '120px' }}
+        onClick={() => ref.current?.click()}
+        onDrop={handleDrop}
+        onDragOver={e => e.preventDefault()}
+      >
+        {preview ? (
+          <>
+            <img src={getStorageUrl(preview)} alt={label} className="w-full h-full object-cover" />
+            <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded text-[9px] font-poppins font-bold text-white" style={{ background: tagColor }}>
+              {tag}
+            </div>
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <Upload size={16} className="text-white" />
+            </div>
+          </>
+        ) : (
+          <div className="h-full flex flex-col items-center justify-center gap-1.5 bg-pink-50/60 dark:bg-pink-900/20">
+            <div className="w-9 h-9 rounded-xl bg-pink-100 dark:bg-pink-900/40 flex items-center justify-center">
+              <Upload size={16} className="text-pink-400" />
+            </div>
+            <p className="font-poppins text-xs text-pink-400">Subir {label.toLowerCase()}</p>
+          </div>
+        )}
+      </div>
+      <input ref={ref} type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
+        onChange={e => { const f = e.target.files?.[0]; if (f) onFileSelect(f); }} />
+      {preview && (
+        <button type="button" disabled={deleting} onClick={onDelete}
+          className="mt-1.5 flex items-center gap-1 font-poppins text-[11px] text-red-400 hover:text-red-600 disabled:opacity-50 cursor-pointer transition-colors">
+          {deleting
+            ? <div className="w-3 h-3 border border-red-400 border-t-transparent rounded-full animate-spin" />
+            : <Trash2 size={11} />}
+          {deleting ? 'Eliminando…' : 'Eliminar'}
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function ServicioModal({ servicio, totalServicios = 0, onClose, onSaved }) {
   const isEdit    = Boolean(servicio);
   const [form,    setForm]    = useState(isEdit ? { ...EMPTY, ...servicio, precio: String(servicio.precio) } : { ...EMPTY });
@@ -20,6 +72,14 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
   const [preview,     setPreview]     = useState(servicio?.imagen_url ?? null);
   const [imgFile,     setImgFile]     = useState(null);
   const fileRef = useRef();
+
+  // Galería antes/después
+  const [antesPreview,   setAntesPreview]   = useState(servicio?.antes_url   ?? null);
+  const [despuesPreview, setDespuesPreview] = useState(servicio?.despues_url ?? null);
+  const [antesFile,      setAntesFile]      = useState(null);
+  const [despuesFile,    setDespuesFile]    = useState(null);
+  const [deletingAntes,  setDeletingAntes]  = useState(false);
+  const [deletingDespues,setDeletingDespues]= useState(false);
 
   // True when the current preview is the image already saved in DB (not a local selection)
   const hasSavedImage = isEdit && Boolean(servicio.imagen_url) && !imgFile && Boolean(preview);
@@ -55,12 +115,33 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
     setError('');
     await deleteServicioImagen(servicio.imagen_url);
     await updateServicio(servicio.id, { imagen_url: null });
-    // Update local state so the modal reflects the deletion immediately
     servicio.imagen_url = null;
     setPreview(null);
     setImgFile(null);
     setForm(p => ({ ...p, imagen_url: '' }));
     setDeletingImg(false);
+  }
+
+  async function handleDeleteAntes() {
+    if (!servicio?.id) return;
+    setDeletingAntes(true);
+    await deleteGaleriaImagen(servicio.antes_url);
+    await updateServicio(servicio.id, { antes_url: null });
+    servicio.antes_url = null;
+    setAntesPreview(null);
+    setAntesFile(null);
+    setDeletingAntes(false);
+  }
+
+  async function handleDeleteDespues() {
+    if (!servicio?.id) return;
+    setDeletingDespues(true);
+    await deleteGaleriaImagen(servicio.despues_url);
+    await updateServicio(servicio.id, { despues_url: null });
+    servicio.despues_url = null;
+    setDespuesPreview(null);
+    setDespuesFile(null);
+    setDeletingDespues(false);
   }
 
   async function handleSubmit(e) {
@@ -82,26 +163,45 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
       imagen_url:  form.imagen_url || null,
     };
 
-    // Save first to get an ID (needed as filename), then upload image
+    // Save first to get an ID (needed as filename), then upload images
     const { data: saved, error: err } = isEdit
       ? await updateServicio(servicio.id, campos)
       : await createServicio(campos);
 
     if (err) { setError('Error al guardar: ' + err.message); setLoading(false); return; }
 
-    // Upload new image if selected
-    if (imgFile && saved?.id) {
-      // Delete the previous image from storage before uploading the new one
+    const sid = saved?.id;
+    const updates = {};
+
+    // Upload main service image
+    if (imgFile && sid) {
       const oldUrl = isEdit ? servicio.imagen_url : null;
       if (oldUrl) await deleteServicioImagen(oldUrl);
+      const { url, error: uploadErr } = await uploadServicioImagen(imgFile, sid);
+      if (uploadErr) { setError('Servicio guardado, pero falló la subida de imagen: ' + uploadErr.message); setLoading(false); return; }
+      updates.imagen_url = url;
+    }
 
-      const { url, error: uploadErr } = await uploadServicioImagen(imgFile, saved.id);
-      if (uploadErr) {
-        setError('Servicio guardado, pero falló la subida de imagen: ' + uploadErr.message);
-        setLoading(false);
-        return;
-      }
-      await updateServicio(saved.id, { imagen_url: url });
+    // Upload antes image
+    if (antesFile && sid) {
+      const oldUrl = isEdit ? servicio.antes_url : null;
+      if (oldUrl) await deleteGaleriaImagen(oldUrl);
+      const { url, error: uploadErr } = await uploadGaleriaImagen(antesFile, sid, 'antes');
+      if (uploadErr) { setError('Servicio guardado, pero falló la subida de imagen ANTES: ' + uploadErr.message); setLoading(false); return; }
+      updates.antes_url = url;
+    }
+
+    // Upload despues image
+    if (despuesFile && sid) {
+      const oldUrl = isEdit ? servicio.despues_url : null;
+      if (oldUrl) await deleteGaleriaImagen(oldUrl);
+      const { url, error: uploadErr } = await uploadGaleriaImagen(despuesFile, sid, 'despues');
+      if (uploadErr) { setError('Servicio guardado, pero falló la subida de imagen DESPUÉS: ' + uploadErr.message); setLoading(false); return; }
+      updates.despues_url = url;
+    }
+
+    if (Object.keys(updates).length > 0 && sid) {
+      await updateServicio(sid, updates);
     }
 
     setLoading(false);
@@ -200,6 +300,34 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
                 )}
               </div>
             )}
+          </div>
+
+          {/* Galería antes / después */}
+          <div>
+            <label className={lbl}>Galería — Antes / Después</label>
+            <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mb-3 -mt-1">
+              Estas imágenes se muestran en la sección "Resultados Reales" del sitio web.
+            </p>
+            <div className="flex gap-3">
+              <GaleriaUploadZone
+                label="Antes"
+                preview={antesPreview}
+                tag="ANTES"
+                tagColor="#374151"
+                onFileSelect={f => { setAntesFile(f); setAntesPreview(URL.createObjectURL(f)); }}
+                onDelete={handleDeleteAntes}
+                deleting={deletingAntes}
+              />
+              <GaleriaUploadZone
+                label="Después"
+                preview={despuesPreview}
+                tag="DESPUÉS"
+                tagColor="#ec4899"
+                onFileSelect={f => { setDespuesFile(f); setDespuesPreview(URL.createObjectURL(f)); }}
+                onDelete={handleDeleteDespues}
+                deleting={deletingDespues}
+              />
+            </div>
           </div>
 
           {/* Nombre */}
