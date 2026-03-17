@@ -470,7 +470,7 @@ export default function AdminCitas() {
                             <select
                               value={c.estado}
                               onChange={e => handleChangeEstado(c.id, e.target.value)}
-                              className="font-poppins text-xs bg-transparent border-0 cursor-pointer focus:outline-none focus:ring-0 p-0"
+                              className="font-poppins text-xs bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1 cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-300"
                               title="Cambiar estado"
                             >
                               {['pendiente','por_confirmar','confirmada','completada','cancelada'].map(e => (
