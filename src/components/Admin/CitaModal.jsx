@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { X, Save, Calendar, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { crearCitaAdmin, updateCita, vincularEventoCalendario, gcalSync, getServiciosAdmin } from '../../lib/supabase';
+import React, { useEffect, useState, useMemo } from 'react';
+import { X, Save, Calendar, AlertCircle, CheckCircle2, Tag } from 'lucide-react';
+import { crearCitaAdmin, updateCita, vincularEventoCalendario, gcalSync, getServiciosAdmin, getPromocionesAdmin } from '../../lib/supabase';
+import { promosParaHoy, calcularPrecioEfectivo } from '../../lib/promociones';
 
 const SERVICIOS = [
   'Pedicure Spa',
@@ -34,8 +35,9 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
   const [form,      setForm]      = useState(isEdit
     ? { ...cita, hora: cita.hora?.slice(0, 5) ?? '10:00', notas: cita.notas ?? '', precio_cobrado: cita.precio_cobrado != null ? String(cita.precio_cobrado) : '', email: cita.email ?? '', telefono: cita.telefono ?? '' }
     : { ...EMPTY, fecha: defaultFecha ?? '', hora: defaultHora ?? '10:00' });
-  const [servicios, setServicios] = useState([]);
-  const [loading,   setLoading]   = useState(false);
+  const [servicios,   setServicios]   = useState([]);
+  const [promociones, setPromociones] = useState([]);
+  const [loading,     setLoading]     = useState(false);
   const [calSync, setCalSync] = useState('idle'); // idle | syncing | ok | error
   const [error,   setError]   = useState('');
 
@@ -45,7 +47,7 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
     return () => window.removeEventListener('keydown', handler);
   }, [onClose]);
 
-  // Load servicios from DB (dynamic list + auto-fill price)
+  // Load servicios + promociones from DB
   useEffect(() => {
     getServiciosAdmin().then(({ data }) => {
       if (data?.length) {
@@ -57,7 +59,20 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
         }
       }
     });
+    getPromocionesAdmin().then(({ data }) => {
+      if (data?.length) setPromociones(data);
+    });
   }, []); // eslint-disable-line
+
+  // Price hint: precio base + promo activa en la fecha de la cita
+  const precioHint = useMemo(() => {
+    const sv = servicios.find(s => s.nombre === form.servicio);
+    if (!sv) return null;
+    const fecha = form.fecha ? new Date(form.fecha + 'T12:00:00') : new Date();
+    const promosHoy = promosParaHoy(promociones, fecha);
+    const { precioFinal, promo } = calcularPrecioEfectivo(sv.precio, promosHoy, sv.id);
+    return { precioBase: sv.precio, precioFinal, promo };
+  }, [form.servicio, form.fecha, servicios, promociones]);
 
   // When servicio changes, auto-fill price from DB
   function handleServicioChange(e) {
@@ -242,7 +257,22 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
                   placeholder="0.00"
                   className={`${inputClass} pl-7`} />
               </div>
-              <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-1">Se usa para calcular los ingresos en el reporte.</p>
+              {precioHint ? (
+                precioHint.promo ? (
+                  <div className="flex items-start gap-1.5 mt-1.5">
+                    <Tag size={11} className="text-pink-400 mt-0.5 shrink-0" />
+                    <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
+                      Precio regular: <span className="line-through">${precioHint.precioBase}</span>
+                      {' · '}
+                      <span className="text-pink-500 font-medium">Con promo "{precioHint.promo.nombre}": ${precioHint.precioFinal}</span>
+                    </p>
+                  </div>
+                ) : (
+                  <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-1.5">
+                    Precio del servicio: <span className="font-medium text-gray-500 dark:text-gray-400">${precioHint.precioBase}</span>
+                  </p>
+                )
+              ) : null}
             </div>
           )}
 
