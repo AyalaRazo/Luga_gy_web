@@ -118,6 +118,8 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
 
     if (!form.nombre.trim()) { setError('El nombre es requerido.'); return; }
     if (!form.fecha)          { setError('La fecha es requerida.');  return; }
+    if (form.precio_cobrado === '' || form.precio_cobrado == null) { setError('El precio cobrado es requerido.'); return; }
+    if (parseFloat(form.precio_cobrado) < 0) { setError('El precio cobrado no puede ser negativo.'); return; }
 
     setLoading(true);
 
@@ -246,13 +248,12 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
             </select>
           </div>
 
-          {/* Precio cobrado — visible solo si estado es completada o si ya tiene valor */}
-          {(form.estado === 'completada' || form.precio_cobrado !== '') && (
-            <div>
-              <label className={labelClass}>Precio cobrado (MXN)</label>
+          {/* Precio cobrado — siempre visible */}
+          <div>
+              <label className={labelClass}>Precio cobrado (MXN) *</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 font-poppins text-sm text-gray-400 dark:text-gray-500">$</span>
-                <input type="number" min="0" step="0.01"
+                <input type="number" min="0" step="0.01" required
                   value={form.precio_cobrado} onChange={set('precio_cobrado')}
                   placeholder="0.00"
                   className={`${inputClass} pl-7`} />
@@ -274,7 +275,6 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
                 )
               ) : null}
             </div>
-          )}
 
           <div>
             <label className={labelClass}>Notas (opcional)</label>
