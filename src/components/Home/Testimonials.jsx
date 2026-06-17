@@ -111,13 +111,13 @@ const Testimonials = () => (
       <FadeIn delay={0.1} className="flex justify-center mb-10">
         <div className="bg-white dark:bg-gray-800 rounded-2xl px-8 py-5 shadow-card border border-pink-100 dark:border-gray-700 flex items-center gap-6">
           <div className="text-center">
-            <div className="font-playfair text-5xl font-bold text-pink-400">4.8</div>
+            <div className="font-playfair text-5xl font-semibold text-pink-400">4.8</div>
             <StarRating rating={5} />
             <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-1">Calificación promedio</p>
           </div>
           <div className="h-12 w-px bg-pink-100" aria-hidden="true" />
           <div className="text-center">
-            <div className="font-playfair text-5xl font-bold text-pink-400">500+</div>
+            <div className="font-playfair text-5xl font-semibold text-pink-400">500+</div>
             <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-1">Clientas satisfechas</p>
           </div>
         </div>

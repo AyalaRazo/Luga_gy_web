@@ -47,6 +47,14 @@
       transition-duration: 0.01ms !important;
     }
   }
+
+  /* Promote infinite CSS animations to their own GPU layer */
+  .animate-float {
+    will-change: transform;
+  }
+  .animate-gentle-pulse {
+    will-change: opacity;
+  }
 }
 
 @layer components {

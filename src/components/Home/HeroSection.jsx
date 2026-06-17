@@ -65,7 +65,7 @@ const HeroSection = () => {
                 { value: '4.8★', label: 'Calificación promedio' },
               ].map(({ value, label }) => (
                 <div key={label} className="text-center lg:text-left">
-                  <div className="font-playfair text-2xl font-bold text-pink-400">{value}</div>
+                  <div className="font-playfair text-2xl font-semibold text-pink-400">{value}</div>
                   <div className="font-poppins text-xs text-gray-500 dark:text-gray-400 mt-0.5">{label}</div>
                 </div>
               ))}

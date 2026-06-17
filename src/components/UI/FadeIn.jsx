@@ -1,26 +1,44 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useEffect, useState } from 'react';
 
-/**
- * Envuelve cualquier contenido con una animación fade-in + slide-up
- * al entrar al viewport. Props:
- *  - delay: número en segundos (default 0)
- *  - y: desplazamiento inicial en px (default 30)
- *  - className: clases adicionales al wrapper
- *  - as: etiqueta HTML del wrapper (default 'div')
- */
-const FadeIn = ({ children, delay = 0, y = 30, className = '', as = 'div' }) => {
-  const MotionTag = motion[as] ?? motion.div;
+const reducedMotion =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const FadeIn = ({ children, delay = 0, y = 30, className = '', as: Tag = 'div' }) => {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(reducedMotion);
+
+  useEffect(() => {
+    if (reducedMotion) return;
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '-60px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <MotionTag
+    <Tag
+      ref={ref}
       className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay }}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0)' : `translateY(${y}px)`,
+        transition: reducedMotion
+          ? 'none'
+          : `opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s, transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s`,
+      }}
     >
       {children}
-    </MotionTag>
+    </Tag>
   );
 };
 
