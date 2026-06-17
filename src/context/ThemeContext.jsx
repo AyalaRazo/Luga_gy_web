@@ -6,7 +6,7 @@ export function ThemeProvider({ children }) {
   const [dark, setDark] = useState(() => {
     try {
       const stored = localStorage.getItem('theme');
-      const isDark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = stored === 'dark';
       document.documentElement.classList.toggle('dark', isDark);
       return isDark;
     } catch (e) {
