@@ -28,10 +28,10 @@ const HeroSection = () => {
       </div>
 
       <div className="container-custom relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[85vh]">
+        <div className="grid lg:grid-cols-2 gap-10 items-center min-h-[80vh]">
 
           {/* Left: Text content */}
-          <FadeIn delay={0.1} className="flex flex-col gap-6 text-center lg:text-left">
+          <FadeIn delay={0.1} className="flex flex-col gap-5 text-center lg:text-left">
             {/* Tag */}
             <div className="inline-flex items-center gap-2 bg-pink-100/80 text-pink-600 rounded-full px-4 py-1.5 text-xs font-poppins font-medium tracking-wide w-fit mx-auto lg:mx-0">
               <Sparkles size={14} aria-hidden="true" />
@@ -40,17 +40,17 @@ const HeroSection = () => {
 
             {/* Main heading */}
             <div>
-              <h1 className="font-great-vibes text-7xl md:text-8xl lg:text-9xl text-pink-400 leading-none mb-3">
+              <h1 className="font-great-vibes text-5xl md:text-6xl lg:text-7xl text-pink-400 leading-none mb-2">
                 Luga Gy
               </h1>
-              <p className="font-playfair text-2xl md:text-3xl text-gray-700 dark:text-gray-200 font-medium leading-snug">
+              <p className="font-playfair text-xl md:text-2xl text-gray-700 dark:text-gray-200 font-medium leading-snug">
                 Tu salón de belleza de{' '}
                 <span className="text-pink-400 italic">confianza</span>
               </p>
             </div>
 
             {/* Description */}
-            <p className="font-poppins text-gray-500 dark:text-gray-400 text-lg leading-relaxed max-w-lg mx-auto lg:mx-0">
+            <p className="font-poppins text-gray-500 dark:text-gray-400 text-base leading-relaxed max-w-lg mx-auto lg:mx-0">
               Especialistas en <strong className="text-pink-500 font-medium">Pedicure</strong>,{' '}
               <strong className="text-pink-500 font-medium">Nails</strong>,{' '}
               <strong className="text-pink-500 font-medium">Lashes</strong> y{' '}
@@ -93,11 +93,11 @@ const HeroSection = () => {
           {/* Right: Visual card */}
           <FadeIn delay={0.25} className="relative flex justify-center items-center">
             {/* Main hero image placeholder */}
-            <div className="relative w-80 h-96 md:w-96 md:h-[480px] animate-float">
+            <div className="relative w-64 h-72 md:w-72 md:h-80 animate-float">
               <div className="w-full h-full rounded-3xl bg-gradient-to-br from-pink-200 via-pink-300 to-pink-400 shadow-pink-lg overflow-hidden">
                 {/* Placeholder visual */}
                 <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center">
-                  <span className="font-great-vibes text-6xl text-white/90 leading-none mb-4">
+                  <span className="font-great-vibes text-5xl text-white/90 leading-none mb-3">
                     Beauty
                   </span>
                   <div className="grid grid-cols-2 gap-3 w-full max-w-xs">
