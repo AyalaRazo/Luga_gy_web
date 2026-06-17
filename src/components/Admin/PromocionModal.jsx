@@ -195,7 +195,7 @@ export default function PromocionModal({ promocion, servicios = [], onClose, onS
           </div>
 
           {/* Fechas opcionales */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className={lbl}>Fecha inicio <span className="text-gray-300 dark:text-gray-600 normal-case">(opcional)</span></label>
               <input type="date" value={form.fecha_inicio} onChange={e => set('fecha_inicio', e.target.value)}

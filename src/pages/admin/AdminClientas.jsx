@@ -69,8 +69,8 @@ function HistorialDrawer({ clienta, onClose }) {
             <p className="font-poppins text-lg font-bold text-green-600">{clienta.citas_completadas}</p>
             <p className="font-poppins text-xs text-gray-400 dark:text-gray-500">Completadas</p>
           </div>
-          <div className="text-center">
-            <p className="font-poppins text-lg font-bold text-pink-600 dark:text-pink-400">{fmtMoney(clienta.total_gastado)}</p>
+          <div className="text-center overflow-hidden">
+            <p className="font-poppins text-base font-bold text-pink-600 dark:text-pink-400 truncate">{fmtMoney(clienta.total_gastado)}</p>
             <p className="font-poppins text-xs text-gray-400 dark:text-gray-500">Gastado</p>
           </div>
         </div>

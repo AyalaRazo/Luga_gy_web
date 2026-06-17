@@ -569,8 +569,9 @@ export default function AdminCitas() {
                       <p className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100">{c.nombre}</p>
                       <p className="font-poppins text-xs text-gray-500 dark:text-gray-400">{c.servicio}</p>
                       {c.email && (
-                        <p className="flex items-center gap-1 font-poppins text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                          <Mail size={10} />{c.email}
+                        <p className="flex items-center gap-1 font-poppins text-xs text-gray-400 dark:text-gray-500 mt-0.5 min-w-0">
+                          <Mail size={10} className="shrink-0" />
+                          <span className="truncate">{c.email}</span>
                         </p>
                       )}
                       {c.telefono && (

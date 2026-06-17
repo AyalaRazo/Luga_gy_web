@@ -4,6 +4,7 @@ import SectionTitle from '../UI/SectionTitle';
 import ElegantButton from '../UI/ElegantButton';
 import { WhatsAppIcon, SOCIAL_LINKS, BUSINESS_INFO } from '../UI/SocialIcons';
 import { crearCita, getCitasPorFecha, sendBookingEmail, getHorario, getDiasBloqueados, getServiciosPublic } from '../../lib/supabase';
+import { trackSchedule } from '../../lib/metaPixel';
 
 const DIA_KEYS = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
 
@@ -113,6 +114,7 @@ const BookingSection = () => {
     if (emailError) console.warn('[Booking] Email no enviado:', emailError);
 
     setStatus(ESTADO.SUCCESS);
+    trackSchedule(service);
   };
 
   const resetForm = () => {

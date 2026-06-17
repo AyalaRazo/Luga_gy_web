@@ -207,7 +207,7 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
             <input type="text" required value={form.nombre} onChange={set('nombre')} placeholder="Ej: María García" className={inputClass} />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Correo electrónico <span className="text-gray-400 dark:text-gray-500 font-normal">(opcional)</span></label>
               <input type="email" value={form.email} onChange={set('email')} placeholder="maria@gmail.com" className={inputClass} />
@@ -228,7 +228,7 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
             </select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Fecha *</label>
               <input type="date" required value={form.fecha} onChange={set('fecha')} className={inputClass} />

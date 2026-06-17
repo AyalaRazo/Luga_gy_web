@@ -420,6 +420,9 @@ export default function AdminCalendar() {
       </div>
 
       {/* ── Calendar ── */}
+      <p className="lg:hidden flex items-center justify-center gap-1.5 py-1.5 px-4 font-poppins text-xs text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700">
+        ← Deslizá para ver el calendario completo
+      </p>
       <div className="flex-1 overflow-auto">
         <div className="min-w-[640px] flex flex-col">
 

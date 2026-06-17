@@ -146,7 +146,7 @@ export default function AdminHorario() {
               {DIAS_SEMANA.map(({ key, label }) => {
                 const dia = horario[key] ?? { activo: false, inicio: '09:00', fin: '18:00' };
                 return (
-                  <div key={key} className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
+                  <div key={key} className={`flex flex-wrap items-center gap-3 p-4 rounded-xl border transition-all ${
                     dia.activo ? 'border-pink-100 dark:border-pink-900/50 bg-pink-50/30 dark:bg-pink-900/10' : 'border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/30'
                   }`}>
                     {/* Toggle */}
@@ -164,7 +164,7 @@ export default function AdminHorario() {
 
                     {/* Horas */}
                     {dia.activo ? (
-                      <div className="flex items-center gap-2 flex-1 flex-wrap">
+                      <div className="flex items-center gap-2 w-full sm:flex-1 sm:w-auto flex-wrap">
                         <select value={dia.inicio} onChange={e => setHora(key, 'inicio', e.target.value)} className={`${inp} cursor-pointer`}>
                           {HORAS.map(h => <option key={h} value={h}>{h}</option>)}
                         </select>

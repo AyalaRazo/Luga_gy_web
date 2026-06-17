@@ -217,7 +217,7 @@ export default function AdminServicios() {
                 <span className={`font-poppins text-xs font-medium ${s.activo ? 'text-green-600' : 'text-gray-400 dark:text-gray-500'}`}>
                   {s.activo ? 'Visible en la web' : 'Oculto en la web'}
                 </span>
-                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                   <button onClick={() => setModal({ servicio: s })}
                     className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-pink-500 hover:bg-pink-50 transition-all cursor-pointer"
                     title="Editar">

@@ -308,7 +308,7 @@ export default function ServicioModal({ servicio, totalServicios = 0, onClose, o
             <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mb-3 -mt-1">
               Estas imágenes se muestran en la sección "Resultados Reales" del sitio web.
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <GaleriaUploadZone
                 label="Antes"
                 preview={antesPreview}
