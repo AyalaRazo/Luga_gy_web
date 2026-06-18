@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
           short_name: 'Luga Gy',
           description: 'Panel de administración de Luga Gy',
           start_url: '/admin',
+          scope: '/admin',
           display: 'standalone',
           background_color: '#ffffff',
           theme_color: '#FF9EB5',
@@ -28,6 +29,7 @@ export default defineConfig(({ mode }) => {
         },
         workbox: {
           navigateFallback: '/index.html',
+          navigateFallbackAllowlist: [/^\/admin/],
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
