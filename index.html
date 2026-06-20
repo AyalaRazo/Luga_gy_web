@@ -13,7 +13,13 @@
     <meta name="theme-color" content="#FF9EB5" />
     <meta name="robots" content="index, follow" />
 
-    <!-- Canonical — actualiza con tu dominio real -->
+    <!-- Geo local tags -->
+    <meta name="geo.region" content="MX-BCN" />
+    <meta name="geo.placename" content="Mexicali, Baja California, México" />
+    <meta name="geo.position" content="32.6245;-115.4523" />
+    <meta name="ICBM" content="32.6245, -115.4523" />
+
+    <!-- Canonical -->
     <link rel="canonical" href="https://lugagy.com/" />
 
     <!-- Fonts: preconnect reduce latencia, media=print + onload evita bloqueo de render -->
@@ -47,10 +53,16 @@
           "@type": "BeautySalon",
           "@id": "https://lugagy.com/#salon",
           "name": "Luga Gy",
-          "description": "Salón de belleza profesional con más de 5 años de experiencia en Mexicali, Baja California. Especialistas certificadas en Pedicure Spa, Manicure Gel, Uñas Acrílicas, Extensiones de Pestañas, Lifting de Pestañas, Diseño de Cejas y Laminado de Cejas.",
+          "description": "Salón de belleza profesional en Mexicali, Baja California, especializado en Pedicure Spa, Manicure Gel, Uñas Acrílicas, Extensiones de Pestañas, Lifting de Pestañas, Diseño de Cejas y Laminado de Cejas. Con más de 500 clientas satisfechas y una calificación promedio de 4.8 estrellas.",
           "url": "https://lugagy.com",
           "telephone": "+526861162619",
           "image": "https://lugagy.com/logo.png",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://lugagy.com/logo.png",
+            "width": 500,
+            "height": 500
+          },
           "priceRange": "$$",
           "currenciesAccepted": "MXN",
           "paymentAccepted": "Efectivo, Tarjeta de crédito, Transferencia",
@@ -67,6 +79,57 @@
             "latitude": "32.6245",
             "longitude": "-115.4523"
           },
+          "areaServed": {
+            "@type": "GeoCircle",
+            "geoMidpoint": {
+              "@type": "GeoCoordinates",
+              "latitude": "32.6245",
+              "longitude": "-115.4523"
+            },
+            "geoRadius": "20000"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "500",
+            "bestRating": "5",
+            "worstRating": "1"
+          },
+          "review": [
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": "María González" },
+              "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+              "name": "Extensiones de Pestañas",
+              "reviewBody": "¡Excelente servicio! Quedé encantada con mis pestañas. Muy profesionales y el ambiente es súper acogedor. Ya saqué turno para el mes que viene."
+            },
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": "Carolina Pérez" },
+              "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+              "name": "Manicure Gel",
+              "reviewBody": "Las uñas me quedaron perfectas, duran muchísimo y los colores son hermosos. Además el trato es increíble, me sentí muy cuidada. 100% recomendado."
+            },
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": "Valentina Ruiz" },
+              "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+              "name": "Diseño de Cejas",
+              "reviewBody": "Por fin encontré un lugar que entiende lo que quiero con mis cejas. Quedaron naturales pero perfectamente definidas. ¡Me encantó el resultado!"
+            },
+            {
+              "@type": "Review",
+              "author": { "@type": "Person", "name": "Sofía Morales" },
+              "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+              "name": "Pedicure Spa",
+              "reviewBody": "La experiencia de pedicure es súper relajante, el masaje incluido es maravilloso. Salí con los pies hermosos y el alma renovada. Volvería siempre."
+            }
+          ],
+          "knowsAbout": [
+            "Pedicure Spa", "Manicure Gel", "Uñas Acrílicas", "Extensiones de Pestañas",
+            "Lifting de Pestañas", "Diseño de Cejas", "Laminado de Cejas",
+            "Belleza femenina", "Cuidado de uñas", "Tratamientos de cejas y pestañas"
+          ],
           "openingHoursSpecification": [
             {
               "@type": "OpeningHoursSpecification",
@@ -90,13 +153,86 @@
             "@type": "OfferCatalog",
             "name": "Servicios de belleza en Mexicali",
             "itemListElement": [
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Pedicure Spa", "description": "Tratamiento completo de pies con exfoliación, hidratación y esmaltado." } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Manicure Gel", "description": "Manicure de larga duración con gel de alta calidad." } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Uñas Acrílicas", "description": "Extensiones y rellenos de uñas acrílicas en diferentes estilos y diseños." } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Extensiones de Pestañas", "description": "Aplicación de extensiones de pestañas pelo a pelo o volumen." } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Lifting de Pestañas", "description": "Tratamiento permanente que riza y eleva las pestañas naturales." } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Diseño de Cejas", "description": "Diseño y definición de cejas según la morfología del rostro." } },
-              { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Laminado de Cejas", "description": "Tratamiento que alisa y fija las cejas para un aspecto lleno y definido." } }
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Pedicure Spa",
+                  "description": "Tratamiento completo de pies con exfoliación, hidratación profunda y esmaltado de larga duración. Incluye masaje de pies. Duración: 60 minutos."
+                },
+                "price": "350",
+                "priceCurrency": "MXN"
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Manicure Gel",
+                  "description": "Esmaltado semipermanente de alta calidad con duración de 2 a 3 semanas sin perder brillo ni color. Incluye modelado de uñas. Duración: 45 minutos."
+                },
+                "price": "280",
+                "priceCurrency": "MXN"
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Uñas Acrílicas",
+                  "description": "Diseño personalizado en forma y largo a elección. Incluye esmaltado en gel y acabado impecable con los mejores productos. Duración: 90 minutos."
+                },
+                "price": "550",
+                "priceCurrency": "MXN"
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Extensiones de Pestañas",
+                  "description": "Técnica pelo a pelo para una mirada impactante. Estilos disponibles: natural, volumen y mega volumen. Duración: 120 minutos."
+                },
+                "price": "850",
+                "priceCurrency": "MXN"
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Lifting de Pestañas",
+                  "description": "Realza tu mirada curvando las pestañas naturales sin necesidad de extensiones. Incluye tintado para un efecto más dramático. Resultado visible por 6 a 8 semanas. Duración: 60 minutos."
+                },
+                "price": "650",
+                "priceCurrency": "MXN"
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Diseño de Cejas",
+                  "description": "Perfilado y depilación profesional con asesoría de forma ideal según la morfología del rostro. Duración: 30 minutos."
+                },
+                "price": "180",
+                "priceCurrency": "MXN"
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Laminado de Cejas",
+                  "description": "Tratamiento semipermanente que alisa y fija las cejas con efecto cepillado por hasta 8 semanas. Resultado natural y definido. Duración: 45 minutos."
+                },
+                "price": "450",
+                "priceCurrency": "MXN"
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Spa de Pies Completo",
+                  "description": "Pedicure premium con exfoliación, mascarilla, hidratación, esmaltado y masaje de piernas. Duración: 75 minutos."
+                },
+                "price": "550",
+                "priceCurrency": "MXN"
+              }
             ]
           },
           "speakable": {
@@ -112,14 +248,7 @@
           "description": "Sitio oficial de Luga Gy, salón de belleza profesional en Mexicali, Baja California.",
           "publisher": { "@id": "https://lugagy.com/#salon" },
           "inLanguage": "es-MX",
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": {
-              "@type": "EntryPoint",
-              "urlTemplate": "https://lugagy.com/?q={search_term_string}"
-            },
-            "query-input": "required name=search_term_string"
-          }
+          "dateModified": "2026-06-20"
         },
         {
           "@type": "FAQPage",
@@ -127,10 +256,10 @@
           "mainEntity": [
             {
               "@type": "Question",
-              "name": "¿Qué servicios ofrece Luga Gy?",
+              "name": "¿Qué servicios ofrece Luga Gy en Mexicali?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Luga Gy ofrece servicios de belleza profesionales en Mexicali: Pedicure Spa, Manicure Gel, Uñas Acrílicas, Extensiones de Pestañas, Lifting de Pestañas, Diseño de Cejas y Laminado de Cejas. Contamos con más de 5 años de experiencia atendiendo a nuestras clientas."
+                "text": "Luga Gy es un salón de belleza profesional en Mexicali, Baja California, que ofrece: Pedicure Spa ($350 MXN, 60 min), Manicure Gel ($280 MXN, 45 min), Uñas Acrílicas ($550 MXN, 90 min), Extensiones de Pestañas ($850 MXN, 120 min), Lifting de Pestañas ($650 MXN, 60 min), Diseño de Cejas ($180 MXN, 30 min) y Laminado de Cejas ($450 MXN, 45 min). El salón cuenta con una calificación promedio de 4.8 estrellas basada en más de 500 clientas."
               }
             },
             {
@@ -138,7 +267,7 @@
               "name": "¿Cómo puedo reservar una cita en Luga Gy?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Puedes reservar tu cita directamente en nuestro sitio web lugagy.com usando el formulario de reservación, o bien contactarnos por WhatsApp al +52 686 116 2619. Una vez que reserves, recibirás un correo electrónico para confirmar tu cita."
+                "text": "Puedes reservar tu cita en Luga Gy de dos formas: directamente en lugagy.com mediante el formulario de reservación en línea (disponible las 24 horas), o por WhatsApp al +52 686 116 2619. Al reservar en línea recibirás una confirmación por correo electrónico. Se recomienda reservar con al menos 24 horas de anticipación para garantizar disponibilidad."
               }
             },
             {
@@ -146,23 +275,15 @@
               "name": "¿Dónde está ubicado el salón Luga Gy?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Luga Gy se encuentra en Calle Gordiano Guzmán #1400, Mexicali, Baja California, México (C.P. 21290). Estamos disponibles de lunes a viernes de 10:00 a 20:00 horas y los sábados de 10:00 a 18:00 horas."
+                "text": "Luga Gy se encuentra en Calle Gordiano Guzmán #1400, colonia Independencia, Mexicali, Baja California, México (C.P. 21290). El horario de atención es lunes a viernes de 10:00 a 20:00 horas y sábados de 10:00 a 18:00 horas. Los domingos permanecemos cerrados."
               }
             },
             {
               "@type": "Question",
-              "name": "¿Cuáles son los horarios de atención de Luga Gy?",
+              "name": "¿Cuánto duran las uñas de manicure gel en Luga Gy?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Nuestro horario de atención es: lunes a viernes de 10:00 a 20:00 horas, y sábados de 10:00 a 18:00 horas. Los domingos permanecemos cerrados. Te recomendamos reservar tu cita con anticipación para garantizar tu lugar."
-              }
-            },
-            {
-              "@type": "Question",
-              "name": "¿Cuánto cuestan los servicios de uñas acrílicas en Luga Gy?",
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": "Los precios varían según el servicio y diseño elegido. Luga Gy ofrece precios accesibles con calidad profesional en Mexicali. Para conocer el costo exacto de uñas acrílicas, extensiones de pestañas, diseño de cejas u otros servicios, puedes consultarnos por WhatsApp o reservar directamente en nuestro sitio web."
+                "text": "El manicure gel en Luga Gy tiene una duración de 2 a 3 semanas sin perder brillo ni color, significativamente más que el esmalte tradicional que suele durar 5 a 7 días. El servicio incluye modelado de uñas y el proceso toma aproximadamente 45 minutos. Para prolongar el resultado se recomienda usar guantes en tareas domésticas y aplicar aceite de cutículas diariamente."
               }
             },
             {
@@ -170,15 +291,39 @@
               "name": "¿Qué es el laminado de cejas y cuánto dura?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "El laminado de cejas es un tratamiento semipermanente que alisa y fija los vellos de las cejas hacia arriba, logrando un efecto de cejas llenas, definidas y ordenadas. El resultado dura entre 4 y 6 semanas dependiendo del tipo de piel y cuidados posteriores. En Luga Gy lo realizamos con productos de alta calidad para garantizar tu seguridad y el mejor resultado."
+                "text": "El laminado de cejas es un tratamiento semipermanente que alisa y fija los vellos hacia arriba, logrando un efecto de cejas llenas, ordenadas y definidas sin necesidad de maquillaje diario. En Luga Gy el resultado dura entre 6 y 8 semanas dependiendo del tipo de piel y los cuidados posteriores. La sesión toma 45 minutos y tiene un costo de $450 MXN."
               }
             },
             {
               "@type": "Question",
-              "name": "¿Luga Gy tiene lifting de pestañas?",
+              "name": "¿Las extensiones de pestañas dañan las pestañas naturales?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Sí, ofrecemos lifting de pestañas, un tratamiento que riza y eleva permanentemente las pestañas naturales sin necesidad de extensiones. El efecto dura entre 6 y 8 semanas. Es ideal para quienes buscan una mirada más abierta y expresiva con bajo mantenimiento."
+                "text": "Cuando se aplican correctamente por profesionales certificados, las extensiones de pestañas no dañan las pestañas naturales. En Luga Gy utilizamos la técnica pelo a pelo, que consiste en adherir una extensión a cada pestaña natural de forma individual, respetando su ciclo de crecimiento. Los estilos disponibles son: natural, volumen y mega volumen. El servicio dura 120 minutos y tiene un costo de $850 MXN."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Qué es el lifting de pestañas y cuánto dura?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "El lifting de pestañas es un tratamiento que riza y eleva permanentemente las pestañas naturales sin necesidad de extensiones. El efecto dura entre 6 y 8 semanas. En Luga Gy incluimos tintado para un resultado más dramático y expresivo. Es ideal para quienes buscan una mirada abierta con bajo mantenimiento diario. El servicio toma 60 minutos y tiene un costo de $650 MXN."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Cuánto cuestan las uñas acrílicas en Mexicali en Luga Gy?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Las uñas acrílicas en Luga Gy tienen un precio de $550 MXN e incluyen diseño personalizado, forma y largo a elección, esmaltado en gel y acabado impecable. El servicio toma 90 minutos. Para rellenos y mantenimiento, contáctanos directamente por WhatsApp al +52 686 116 2619 o reserva en lugagy.com."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "¿Cuáles son los horarios de Luga Gy?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Luga Gy atiende de lunes a viernes de 10:00 a 20:00 horas y los sábados de 10:00 a 18:00 horas. Los domingos el salón permanece cerrado. Para garantizar tu cita, se recomienda reservar con anticipación en lugagy.com o por WhatsApp al +52 686 116 2619."
               }
             }
           ]
