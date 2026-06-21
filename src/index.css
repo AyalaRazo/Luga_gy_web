@@ -119,3 +119,30 @@
     background: #FF9EB5;
   }
 }
+
+/* ── Scrollbar global — aplica a todos los scrollbars del sitio ── */
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background: #FFF5F7;
+  border-radius: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #FBC4C4;
+  border-radius: 10px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #FF9EB5;
+}
+
+.dark *::-webkit-scrollbar-track {
+  background: #1F2937;
+}
+.dark *::-webkit-scrollbar-thumb {
+  background: #9D4E6F;
+}
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: #C06A8A;
+}

@@ -47,34 +47,36 @@ export default function AdminLayout() {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5">
-        {NAV.filter(item => {
-          if (item.superAdminOnly) return isSuperAdmin;
-          if (item.adminOnly) return isAdmin;
-          return true;
-        }).map(({ to, label, icon: Icon, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            onClick={() => setSidebarOpen(false)}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-xl font-poppins text-sm transition-all duration-150 cursor-pointer group ${
-                isActive
-                  ? 'bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 font-semibold'
-                  : 'text-gray-500 dark:text-gray-400 hover:bg-pink-50/60 dark:hover:bg-gray-700 hover:text-pink-500 dark:hover:text-pink-400'
-              }`
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <Icon size={18} className={isActive ? 'text-pink-500 dark:text-pink-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-pink-400'} />
-                <span className="flex-1">{label}</span>
-                {isActive && <ChevronRight size={14} className="text-pink-400" />}
-              </>
-            )}
-          </NavLink>
-        ))}
+      <nav className="flex-1 py-4 overflow-y-auto scrollbar-pink [direction:rtl]">
+        <div className="[direction:ltr] px-3 space-y-0.5">
+          {NAV.filter(item => {
+            if (item.superAdminOnly) return isSuperAdmin;
+            if (item.adminOnly) return isAdmin;
+            return true;
+          }).map(({ to, label, icon: Icon, end }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-xl font-poppins text-sm transition-all duration-150 cursor-pointer group ${
+                  isActive
+                    ? 'bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 font-semibold'
+                    : 'text-gray-500 dark:text-gray-400 hover:bg-pink-50/60 dark:hover:bg-gray-700 hover:text-pink-500 dark:hover:text-pink-400'
+                }`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <Icon size={18} className={isActive ? 'text-pink-500 dark:text-pink-400' : 'text-gray-400 dark:text-gray-500 group-hover:text-pink-400'} />
+                  <span className="flex-1">{label}</span>
+                  {isActive && <ChevronRight size={14} className="text-pink-400" />}
+                </>
+              )}
+            </NavLink>
+          ))}
+        </div>
       </nav>
 
       {/* Ver sitio web */}
