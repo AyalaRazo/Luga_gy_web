@@ -21,11 +21,10 @@ function generarSlots(inicio, fin) {
   return slots;
 }
 
-// Estados del formulario
 const ESTADO = { IDLE: 'idle', LOADING: 'loading', SUCCESS: 'success', ERROR: 'error' };
 
 const BookingSection = () => {
-  const [service, setService]         = useState('');
+  const [selectedServices, setSelectedServices] = useState([]);
   const [date, setDate]               = useState('');
   const [time, setTime]               = useState('');
   const [name, setName]               = useState('');
@@ -46,22 +45,19 @@ const BookingSection = () => {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   })();
 
-  // Cargar horario, días bloqueados y servicios activos al montar
   useEffect(() => {
     Promise.all([getHorario(), getDiasBloqueados(), getServiciosPublic()]).then(
       ([{ data: h }, { data: dias }, { data: svcs }]) => {
         if (h) setHorario(h);
         setDiasBloqueados((dias ?? []).map(d => d.fecha));
-        setServiceOptions((svcs ?? []).map(s => s.nombre));
+        setServiceOptions(svcs ?? []);
       }
     );
   }, []);
 
-  // Cuando cambia la fecha: calcular slots disponibles según horario + días bloqueados
   useEffect(() => {
     if (!date) { setBookedSlots([]); setAvailableSlots([]); setDateBlocked(false); return; }
 
-    // Verificar si el día está bloqueado
     if (diasBloqueados.includes(date)) {
       setDateBlocked(true);
       setAvailableSlots([]);
@@ -70,7 +66,6 @@ const BookingSection = () => {
     }
     setDateBlocked(false);
 
-    // Calcular slots según horario semanal
     const dayIndex = new Date(date + 'T12:00:00').getDay();
     const dayKey   = DIA_KEYS[dayIndex];
     const diaConfig = horario?.[dayKey];
@@ -82,7 +77,6 @@ const BookingSection = () => {
     const slots = generarSlots(diaConfig.inicio, diaConfig.fin);
     setAvailableSlots(slots);
 
-    // Cargar citas ya reservadas
     setLoadingSlots(true);
     getCitasPorFecha(date)
       .then(({ data }) => {
@@ -91,15 +85,30 @@ const BookingSection = () => {
       .finally(() => setLoadingSlots(false));
   }, [date, horario, diasBloqueados]);
 
+  const toggleService = (nombre) => {
+    setSelectedServices(prev =>
+      prev.includes(nombre) ? prev.filter(s => s !== nombre) : [...prev, nombre]
+    );
+  };
+
+  const totalDuracion = serviceOptions
+    .filter(s => selectedServices.includes(s.nombre))
+    .reduce((sum, s) => sum + (s.duracion || 0), 0);
+
+  const totalPrecio = serviceOptions
+    .filter(s => selectedServices.includes(s.nombre))
+    .reduce((sum, s) => sum + (Number(s.precio) || 0), 0);
+
+  const servicioStr = selectedServices.join(' + ');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!service || !date || !time || !email || !telefono) return;
+    if (selectedServices.length === 0 || !date || !time || !email || !telefono) return;
 
     setStatus(ESTADO.LOADING);
     setErrorMsg('');
 
-    // 1. Guardar en Supabase
-    const { data: citaGuardada, error } = await crearCita({ nombre: name, servicio: service, fecha: date, hora: time, email, telefono });
+    const { data: citaGuardada, error } = await crearCita({ nombre: name, servicio: servicioStr, fecha: date, hora: time, email, telefono });
 
     if (error) {
       console.error('[Booking] Error Supabase:', error);
@@ -108,17 +117,16 @@ const BookingSection = () => {
       return;
     }
 
-    // 2. Enviar email de confirmación con token
     const token = citaGuardada?.confirmation_token;
-    const { error: emailError } = await sendBookingEmail({ email, name, servicio: service, fecha: date, hora: time, token, telefono });
+    const { error: emailError } = await sendBookingEmail({ email, name, servicio: servicioStr, fecha: date, hora: time, token, telefono });
     if (emailError) console.warn('[Booking] Email no enviado:', emailError);
 
     setStatus(ESTADO.SUCCESS);
-    trackSchedule(service);
+    trackSchedule(servicioStr);
   };
 
   const resetForm = () => {
-    setService(''); setDate(''); setTime(''); setName(''); setEmail('');
+    setSelectedServices([]); setDate(''); setTime(''); setName(''); setEmail('');
     setStatus(ESTADO.IDLE); setErrorMsg(''); setBookedSlots([]); setTelefono('');
   };
 
@@ -127,7 +135,6 @@ const BookingSection = () => {
   const slotDisabled = (slot) => bookedSlots.filter(s => s === slot).length >= dayCapacity;
   const isDayClosed  = date && !dateBlocked && horario && availableSlots.length === 0;
 
-  // Genera lista de horarios para el panel lateral
   const scheduleInfo = [
     { key: 'lunes',     day: 'Lun – Vie' },
     { key: 'sabado',    day: 'Sábado'    },
@@ -171,7 +178,7 @@ const BookingSection = () => {
                       </p>
                     </div>
                     <div className="bg-pink-50 dark:bg-pink-900/20 rounded-xl p-4 w-full text-left text-sm font-poppins text-gray-600 dark:text-gray-300 space-y-1 border border-pink-100 dark:border-gray-700">
-                      <p><span className="font-medium text-pink-400">Servicio:</span> {service}</p>
+                      <p><span className="font-medium text-pink-400">Servicio:</span> {servicioStr}</p>
                       <p><span className="font-medium text-pink-400">Fecha:</span> {date}</p>
                       <p><span className="font-medium text-pink-400">Hora:</span> {time}</p>
                     </div>
@@ -249,26 +256,47 @@ const BookingSection = () => {
                       />
                     </div>
 
-                    {/* Servicio */}
+                    {/* Servicios — multi-select chips */}
                     <div>
-                      <label htmlFor="booking-service" className="block font-poppins text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">
-                        Servicio <span className="text-pink-400">*</span>
-                      </label>
-                      <select
-                        id="booking-service"
-                        value={service}
-                        onChange={(e) => setService(e.target.value)}
-                        required
-                        disabled={serviceOptions.length === 0}
-                        className="w-full px-4 py-3 rounded-xl border border-pink-200 dark:border-gray-600 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-800 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                      >
-                        <option value="">
-                          {serviceOptions.length === 0 ? 'Cargando servicios…' : 'Elige un servicio...'}
-                        </option>
-                        {serviceOptions.map((s) => (
-                          <option key={s} value={s}>{s}</option>
-                        ))}
-                      </select>
+                      <p className="block font-poppins text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">
+                        Servicios <span className="text-pink-400">*</span>
+                      </p>
+                      {serviceOptions.length === 0 ? (
+                        <p className="font-poppins text-xs text-gray-400 dark:text-gray-500">Cargando servicios…</p>
+                      ) : (
+                        <div className="flex flex-wrap gap-2" role="group" aria-label="Seleccionar servicios">
+                          {serviceOptions.map((svc) => {
+                            const selected = selectedServices.includes(svc.nombre);
+                            return (
+                              <button
+                                key={svc.id}
+                                type="button"
+                                onClick={() => toggleService(svc.nombre)}
+                                aria-pressed={selected}
+                                className={`px-3 py-2 rounded-xl text-xs font-poppins font-medium transition-all duration-200 active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-pink-300 border text-left
+                                  ${selected
+                                    ? 'bg-pink-400 text-white border-pink-400 shadow-pink-sm'
+                                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-pink-200 dark:border-gray-600 hover:border-pink-400 hover:text-pink-500 dark:hover:text-pink-400'
+                                  }`}
+                              >
+                                <span className="block leading-tight">{svc.nombre}</span>
+                                {svc.precio != null && (
+                                  <span className={`block text-[10px] mt-0.5 ${selected ? 'text-white/75' : 'text-gray-400 dark:text-gray-500'}`}>
+                                    ${svc.precio} MXN
+                                  </span>
+                                )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                      {selectedServices.length > 0 && (
+                        <p className="font-poppins text-xs text-pink-500 dark:text-pink-400 mt-2 font-medium">
+                          {totalDuracion > 0 && `~${totalDuracion} min`}
+                          {totalDuracion > 0 && totalPrecio > 0 && ' · '}
+                          {totalPrecio > 0 && `Total $${totalPrecio} MXN`}
+                        </p>
+                      )}
                     </div>
 
                     {/* Fecha */}
@@ -298,7 +326,6 @@ const BookingSection = () => {
                         )}
                       </p>
 
-                      {/* Día bloqueado */}
                       {dateBlocked && (
                         <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
                           <AlertCircle size={15} className="text-amber-500 shrink-0" />
@@ -306,7 +333,6 @@ const BookingSection = () => {
                         </div>
                       )}
 
-                      {/* Día sin horario (cerrado) */}
                       {isDayClosed && (
                         <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3">
                           <AlertCircle size={15} className="text-gray-400 dark:text-gray-500 shrink-0" />
@@ -314,7 +340,6 @@ const BookingSection = () => {
                         </div>
                       )}
 
-                      {/* Slots disponibles */}
                       {!dateBlocked && availableSlots.length > 0 && (
                         <div className="grid grid-cols-5 gap-2" role="group" aria-label="Seleccionar horario">
                           {availableSlots.map((slot) => {
@@ -358,7 +383,7 @@ const BookingSection = () => {
                       type="submit"
                       className="w-full justify-center mt-2"
                       size="large"
-                      disabled={!service || !date || !time || !email || !telefono || isDayClosed || dateBlocked || status === ESTADO.LOADING}
+                      disabled={selectedServices.length === 0 || !date || !time || !email || !telefono || isDayClosed || dateBlocked || status === ESTADO.LOADING}
                     >
                       {status === ESTADO.LOADING ? (
                         <>
@@ -394,7 +419,6 @@ const BookingSection = () => {
                     </div>
                   </a>
 
-                  {/* Horarios */}
                   <div className="border-t border-white/20 pt-4 mb-4">
                     <h4 className="font-poppins font-semibold text-sm mb-3">Horario de atención</h4>
                     <ul className="space-y-2">
@@ -409,7 +433,6 @@ const BookingSection = () => {
                     </ul>
                   </div>
 
-                  {/* Dirección */}
                   <div className="border-t border-white/20 pt-4">
                     <h4 className="font-poppins font-semibold text-sm mb-2">Dónde estamos</h4>
                     <p className="font-poppins text-xs text-white/80 leading-relaxed">

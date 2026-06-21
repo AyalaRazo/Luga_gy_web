@@ -3,16 +3,6 @@ import { X, Save, Calendar, AlertCircle, CheckCircle2, Tag } from 'lucide-react'
 import { crearCitaAdmin, updateCita, vincularEventoCalendario, gcalSync, getServiciosAdmin, getPromocionesAdmin } from '../../lib/supabase';
 import { promosParaHoy, calcularPrecioEfectivo } from '../../lib/promociones';
 
-const SERVICIOS = [
-  'Pedicure Spa',
-  'Manicure Gel',
-  'Uñas Acrílicas',
-  'Extensiones de Pestañas',
-  'Lifting de Pestañas',
-  'Diseño de Cejas',
-  'Laminado de Cejas',
-];
-
 const ESTADOS = ['pendiente', 'por_confirmar', 'confirmada', 'completada', 'cancelada'];
 const ESTADO_LABELS = {
   pendiente:     'Pendiente',
@@ -28,18 +18,22 @@ const HORAS = Array.from({ length: 21 }, (_, i) => {
   return `${String(h).padStart(2, '0')}:${m}`;
 });
 
-const EMPTY = { nombre: '', servicio: SERVICIOS[0], fecha: '', hora: '10:00', estado: 'pendiente', notas: '', precio_cobrado: '', email: '', telefono: '' };
+const EMPTY = { nombre: '', fecha: '', hora: '10:00', estado: 'pendiente', notas: '', precio_cobrado: '', email: '', telefono: '' };
 
 export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaultHora }) {
   const isEdit = Boolean(cita);
-  const [form,      setForm]      = useState(isEdit
+  const [form, setForm] = useState(isEdit
     ? { ...cita, hora: cita.hora?.slice(0, 5) ?? '10:00', notas: cita.notas ?? '', precio_cobrado: cita.precio_cobrado != null ? String(cita.precio_cobrado) : '', email: cita.email ?? '', telefono: cita.telefono ?? '' }
     : { ...EMPTY, fecha: defaultFecha ?? '', hora: defaultHora ?? '10:00' });
+
+  const [selectedAdminServices, setSelectedAdminServices] = useState(
+    isEdit ? (cita?.servicio || '').split(' + ').filter(Boolean) : []
+  );
   const [servicios,   setServicios]   = useState([]);
   const [promociones, setPromociones] = useState([]);
   const [loading,     setLoading]     = useState(false);
-  const [calSync, setCalSync] = useState('idle'); // idle | syncing | ok | error
-  const [error,   setError]   = useState('');
+  const [calSync,     setCalSync]     = useState('idle');
+  const [error,       setError]       = useState('');
 
   useEffect(() => {
     const handler = (e) => { if (e.key === 'Escape') onClose(); };
@@ -47,40 +41,48 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
     return () => window.removeEventListener('keydown', handler);
   }, [onClose]);
 
-  // Load servicios + promociones from DB
   useEffect(() => {
     getServiciosAdmin().then(({ data }) => {
-      if (data?.length) {
-        setServicios(data);
-        // Auto-fill price on new cita
-        if (!isEdit && !form.precio_cobrado) {
-          const sv = data.find(s => s.nombre === form.servicio);
-          if (sv) setForm(p => ({ ...p, precio_cobrado: String(sv.precio) }));
-        }
-      }
+      if (data?.length) setServicios(data);
     });
     getPromocionesAdmin().then(({ data }) => {
       if (data?.length) setPromociones(data);
     });
   }, []); // eslint-disable-line
 
-  // Price hint: precio base + promo activa en la fecha de la cita
+  const toggleAdminService = (nombre) => {
+    setSelectedAdminServices(prev => {
+      const next = prev.includes(nombre)
+        ? prev.filter(s => s !== nombre)
+        : [...prev, nombre];
+      if (servicios.length > 0) {
+        const total = servicios
+          .filter(s => next.includes(s.nombre))
+          .reduce((sum, s) => sum + (Number(s.precio) || 0), 0);
+        setForm(p => ({ ...p, precio_cobrado: next.length > 0 ? String(total) : '' }));
+      }
+      return next;
+    });
+  };
+
   const precioHint = useMemo(() => {
-    const sv = servicios.find(s => s.nombre === form.servicio);
-    if (!sv) return null;
+    if (!selectedAdminServices.length || !servicios.length) return null;
+    const svcs = servicios.filter(s => selectedAdminServices.includes(s.nombre));
+    if (!svcs.length) return null;
     const fecha = form.fecha ? new Date(form.fecha + 'T12:00:00') : new Date();
     const promosHoy = promosParaHoy(promociones, fecha);
-    const { precioFinal, promo } = calcularPrecioEfectivo(sv.precio, promosHoy, sv.id);
-    return { precioBase: sv.precio, precioFinal, promo };
-  }, [form.servicio, form.fecha, servicios, promociones]);
-
-  // When servicio changes, auto-fill price from DB
-  function handleServicioChange(e) {
-    const nombre = e.target.value;
-    setForm(p => ({ ...p, servicio: nombre }));
-    const sv = servicios.find(s => s.nombre === nombre);
-    if (sv) setForm(p => ({ ...p, servicio: nombre, precio_cobrado: String(sv.precio) }));
-  }
+    let totalBase = 0, totalFinal = 0;
+    const promosAplicadas = [];
+    svcs.forEach(sv => {
+      const { precioFinal, promo } = calcularPrecioEfectivo(sv.precio, promosHoy, sv.id);
+      totalBase  += Number(sv.precio) || 0;
+      totalFinal += precioFinal || 0;
+      if (promo && !promosAplicadas.find(p => p.nombre === promo.nombre)) {
+        promosAplicadas.push(promo);
+      }
+    });
+    return { precioBase: totalBase, precioFinal: totalFinal, promosAplicadas };
+  }, [selectedAdminServices, form.fecha, servicios, promociones]);
 
   function set(field) {
     return (e) => setForm(prev => ({ ...prev, [field]: e.target.value }));
@@ -92,9 +94,8 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
     const tieneEvento      = Boolean(eventIdExistente);
 
     if (estadosConEvento.includes(savedCita.estado)) {
-      // Crear o actualizar evento según si ya existe
       setCalSync('syncing');
-      const action  = tieneEvento ? 'update' : 'create';
+      const action = tieneEvento ? 'update' : 'create';
       const { data, error: fnError } = await gcalSync({ action, cita: savedCita, eventId: eventIdExistente ?? undefined });
       if (fnError || data?.error) {
         console.warn('[GCal] No se pudo sincronizar:', fnError ?? data?.error);
@@ -103,36 +104,34 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
       }
       if (data?.eventId) await vincularEventoCalendario(savedCita.id, data.eventId);
       setCalSync('ok');
-
     } else if (tieneEvento) {
-      // Estado no requiere evento → eliminar del calendario y limpiar DB
       await gcalSync({ action: 'delete', eventId: eventIdExistente });
       await vincularEventoCalendario(savedCita.id, null);
     }
-    // pendiente / por_confirmar / cancelada sin evento → no hacer nada
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError('');
 
-    if (!form.nombre.trim()) { setError('El nombre es requerido.'); return; }
-    if (!form.fecha)          { setError('La fecha es requerida.');  return; }
+    if (!form.nombre.trim())  { setError('El nombre es requerido.'); return; }
+    if (!form.fecha)           { setError('La fecha es requerida.'); return; }
+    if (selectedAdminServices.length === 0) { setError('Selecciona al menos un servicio.'); return; }
     if (form.precio_cobrado === '' || form.precio_cobrado == null) { setError('El precio cobrado es requerido.'); return; }
     if (parseFloat(form.precio_cobrado) < 0) { setError('El precio cobrado no puede ser negativo.'); return; }
 
     setLoading(true);
 
     const campos = {
-      nombre:          form.nombre.trim(),
-      servicio:        form.servicio,
-      fecha:           form.fecha,
-      hora:            form.hora,
-      estado:          form.estado,
-      notas:           form.notas     || null,
-      precio_cobrado:  form.precio_cobrado !== '' ? parseFloat(form.precio_cobrado) : null,
-      email:           form.email     || null,
-      telefono:        form.telefono  || null,
+      nombre:         form.nombre.trim(),
+      servicio:       selectedAdminServices.join(' + '),
+      fecha:          form.fecha,
+      hora:           form.hora,
+      estado:         form.estado,
+      notas:          form.notas     || null,
+      precio_cobrado: form.precio_cobrado !== '' ? parseFloat(form.precio_cobrado) : null,
+      email:          form.email     || null,
+      telefono:       form.telefono  || null,
     };
 
     const { data: saved, error: dbError } = isEdit
@@ -145,7 +144,6 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
       return;
     }
 
-    // Sync with Google Calendar (non-blocking — don't fail if calendar unavailable)
     await syncCalendar(saved);
 
     setLoading(false);
@@ -180,7 +178,6 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
             </div>
           )}
 
-          {/* Calendar sync status */}
           {calSync === 'syncing' && (
             <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-xl px-4 py-2.5">
               <div className="w-3.5 h-3.5 border-2 border-blue-300 border-t-blue-500 rounded-full animate-spin shrink-0" />
@@ -219,13 +216,38 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
             </div>
           </div>
 
+          {/* Servicios — multi-select chips */}
           <div>
             <label className={labelClass}>Servicio *</label>
-            <select value={form.servicio} onChange={handleServicioChange} className={inputClass}>
-              {(servicios.length ? servicios.map(s => s.nombre) : SERVICIOS).map(s => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
+            {servicios.length === 0 ? (
+              <p className="font-poppins text-xs text-gray-400 dark:text-gray-500">Cargando servicios…</p>
+            ) : (
+              <div className="flex flex-wrap gap-2" role="group" aria-label="Seleccionar servicios">
+                {servicios.map((svc) => {
+                  const selected = selectedAdminServices.includes(svc.nombre);
+                  return (
+                    <button
+                      key={svc.id}
+                      type="button"
+                      onClick={() => toggleAdminService(svc.nombre)}
+                      aria-pressed={selected}
+                      className={`px-3 py-2 rounded-xl text-xs font-poppins font-medium transition-all duration-200 active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-pink-300 border text-left
+                        ${selected
+                          ? 'bg-pink-400 text-white border-pink-400'
+                          : 'bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-pink-400 hover:text-pink-500'
+                        }`}
+                    >
+                      <span className="block leading-tight">{svc.nombre}</span>
+                      {svc.precio != null && (
+                        <span className={`block text-[10px] mt-0.5 ${selected ? 'text-white/75' : 'text-gray-400 dark:text-gray-500'}`}>
+                          ${svc.precio} MXN
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -248,33 +270,35 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
             </select>
           </div>
 
-          {/* Precio cobrado — siempre visible */}
+          {/* Precio cobrado */}
           <div>
-              <label className={labelClass}>Precio cobrado (MXN) *</label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 font-poppins text-sm text-gray-400 dark:text-gray-500">$</span>
-                <input type="number" min="0" step="0.01" required
-                  value={form.precio_cobrado} onChange={set('precio_cobrado')}
-                  placeholder="0.00"
-                  className={`${inputClass} pl-7`} />
-              </div>
-              {precioHint ? (
-                precioHint.promo ? (
-                  <div className="flex items-start gap-1.5 mt-1.5">
-                    <Tag size={11} className="text-pink-400 mt-0.5 shrink-0" />
-                    <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
-                      Precio regular: <span className="line-through">${precioHint.precioBase}</span>
-                      {' · '}
-                      <span className="text-pink-500 font-medium">Con promo "{precioHint.promo.nombre}": ${precioHint.precioFinal}</span>
-                    </p>
-                  </div>
-                ) : (
-                  <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-1.5">
-                    Precio del servicio: <span className="font-medium text-gray-500 dark:text-gray-400">${precioHint.precioBase}</span>
-                  </p>
-                )
-              ) : null}
+            <label className={labelClass}>Precio cobrado (MXN) *</label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 font-poppins text-sm text-gray-400 dark:text-gray-500">$</span>
+              <input type="number" min="0" step="0.01" required
+                value={form.precio_cobrado} onChange={set('precio_cobrado')}
+                placeholder="0.00"
+                className={`${inputClass} pl-7`} />
             </div>
+            {precioHint && (
+              precioHint.promosAplicadas.length > 0 ? (
+                <div className="flex items-start gap-1.5 mt-1.5">
+                  <Tag size={11} className="text-pink-400 mt-0.5 shrink-0" />
+                  <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
+                    Precio regular: <span className="line-through">${precioHint.precioBase}</span>
+                    {' · '}
+                    <span className="text-pink-500 font-medium">
+                      Con promo "{precioHint.promosAplicadas.map(p => p.nombre).join(', ')}": ${precioHint.precioFinal}
+                    </span>
+                  </p>
+                </div>
+              ) : (
+                <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-1.5">
+                  Precio estimado: <span className="font-medium text-gray-500 dark:text-gray-400">${precioHint.precioBase} MXN</span>
+                </p>
+              )
+            )}
+          </div>
 
           <div>
             <label className={labelClass}>Notas (opcional)</label>
