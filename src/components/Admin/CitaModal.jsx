@@ -93,10 +93,14 @@ export default function CitaModal({ cita, onClose, onSaved, defaultFecha, defaul
     const eventIdExistente = savedCita.google_event_id ?? cita?.google_event_id ?? null;
     const tieneEvento      = Boolean(eventIdExistente);
 
+    const duracion_total = servicios
+      .filter(s => selectedAdminServices.includes(s.nombre))
+      .reduce((sum, s) => sum + (s.duracion || 60), 0) || 60;
+
     if (estadosConEvento.includes(savedCita.estado)) {
       setCalSync('syncing');
       const action = tieneEvento ? 'update' : 'create';
-      const { data, error: fnError } = await gcalSync({ action, cita: savedCita, eventId: eventIdExistente ?? undefined });
+      const { data, error: fnError } = await gcalSync({ action, cita: { ...savedCita, duracion_total }, eventId: eventIdExistente ?? undefined });
       if (fnError || data?.error) {
         console.warn('[GCal] No se pudo sincronizar:', fnError ?? data?.error);
         setCalSync('error');

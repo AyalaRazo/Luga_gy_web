@@ -39,7 +39,11 @@ export async function crearEventoCalendario(cita, accessToken) {
     return null;
   }
 
-  const duracion = DURACIONES[cita.servicio] ?? 60;
+  const duracion = cita.duracion_total
+    ?? (cita.servicio ?? '')
+        .split(' + ')
+        .reduce((sum, s) => sum + (DURACIONES[s.trim()] ?? 60), 0)
+    || 60;
 
   // Construir fechas en ISO 8601 con zona horaria de Mexicali (America/Tijuana)
   const startISO = `${cita.fecha}T${cita.hora}:00`;
