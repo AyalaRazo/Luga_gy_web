@@ -10,8 +10,8 @@ const SectionTitle = ({ title, subtitle, align = 'center', light = false }) => {
   return (
     <div className={`mb-8 flex flex-col ${alignClasses[align]}`}>
       <h2
-        className={`font-great-vibes text-4xl md:text-5xl leading-tight mb-2 ${
-          light ? 'text-white' : 'text-pink-400 dark:text-pink-300'
+        className={`font-playfair text-4xl md:text-5xl font-semibold tracking-tight leading-tight mb-2 ${
+          light ? 'text-white' : 'text-gray-900 dark:text-gray-100'
         }`}
       >
         {title}
@@ -26,10 +26,8 @@ const SectionTitle = ({ title, subtitle, align = 'center', light = false }) => {
         </p>
       )}
       <div
-        className={`w-20 h-0.5 mt-4 rounded-full ${
-          light
-            ? 'bg-gradient-to-r from-white/60 to-white/20'
-            : 'bg-gradient-to-r from-pink-300 via-pink-400 to-gold-400'
+        className={`w-12 h-0.5 mt-4 ${
+          light ? 'bg-white/50' : 'bg-pink-400'
         }`}
       />
     </div>
