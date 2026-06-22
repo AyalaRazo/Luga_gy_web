@@ -1,18 +1,18 @@
 import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-// Public site
+// Public site — above the fold: eager; below the fold: lazy (code splitting)
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
 import HeroSection from './components/Home/HeroSection';
-import AboutSection from './components/Home/AboutSection';
-import ServicesGrid from './components/Home/ServicesGrid';
-import GallerySection from './components/Home/GallerySection';
-import TikTokFeed from './components/Home/TikTokFeed';
-import Testimonials from './components/Home/Testimonials';
-import BookingSection from './components/Home/BookingSection';
-import LocationSection from './components/Home/LocationSection';
-import WhatsAppFloat from './components/UI/WhatsAppFloat';
+const AboutSection   = lazy(() => import('./components/Home/AboutSection'));
+const ServicesGrid   = lazy(() => import('./components/Home/ServicesGrid'));
+const GallerySection = lazy(() => import('./components/Home/GallerySection'));
+const TikTokFeed     = lazy(() => import('./components/Home/TikTokFeed'));
+const Testimonials   = lazy(() => import('./components/Home/Testimonials'));
+const LocationSection = lazy(() => import('./components/Home/LocationSection'));
+const BookingSection = lazy(() => import('./components/Home/BookingSection'));
+const WhatsAppFloat  = lazy(() => import('./components/UI/WhatsAppFloat'));
 
 // Theme
 import { ThemeProvider } from './context/ThemeContext';
