@@ -36,6 +36,7 @@ export async function crearCita(cita) {
     p_hora:     cita.hora,
     p_email:    cita.email    || null,
     p_telefono: cita.telefono || null,
+    p_notas:    cita.notas    || null,
   });
 
   // rpc returns an array of rows; grab the first
@@ -354,7 +355,9 @@ export async function getHorario() {
 }
 
 export async function updateHorario(horario_config) {
-  const { data, error } = await supabase.from('settings').update({ horario_config }).eq('id', 1).select('horario_config').single();
+  // Strip horas_antelacion — it lives in a dedicated column, not inside horario_config
+  const { horas_antelacion: _h, ...cleanConfig } = horario_config ?? {};
+  const { data, error } = await supabase.from('settings').update({ horario_config: cleanConfig }).eq('id', 1).select('horario_config').single();
   return { data, error };
 }
 
@@ -508,6 +511,27 @@ export async function getClientas() {
   const { data, error } = await supabase
     .from('clientes_resumen')
     .select('*');
+  return { data, error };
+}
+
+export async function getNotaCliente(email) {
+  const { data, error } = await supabase
+    .from('notas_cliente')
+    .select('notas')
+    .eq('email', email)
+    .maybeSingle();
+  return { data, error };
+}
+
+export async function upsertNotaCliente(email, notas) {
+  const { data, error } = await supabase
+    .from('notas_cliente')
+    .upsert(
+      { email, notas: notas || null, updated_at: new Date().toISOString() },
+      { onConflict: 'email' }
+    )
+    .select()
+    .single();
   return { data, error };
 }
 

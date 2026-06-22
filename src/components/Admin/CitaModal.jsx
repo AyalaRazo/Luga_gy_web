@@ -3,13 +3,14 @@ import { X, Save, Calendar, AlertCircle, CheckCircle2, Tag } from 'lucide-react'
 import { crearCitaAdmin, updateCita, vincularEventoCalendario, gcalSync, getServiciosAdmin, getPromocionesAdmin } from '../../lib/supabase';
 import { promosParaHoy, calcularPrecioEfectivo } from '../../lib/promociones';
 
-const ESTADOS = ['pendiente', 'por_confirmar', 'confirmada', 'completada', 'cancelada'];
+const ESTADOS = ['pendiente', 'por_confirmar', 'confirmada', 'completada', 'cancelada', 'no_show'];
 const ESTADO_LABELS = {
   pendiente:     'Pendiente',
   por_confirmar: 'Por confirmar',
   confirmada:    'Confirmada',
   completada:    'Completada',
   cancelada:     'Cancelada',
+  no_show:       'No asistió',
 };
 
 const HORAS = Array.from({ length: 21 }, (_, i) => {

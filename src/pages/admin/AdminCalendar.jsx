@@ -25,6 +25,7 @@ const STATUS_STYLE = {
   completada:            'bg-purple-50 border-l-4 border-purple-400 text-purple-900',
   cancelada:             'bg-gray-50   border-l-4 border-gray-300   text-gray-500',
   solicitud_cancelacion: 'bg-red-50    border-l-4 border-red-400    text-red-900',
+  no_show:               'bg-gray-50   border-l-4 border-gray-400   text-gray-500',
 };
 
 const STATUS_BADGE = {
@@ -34,6 +35,7 @@ const STATUS_BADGE = {
   completada:            'bg-purple-100 text-purple-700',
   cancelada:             'bg-gray-100   text-gray-500',
   solicitud_cancelacion: 'bg-red-100    text-red-700',
+  no_show:               'bg-gray-100   text-gray-500',
 };
 
 const STATUS_LABEL = {
@@ -43,6 +45,7 @@ const STATUS_LABEL = {
   completada:            'Completada',
   cancelada:             'Cancelada',
   solicitud_cancelacion: 'Sol. cancelación',
+  no_show:               'No asistió',
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -73,7 +76,10 @@ function groupBySlot(dayCitas) {
     (map[key] ??= []).push(c);
   }
   return Object.entries(map).map(([hora, citas]) => {
-    const maxDur   = Math.max(...citas.map(c => DURACIONES[c.servicio] ?? 60));
+    const maxDur   = Math.max(...citas.map(c => {
+      const parts = (c.servicio ?? '').split(' + ');
+      return parts.reduce((sum, s) => sum + (DURACIONES[s.trim()] ?? 60), 0) || 60;
+    }));
     const startMin = timeToMinutes(hora);
     return {
       hora,

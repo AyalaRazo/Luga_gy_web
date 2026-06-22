@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { CalendarDays, Clock, CheckCircle2, XCircle, TrendingUp, RefreshCw, AlertCircle } from 'lucide-react';
+import { CalendarDays, Clock, CheckCircle2, XCircle, TrendingUp, RefreshCw, AlertCircle, UserX } from 'lucide-react';
 import { getCitasStats, getCitasAdmin } from '../../lib/supabase';
 import CitaStatusBadge from '../../components/Admin/CitaStatusBadge';
 import { useAuth } from '../../context/AuthContext';
@@ -98,7 +98,7 @@ export default function AdminDashboard() {
         <StatCard icon={TrendingUp}   label="Total citas"  value={stats?.total}      color="bg-pink-500"   />
         <StatCard icon={Clock}        label="Pendientes"   value={stats?.pendientes}  color="bg-amber-400"  />
         <StatCard icon={CheckCircle2} label="Confirmadas"  value={stats?.confirmadas} color="bg-green-500"  />
-        <StatCard icon={XCircle}      label="Canceladas"   value={stats?.canceladas}  color="bg-red-400"    />
+        <StatCard icon={UserX}        label="No asistió"   value={stats?.no_shows}    color="bg-gray-500"   />
       </div>
 
       {/* Today's appointments */}

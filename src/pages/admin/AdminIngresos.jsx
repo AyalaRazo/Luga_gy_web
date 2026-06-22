@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { TrendingUp, DollarSign, CheckCircle2, BarChart3, RefreshCw, CalendarDays, Download, ChevronLeft, ChevronRight } from 'lucide-react';
-import * as XLSX from 'xlsx';
+import { exportarExcelIngresos } from '../../lib/exportXlsx';
 import { getIngresosStats, getIngresosPorServicio } from '../../lib/supabase';
 
 const PERIODOS = [
@@ -82,31 +82,7 @@ export default function AdminIngresos() {
     const { inicio, fin } = periodo === 'custom'
       ? { inicio: customInicio, fin: customFin }
       : getRango(periodo);
-
-    // Hoja 1: detalle de citas
-    const detalle = citas.map(c => ({
-      'Fecha':    c.fecha,
-      'Clienta':  c.nombre,
-      'Servicio': c.servicio,
-      'Cobrado':  c.precio_cobrado != null ? Number(c.precio_cobrado) : '',
-    }));
-    detalle.push({ 'Fecha': '', 'Clienta': '', 'Servicio': 'TOTAL', 'Cobrado': totalIngresado });
-
-    // Hoja 2: resumen por servicio
-    const resumen = ranking
-      .filter(r => Number(r.total_ingresado) > 0)
-      .map(r => ({
-        'Servicio':       r.nombre,
-        'Citas':          Number(r.total_citas),
-        'Total ingresado': Number(r.total_ingresado),
-      }));
-
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(detalle),  'Citas completadas');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(resumen),  'Por servicio');
-
-    const nombreArchivo = `ingresos_${inicio}_${fin}.xlsx`;
-    XLSX.writeFile(wb, nombreArchivo);
+    exportarExcelIngresos(citas, ranking, inicio, fin);
   }
 
   // Computed stats

@@ -13,6 +13,7 @@ const Testimonials   = lazy(() => import('./components/Home/Testimonials'));
 const LocationSection = lazy(() => import('./components/Home/LocationSection'));
 const BookingSection = lazy(() => import('./components/Home/BookingSection'));
 const WhatsAppFloat  = lazy(() => import('./components/UI/WhatsAppFloat'));
+const MobileBookingCTA = lazy(() => import('./components/UI/MobileBookingCTA'));
 
 // Theme
 import { ThemeProvider } from './context/ThemeContext';
@@ -53,6 +54,7 @@ function PublicSite() {
       </main>
       <Footer />
       <WhatsAppFloat />
+      <MobileBookingCTA />
     </div>
   );
 }

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Save, Link, CheckCircle2, AlertCircle, ExternalLink, RefreshCw, Eye, EyeOff, Bell } from 'lucide-react';
+import { Save, Link, CheckCircle2, AlertCircle, ExternalLink, RefreshCw, Eye, EyeOff, Bell, CalendarClock } from 'lucide-react';
 import { getSettings, updateSettings, gcalSync } from '../../lib/supabase';
 
 const SCOPES = 'https://www.googleapis.com/auth/calendar.events';
 
 export default function AdminSettings() {
-  const [settings, setSettings] = useState({ google_client_id: '', google_client_secret: '', google_calendar_id: '', admin_email: '' });
+  const [settings, setSettings] = useState({ google_client_id: '', google_client_secret: '', google_calendar_id: '', admin_email: '', horas_antelacion: 2 });
   const [savingEmail, setSavingEmail] = useState(false);
+  const [savingReservas, setSavingReservas] = useState(false);
   const [loading,  setLoading]  = useState(true);
   const [saving,   setSaving]   = useState(false);
   const [toast,    setToast]    = useState({ msg: '', type: 'ok' });
@@ -25,6 +26,7 @@ export default function AdminSettings() {
         google_client_secret: data.google_client_secret ?? '',
         google_calendar_id:   data.google_calendar_id   ?? 'primary',
         admin_email:          data.admin_email           ?? '',
+        horas_antelacion:     data.horas_antelacion      ?? 2,
       });
       setLoading(false);
     });
@@ -94,6 +96,20 @@ export default function AdminSettings() {
     setSavingEmail(false);
     if (error) showToast('Error al guardar el email.', 'error');
     else showToast('Email de notificaciones guardado.');
+  }
+
+  async function handleSaveReservas(e) {
+    e.preventDefault();
+    const val = parseInt(settings.horas_antelacion, 10);
+    if (isNaN(val) || val < 0 || val > 72) {
+      showToast('Ingresá un valor entre 0 y 72 horas.', 'error');
+      return;
+    }
+    setSavingReservas(true);
+    const { error } = await updateSettings({ horas_antelacion: val });
+    setSavingReservas(false);
+    if (error) showToast('Error al guardar.', 'error');
+    else showToast('Configuración de reservas guardada.');
   }
 
   function handleConnectGoogle() {
@@ -172,6 +188,49 @@ export default function AdminSettings() {
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 disabled:bg-pink-300 text-white font-poppins text-sm font-semibold transition-all cursor-pointer shadow-pink-sm"
           >
             {savingEmail ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save size={15} />}
+            Guardar
+          </button>
+        </form>
+      </div>
+
+      {/* Reservas */}
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-6 mb-5">
+        <div className="flex items-start gap-3 mb-5">
+          <div className="w-9 h-9 rounded-xl bg-pink-100 flex items-center justify-center shrink-0">
+            <CalendarClock size={16} className="text-pink-500" />
+          </div>
+          <div>
+            <h2 className="font-poppins text-sm font-semibold text-gray-800 dark:text-gray-100">Reservas online</h2>
+            <p className="font-poppins text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+              Mínimo de horas de antelación para reservar. Las clientas no podrán elegir horarios dentro de este margen.
+            </p>
+          </div>
+        </div>
+        <form onSubmit={handleSaveReservas} className="flex items-end gap-3 flex-wrap">
+          <div className="flex-1 min-w-36">
+            <label className={labelClass}>Horas mínimas de antelación</label>
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                min="0"
+                max="72"
+                step="1"
+                value={settings.horas_antelacion}
+                onChange={e => setSettings(p => ({ ...p, horas_antelacion: e.target.value }))}
+                className={`${inputClass} w-24`}
+              />
+              <span className="font-poppins text-sm text-gray-500 dark:text-gray-400 shrink-0">horas</span>
+            </div>
+            <p className="font-poppins text-xs text-gray-400 dark:text-gray-500 mt-1">
+              Ej: 2 = no pueden reservar para dentro de 2 horas. 0 = sin restricción.
+            </p>
+          </div>
+          <button
+            type="submit"
+            disabled={savingReservas}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 disabled:bg-pink-300 text-white font-poppins text-sm font-semibold transition-all cursor-pointer shadow-pink-sm"
+          >
+            {savingReservas ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save size={15} />}
             Guardar
           </button>
         </form>

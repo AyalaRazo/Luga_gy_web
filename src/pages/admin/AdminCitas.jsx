@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Plus, Search, Filter, Pencil, Trash2, RefreshCw,
-  CalendarDays, ChevronDown, AlertCircle, Calendar, Check, X, Mail, Phone, CheckCircle2,
+  CalendarDays, ChevronDown, AlertCircle, Calendar, Check, X, Mail, Phone, CheckCircle2, Download,
 } from 'lucide-react';
+import { exportarExcelCitas } from '../../lib/exportXlsx';
 import { getCitasAdmin, deleteCita, updateCita, gcalSync, vincularEventoCalendario, resolverCancelacion, sendConfirmedEmail } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +16,7 @@ import Pagination from '../../components/Admin/Pagination';
 import CitaFlowGuide from '../../components/Admin/CitaFlowGuide';
 import Tooltip from '../../components/UI/Tooltip';
 
-const ESTADOS_FILTER = ['todos', 'pendiente', 'por_confirmar', 'confirmada', 'completada', 'cancelada', 'solicitud_cancelacion'];
+const ESTADOS_FILTER = ['todos', 'pendiente', 'por_confirmar', 'confirmada', 'completada', 'cancelada', 'solicitud_cancelacion', 'no_show'];
 
 const ESTADO_LABELS = {
   todos:                 'Todos los estados',
@@ -25,6 +26,7 @@ const ESTADO_LABELS = {
   completada:            'Completada',
   cancelada:             'Cancelada',
   solicitud_cancelacion: 'Solicitud cancelación',
+  no_show:               'No asistió',
 };
 
 function PagoDialog({ cita, onConfirm, onCancel }) {
@@ -145,6 +147,7 @@ function ConfirmDialog({ message, onConfirm, onCancel }) {
   );
 }
 
+
 const PAGE_SIZE = 15;
 
 export default function AdminCitas() {
@@ -228,7 +231,7 @@ export default function AdminCitas() {
         if (gcalData?.eventId) await vincularEventoCalendario(id, gcalData.eventId);
       }
     } else if (cita?.google_event_id) {
-      // pendiente / por_confirmar / cancelada → eliminar evento existente
+      // pendiente / por_confirmar / cancelada / no_show → eliminar evento existente
       await gcalSync({ action: 'delete', eventId: cita.google_event_id });
       await vincularEventoCalendario(id, null);
     }
@@ -346,6 +349,16 @@ export default function AdminCitas() {
               className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-500 dark:text-gray-400 hover:text-pink-500 hover:border-pink-200 hover:bg-pink-50 dark:hover:bg-pink-900/20 transition-all cursor-pointer"
             >
               <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
+            </button>
+          </Tooltip>
+          <Tooltip content="Descargar citas visibles como archivo CSV (Excel / Google Sheets)" position="bottom" maxWidth="max-w-[200px]">
+            <button
+              onClick={() => exportarExcelCitas(filtered)}
+              disabled={loading || filtered.length === 0}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-sm text-gray-500 dark:text-gray-400 hover:text-green-600 hover:border-green-200 hover:bg-green-50 dark:hover:bg-green-900/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+            >
+              <Download size={15} />
+              <span className="hidden sm:inline">Excel</span>
             </button>
           </Tooltip>
           <Tooltip content="Agregar cita manualmente (sin pasar por el formulario web)" position="bottom" maxWidth="max-w-[180px]">
@@ -482,7 +495,7 @@ export default function AdminCitas() {
                               className="font-poppins text-xs bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-600 rounded-lg px-2 py-1 cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-300"
                               title="Cambiar estado"
                             >
-                              {['pendiente','por_confirmar','confirmada','completada','cancelada'].map(e => (
+                              {['pendiente','por_confirmar','confirmada','completada','cancelada','no_show'].map(e => (
                                 <option key={e} value={e}>{ESTADO_LABELS[e]}</option>
                               ))}
                             </select>

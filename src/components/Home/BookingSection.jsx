@@ -30,6 +30,7 @@ const BookingSection = () => {
   const [name, setName]               = useState('');
   const [email, setEmail]             = useState('');
   const [telefono, setTelefono]       = useState('');
+  const [notas, setNotas]             = useState('');
   const [status, setStatus]           = useState(ESTADO.IDLE);
   const [errorMsg, setErrorMsg]       = useState('');
   const [bookedSlots, setBookedSlots] = useState([]);
@@ -75,7 +76,13 @@ const BookingSection = () => {
       return;
     }
     const slots = generarSlots(diaConfig.inicio, diaConfig.fin);
-    setAvailableSlots(slots);
+    const horasAntelacion = horario?.horas_antelacion ?? 2;
+    const filteredSlots = date === todayISO ? (() => {
+      const now = new Date();
+      const minMin = now.getHours() * 60 + now.getMinutes() + horasAntelacion * 60;
+      return slots.filter(s => { const [h, m] = s.split(':').map(Number); return h * 60 + m >= minMin; });
+    })() : slots;
+    setAvailableSlots(filteredSlots);
 
     setLoadingSlots(true);
     getCitasPorFecha(date)
@@ -108,12 +115,21 @@ const BookingSection = () => {
     setStatus(ESTADO.LOADING);
     setErrorMsg('');
 
-    const { data: citaGuardada, error } = await crearCita({ nombre: name, servicio: servicioStr, fecha: date, hora: time, email, telefono });
+    const { data: citaGuardada, error } = await crearCita({ nombre: name, servicio: servicioStr, fecha: date, hora: time, email, telefono, notas });
 
     if (error) {
       console.error('[Booking] Error Supabase:', error);
       setStatus(ESTADO.ERROR);
-      setErrorMsg('No pudimos guardar tu cita. Por favor escribinos por WhatsApp.');
+      const isSlotFull = ['slot_full', 'slot full'].some(k =>
+        [error.message, error.details, error.hint].some(f => f?.toLowerCase().includes(k))
+      );
+      if (isSlotFull) {
+        setErrorMsg('El horario que elegiste ya no está disponible. Por favor elegí otro.');
+        setTime('');
+        getCitasPorFecha(date).then(({ data }) => setBookedSlots((data || []).map(c => c.hora.slice(0, 5))));
+      } else {
+        setErrorMsg('No pudimos guardar tu cita. Por favor escribinos por WhatsApp.');
+      }
       return;
     }
 
@@ -127,7 +143,7 @@ const BookingSection = () => {
 
   const resetForm = () => {
     setSelectedServices([]); setDate(''); setTime(''); setName(''); setEmail('');
-    setStatus(ESTADO.IDLE); setErrorMsg(''); setBookedSlots([]); setTelefono('');
+    setStatus(ESTADO.IDLE); setErrorMsg(''); setBookedSlots([]); setTelefono(''); setNotas('');
   };
 
   const dayKey = date ? DIA_KEYS[new Date(date + 'T12:00:00').getDay()] : null;
@@ -377,6 +393,22 @@ const BookingSection = () => {
                           Los horarios tachados ya están reservados.
                         </p>
                       )}
+                    </div>
+
+                    {/* Notas opcionales */}
+                    <div>
+                      <label htmlFor="booking-notas" className="block font-poppins text-sm font-medium text-gray-600 dark:text-gray-300 mb-1.5">
+                        Notas para tu cita <span className="text-gray-400 font-normal">(opcional)</span>
+                      </label>
+                      <textarea
+                        id="booking-notas"
+                        value={notas}
+                        onChange={(e) => setNotas(e.target.value)}
+                        placeholder="Primera vez, alergias, preferencias de diseño…"
+                        rows={2}
+                        maxLength={300}
+                        className="w-full px-4 py-3 rounded-xl border border-pink-200 dark:border-gray-600 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 outline-none font-poppins text-sm text-gray-700 dark:text-gray-100 dark:bg-gray-800 placeholder-gray-300 dark:placeholder-gray-500 transition-colors resize-none"
+                      />
                     </div>
 
                     <ElegantButton

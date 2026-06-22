@@ -44,6 +44,13 @@ const CONFIG = {
     dot:    'bg-amber-500',
     tip:    'La clienta solicitó cancelar. Acepta o rechaza la solicitud desde el panel.',
   },
+  no_show: {
+    label:  'No asistió',
+    bg:     'bg-gray-100',
+    text:   'text-gray-600',
+    dot:    'bg-gray-400',
+    tip:    'La clienta no se presentó a su cita. No se registra ingreso.',
+  },
 };
 
 export default function CitaStatusBadge({ estado, showTooltip = true }) {

@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Users, Search, RefreshCw, X, ChevronLeft,
-  Mail, Phone, CalendarDays, CheckCircle2, TrendingUp,
+  Mail, Phone, CalendarDays, CheckCircle2, TrendingUp, Save, StickyNote,
 } from 'lucide-react';
-import { getClientas, getCitasDeCliente } from '../../lib/supabase';
+import { getClientas, getCitasDeCliente, getNotaCliente, upsertNotaCliente } from '../../lib/supabase';
 import CitaStatusBadge from '../../components/Admin/CitaStatusBadge';
 import Pagination from '../../components/Admin/Pagination';
 
@@ -23,15 +23,34 @@ function fmtMoney(n) {
 function HistorialDrawer({ clienta, onClose }) {
   const [citas, setCitas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [notaInput, setNotaInput] = useState('');
+  const [savingNota, setSavingNota] = useState(false);
+  const [notaSaved, setNotaSaved] = useState(false);
 
   useEffect(() => {
     if (!clienta) return;
+    setNotaInput('');
+    setNotaSaved(false);
     setLoading(true);
     getCitasDeCliente(clienta.email || null, clienta.nombre).then(({ data }) => {
       setCitas(data ?? []);
       setLoading(false);
     });
+    if (clienta.email) {
+      getNotaCliente(clienta.email).then(({ data }) => {
+        if (data?.notas) setNotaInput(data.notas);
+      });
+    }
   }, [clienta]);
+
+  async function handleSaveNota() {
+    if (!clienta?.email) return;
+    setSavingNota(true);
+    await upsertNotaCliente(clienta.email, notaInput);
+    setSavingNota(false);
+    setNotaSaved(true);
+    setTimeout(() => setNotaSaved(false), 3000);
+  }
 
   if (!clienta) return null;
 
@@ -74,6 +93,40 @@ function HistorialDrawer({ clienta, onClose }) {
             <p className="font-poppins text-xs text-gray-400 dark:text-gray-500">Gastado</p>
           </div>
         </div>
+
+        {/* Notas de clienta */}
+        {clienta.email && (
+          <div className="px-5 py-4 border-b border-gray-50 dark:border-gray-700">
+            <div className="flex items-center gap-2 mb-2">
+              <StickyNote size={13} className="text-pink-400 shrink-0" />
+              <span className="font-poppins text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wide">Notas internas</span>
+            </div>
+            <textarea
+              value={notaInput}
+              onChange={e => setNotaInput(e.target.value)}
+              placeholder="Alergias, preferencias, observaciones…"
+              rows={2}
+              maxLength={500}
+              className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 font-poppins text-xs text-gray-700 dark:text-gray-100 dark:placeholder-gray-500 placeholder-gray-300 resize-none focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-400 transition-all"
+            />
+            <div className="flex items-center gap-2 mt-2">
+              <button
+                onClick={handleSaveNota}
+                disabled={savingNota}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-pink-500 hover:bg-pink-600 disabled:bg-pink-300 text-white font-poppins text-xs font-semibold transition-all cursor-pointer"
+              >
+                {savingNota
+                  ? <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  : <Save size={11} />
+                }
+                Guardar
+              </button>
+              {notaSaved && (
+                <span className="font-poppins text-xs text-green-600 dark:text-green-400">Guardado</span>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Citas */}
         <div className="flex-1 overflow-y-auto">
