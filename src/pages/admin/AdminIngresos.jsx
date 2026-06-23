@@ -82,7 +82,21 @@ export default function AdminIngresos() {
     const { inicio, fin } = periodo === 'custom'
       ? { inicio: customInicio, fin: customFin }
       : getRango(periodo);
-    exportarExcelIngresos(citas, ranking, inicio, fin);
+
+    // Calcular ranking desde las citas ya filtradas por período
+    const rankingFiltrado = Object.values(
+      citas.reduce((acc, c) => {
+        const servicios = (c.servicio ?? '').split(' + ').map(s => s.trim()).filter(Boolean);
+        servicios.forEach(nombre => {
+          if (!acc[nombre]) acc[nombre] = { nombre, total_citas: 0, total_ingresado: 0 };
+          acc[nombre].total_citas += 1;
+          acc[nombre].total_ingresado += Number(c.precio_cobrado ?? 0) / servicios.length;
+        });
+        return acc;
+      }, {})
+    ).sort((a, b) => b.total_ingresado - a.total_ingresado);
+
+    exportarExcelIngresos(citas, rankingFiltrado, inicio, fin);
   }
 
   // Computed stats
@@ -146,7 +160,7 @@ export default function AdminIngresos() {
           <button
             onClick={handleExport}
             disabled={loading || citas.length === 0}
-            title="Exportar a Excel"
+            title="Exportar a Excel — incluye solo el período seleccionado"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-600 font-poppins text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-green-600 hover:border-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer">
             <Download size={14} />
             Exportar .xlsx
