@@ -39,6 +39,7 @@ const BookingSection = () => {
   const [diasBloqueados, setDiasBloqueados] = useState([]);
   const [availableSlots, setAvailableSlots] = useState([]);
   const [dateBlocked,    setDateBlocked]    = useState(false);
+  const [noSlotsToday,   setNoSlotsToday]   = useState(false);
   const [serviceOptions, setServiceOptions] = useState([]);
 
   const todayISO = (() => {
@@ -57,12 +58,13 @@ const BookingSection = () => {
   }, []);
 
   useEffect(() => {
-    if (!date) { setBookedSlots([]); setAvailableSlots([]); setDateBlocked(false); return; }
+    if (!date) { setBookedSlots([]); setAvailableSlots([]); setDateBlocked(false); setNoSlotsToday(false); return; }
 
     if (diasBloqueados.includes(date)) {
       setDateBlocked(true);
       setAvailableSlots([]);
       setBookedSlots([]);
+      setNoSlotsToday(false);
       return;
     }
     setDateBlocked(false);
@@ -73,15 +75,19 @@ const BookingSection = () => {
     if (!diaConfig?.activo) {
       setAvailableSlots([]);
       setBookedSlots([]);
+      setNoSlotsToday(false);
       return;
     }
     const slots = generarSlots(diaConfig.inicio, diaConfig.fin);
     const horasAntelacion = horario?.horas_antelacion ?? 2;
     const filteredSlots = date === todayISO ? (() => {
       const now = new Date();
-      const minMin = now.getHours() * 60 + now.getMinutes() + horasAntelacion * 60;
-      return slots.filter(s => { const [h, m] = s.split(':').map(Number); return h * 60 + m >= minMin; });
+      const nowMin = now.getHours() * 60 + now.getMinutes();
+      // Siempre ocultar slots pasados; horas_antelacion agrega margen adicional
+      const cutoff = nowMin + horasAntelacion * 60;
+      return slots.filter(s => { const [h, m] = s.split(':').map(Number); return h * 60 + m > cutoff; });
     })() : slots;
+    setNoSlotsToday(date === todayISO && filteredSlots.length === 0);
     setAvailableSlots(filteredSlots);
 
     setLoadingSlots(true);
@@ -149,7 +155,7 @@ const BookingSection = () => {
   const dayKey = date ? DIA_KEYS[new Date(date + 'T12:00:00').getDay()] : null;
   const dayCapacity = (dayKey && horario?.[dayKey]?.capacidad) ? horario[dayKey].capacidad : 1;
   const slotDisabled = (slot) => bookedSlots.filter(s => s === slot).length >= dayCapacity;
-  const isDayClosed  = date && !dateBlocked && horario && availableSlots.length === 0;
+  const isDayClosed  = date && !dateBlocked && !noSlotsToday && horario && availableSlots.length === 0;
 
   const scheduleInfo = [
     { key: 'lunes',     day: 'Lun – Vie' },
@@ -349,6 +355,13 @@ const BookingSection = () => {
                         </div>
                       )}
 
+                      {noSlotsToday && (
+                        <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl px-4 py-3">
+                          <AlertCircle size={15} className="text-blue-400 shrink-0" />
+                          <p className="font-poppins text-sm text-blue-600 dark:text-blue-400">Ya no quedan turnos disponibles para hoy. Por favor elige otro día o pregunta por disponibilidad por Whatsapp.</p>
+                        </div>
+                      )}
+
                       {isDayClosed && (
                         <div className="flex items-center gap-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3">
                           <AlertCircle size={15} className="text-gray-400 dark:text-gray-500 shrink-0" />
@@ -415,7 +428,7 @@ const BookingSection = () => {
                       type="submit"
                       className="w-full justify-center mt-2"
                       size="large"
-                      disabled={selectedServices.length === 0 || !date || !time || !email || !telefono || isDayClosed || dateBlocked || status === ESTADO.LOADING}
+                      disabled={selectedServices.length === 0 || !date || !time || !email || !telefono || isDayClosed || dateBlocked || noSlotsToday || status === ESTADO.LOADING}
                     >
                       {status === ESTADO.LOADING ? (
                         <>
