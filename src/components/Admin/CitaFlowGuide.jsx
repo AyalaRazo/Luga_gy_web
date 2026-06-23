@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Mail, MousePointerClick, UserCheck, CheckCircle2, XCircle, Info } from 'lucide-react';
+import { ChevronDown, ChevronUp, Mail, MousePointerClick, UserCheck, CheckCircle2, XCircle, UserX, Info } from 'lucide-react';
 
 const STEPS = [
   {
@@ -78,6 +78,15 @@ const EXTRAS = [
     icon:  XCircle,
     iconBg:'bg-red-100 dark:bg-red-800/40',
     desc:  'La clienta solicitó cancelar y el admin aceptó, o el admin canceló directamente.',
+  },
+  {
+    label: 'No asistió',
+    bg:    'bg-gray-50 border-gray-200 dark:bg-gray-800/40 dark:border-gray-700',
+    dot:   'bg-gray-400',
+    text:  'text-gray-500 dark:text-gray-400',
+    icon:  UserX,
+    iconBg:'bg-gray-100 dark:bg-gray-700/40',
+    desc:  'La clienta no se presentó a la cita. El admin marca este estado para registrar la ausencia.',
   },
 ];
 

@@ -585,6 +585,7 @@ export default function AdminCalendar() {
           { label: 'Por confirmar', cls: 'bg-blue-400'   },
           { label: 'Confirmada',    cls: 'bg-green-500'  },
           { label: 'Completada',    cls: 'bg-purple-400' },
+          { label: 'No asistió',    cls: 'bg-gray-400'   },
           { label: 'Múltiples',     cls: 'bg-pink-500'   },
         ].map(({ label, cls }) => (
           <div key={label} className="flex items-center gap-1.5">
