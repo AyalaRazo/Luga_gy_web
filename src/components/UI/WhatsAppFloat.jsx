@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { WhatsAppIcon, SOCIAL_LINKS } from './SocialIcons';
 import { X } from 'lucide-react';
+import { trackContact } from '../../lib/metaPixel';
 
 const WhatsAppFloat = () => {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -55,7 +56,7 @@ const WhatsAppFloat = () => {
         rel="noopener noreferrer"
         className="w-14 h-14 bg-green-500 hover:bg-green-600 active:bg-green-700 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2"
         aria-label="Contactar por WhatsApp"
-        onClick={() => setShowTooltip(false)}
+        onClick={() => { setShowTooltip(false); trackContact('WhatsApp'); }}
       >
         <WhatsAppIcon size={28} className="text-white" />
       </a>

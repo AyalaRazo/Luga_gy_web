@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Calendar, Clock, AlertCircle, Loader } from 'lucide-react';
 import SectionTitle from '../UI/SectionTitle';
 import ElegantButton from '../UI/ElegantButton';
 import { WhatsAppIcon, SOCIAL_LINKS, BUSINESS_INFO } from '../UI/SocialIcons';
 import { crearCita, getCitasPorFecha, sendBookingEmail, getHorario, getDiasBloqueados, getServiciosPublic } from '../../lib/supabase';
-import { trackSchedule } from '../../lib/metaPixel';
+import { trackViewContent, trackInitiateCheckout, trackContact } from '../../lib/metaPixel';
 
 const DIA_KEYS = ['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
 
@@ -24,6 +25,7 @@ function generarSlots(inicio, fin) {
 const ESTADO = { IDLE: 'idle', LOADING: 'loading', SUCCESS: 'success', ERROR: 'error' };
 
 const BookingSection = () => {
+  const navigate = useNavigate();
   const [selectedServices, setSelectedServices] = useState([]);
   const [date, setDate]               = useState('');
   const [time, setTime]               = useState('');
@@ -41,11 +43,23 @@ const BookingSection = () => {
   const [dateBlocked,    setDateBlocked]    = useState(false);
   const [noSlotsToday,   setNoSlotsToday]   = useState(false);
   const [serviceOptions, setServiceOptions] = useState([]);
+  const sectionRef = useRef(null);
 
   const todayISO = (() => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   })();
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        trackViewContent('Reserva de cita');
+        observer.disconnect();
+      }
+    }, { threshold: 0.3 });
+    if (sectionRef.current) observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     Promise.all([getHorario(), getDiasBloqueados(), getServiciosPublic()]).then(
@@ -99,9 +113,15 @@ const BookingSection = () => {
   }, [date, horario, diasBloqueados]);
 
   const toggleService = (nombre) => {
-    setSelectedServices(prev =>
-      prev.includes(nombre) ? prev.filter(s => s !== nombre) : [...prev, nombre]
-    );
+    setSelectedServices(prev => {
+      if (prev.includes(nombre)) return prev.filter(s => s !== nombre);
+      const next = [...prev, nombre];
+      if (prev.length === 0) {
+        const svc = serviceOptions.find(s => s.nombre === nombre);
+        trackInitiateCheckout(nombre, Number(svc?.precio ?? 0));
+      }
+      return next;
+    });
   };
 
   const totalDuracion = serviceOptions
@@ -143,8 +163,9 @@ const BookingSection = () => {
     const { error: emailError } = await sendBookingEmail({ email, name, servicio: servicioStr, fecha: date, hora: time, token, telefono });
     if (emailError) console.warn('[Booking] Email no enviado:', emailError);
 
-    setStatus(ESTADO.SUCCESS);
-    trackSchedule(servicioStr);
+    navigate('/gracias', {
+      state: { servicio: servicioStr, valor: totalPrecio, fecha: date, hora: time, nombre: name, email },
+    });
   };
 
   const resetForm = () => {
@@ -172,7 +193,7 @@ const BookingSection = () => {
   });
 
   return (
-    <section id="reservar" className="section-padding bg-pink-50/60 dark:bg-gray-900">
+    <section ref={sectionRef} id="reservar" className="section-padding bg-pink-50/60 dark:bg-gray-900">
       <div className="container-custom">
         <SectionTitle
           title="Reserva tu Cita"
@@ -186,29 +207,6 @@ const BookingSection = () => {
               {/* ── Formulario ─────────────────────────── */}
               <div className="md:col-span-3 p-7 lg:p-9">
                 <h3 className="font-great-vibes text-3xl text-pink-400 mb-6">Agenda aquí</h3>
-
-                {/* Estado: Éxito */}
-                {status === ESTADO.SUCCESS && (
-                  <div className="flex flex-col items-center justify-center py-10 gap-4 text-center animate-fade-in-up">
-                    <CheckCircle size={52} className="text-green-400" aria-hidden="true" />
-                    <div>
-                      <p className="font-poppins text-gray-800 dark:text-gray-100 font-semibold text-lg">
-                        ¡Cita guardada!
-                      </p>
-                      <p className="font-poppins text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Te enviamos un email de confirmación a <strong className="text-pink-400">{email}</strong>.
-                      </p>
-                    </div>
-                    <div className="bg-pink-50 dark:bg-pink-900/20 rounded-xl p-4 w-full text-left text-sm font-poppins text-gray-600 dark:text-gray-300 space-y-1 border border-pink-100 dark:border-gray-700">
-                      <p><span className="font-medium text-pink-400">Servicio:</span> {servicioStr}</p>
-                      <p><span className="font-medium text-pink-400">Fecha:</span> {date}</p>
-                      <p><span className="font-medium text-pink-400">Hora:</span> {time}</p>
-                    </div>
-                    <ElegantButton variant="outline" onClick={resetForm}>
-                      Reservar otra cita
-                    </ElegantButton>
-                  </div>
-                )}
 
                 {/* Estado: Error */}
                 {status === ESTADO.ERROR && (
@@ -227,8 +225,7 @@ const BookingSection = () => {
                 )}
 
                 {/* Formulario */}
-                {status !== ESTADO.SUCCESS && (
-                  <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+                <form onSubmit={handleSubmit} className="space-y-5" noValidate>
 
                     {/* Nombre */}
                     <div>
@@ -440,7 +437,6 @@ const BookingSection = () => {
                       )}
                     </ElegantButton>
                   </form>
-                )}
               </div>
 
               {/* ── Panel lateral info ──────────────────── */}
@@ -455,6 +451,7 @@ const BookingSection = () => {
                     href={SOCIAL_LINKS.whatsapp}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackContact('WhatsApp')}
                     className="flex items-center gap-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-2xl p-4 mb-4 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/50"
                   >
                     <WhatsAppIcon size={28} />

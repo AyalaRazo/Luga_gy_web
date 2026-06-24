@@ -37,6 +37,7 @@ const AdminUsuarios   = lazy(() => import('./pages/admin/AdminUsuarios'));
 const AcceptInvite    = lazy(() => import('./pages/admin/AcceptInvite'));
 const ConfirmarCita   = lazy(() => import('./pages/public/ConfirmarCita'));
 const CancelarCita    = lazy(() => import('./pages/public/CancelarCita'));
+const Gracias         = lazy(() => import('./pages/public/Gracias'));
 
 function PublicSite() {
   return (
@@ -72,6 +73,7 @@ function App() {
             {/* Confirmación / Cancelación pública */}
             <Route path="/confirmar" element={<ConfirmarCita />} />
             <Route path="/cancelar"  element={<CancelarCita />} />
+            <Route path="/gracias"   element={<Gracias />} />
 
             {/* Accept invite (public — sets password after email invite) */}
             <Route path="/admin/accept-invite" element={<AcceptInvite />} />

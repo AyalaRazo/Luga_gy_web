@@ -4,16 +4,31 @@ function fbq(...args) {
   }
 }
 
-export function trackEvent(eventName, params = {}) {
-  fbq('track', eventName, params);
+export function trackViewContent(contentName) {
+  fbq('track', 'ViewContent', { content_name: contentName, content_category: 'Belleza' });
 }
 
-// Evento estándar de Meta para agendamiento de citas
-export function trackSchedule(service) {
-  fbq('track', 'Schedule', { content_name: service });
+export function trackInitiateCheckout(services, value) {
+  fbq('track', 'InitiateCheckout', {
+    content_name: services,
+    num_items: services.split(' + ').length,
+    value,
+    currency: 'MXN',
+  });
 }
 
-// Útil si en el futuro agregás un formulario de contacto/lead
+export function trackSchedule(service, value) {
+  fbq('track', 'Schedule', { content_name: service, value, currency: 'MXN' });
+}
+
+export function trackContact(method = 'WhatsApp') {
+  fbq('track', 'Contact', { content_name: method });
+}
+
 export function trackLead() {
   fbq('track', 'Lead');
+}
+
+export function trackEvent(eventName, params = {}) {
+  fbq('track', eventName, params);
 }
